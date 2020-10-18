@@ -1,7 +1,6 @@
 package Enums;
 
 import java.util.ArrayList;
-import static Enums.ContinentEnum.*;
 
 public enum CountryEnum {
     /*DECLARATION*/
@@ -52,15 +51,37 @@ public enum CountryEnum {
         WESTERN_EUROPE.setNeighbours(GREAT_BRITAIN, NORTHERN_EUROPE, SOUTHERN_EUROPE, NORTH_AFRICA);
 
         //AFRICA
+        CONGO.setNeighbours(SOUTH_AFRICA, EAST_AFRICA, NORTH_AFRICA);
+        EAST_AFRICA.setNeighbours(CONGO, NORTH_AFRICA, EGYPT, MIDDLE_EAST, MADAGASCAR, SOUTH_AFRICA);
+        EGYPT.setNeighbours(NORTH_AFRICA, SOUTHERN_EUROPE, MIDDLE_EAST, EAST_AFRICA);
+        MADAGASCAR.setNeighbours(SOUTH_AFRICA, EAST_AFRICA);
+        NORTH_AFRICA.setNeighbours(BRAZIL, WESTERN_EUROPE, SOUTHERN_EUROPE, EGYPT, EAST_AFRICA, CONGO);
+        SOUTH_AFRICA.setNeighbours(MADAGASCAR, CONGO, EAST_AFRICA);
 
         //ASIA
+        AFGHANISTAN.setNeighbours(MIDDLE_EAST, UKRAINE, URAL, CHINA, INDIA);
+        CHINA.setNeighbours(AFGHANISTAN, URAL, SIBERIA, MONGOLIA, SIAM, INDIA);
+        INDIA.setNeighbours(MIDDLE_EAST, AFGHANISTAN, CHINA, SIAM);
+        IRKUTSK.setNeighbours(SIBERIA, YAKUTSK, KAMCHATKA, MONGOLIA);
+        JAPAN.setNeighbours(KAMCHATKA, MONGOLIA);
+        KAMCHATKA.setNeighbours(ALASKA, JAPAN, IRKUTSK, YAKUTSK);
+        MIDDLE_EAST.setNeighbours(EAST_AFRICA, EGYPT, NORTHERN_EUROPE, UKRAINE, AFGHANISTAN, INDIA);
+        MONGOLIA.setNeighbours(SIBERIA, IRKUTSK, KAMCHATKA, JAPAN, CHINA);
+        SIAM.setNeighbours(INDIA, CHINA, INDONESIA);
+        SIBERIA.setNeighbours(URAL, YAKUTSK, IRKUTSK, MONGOLIA, CHINA);
+        URAL.setNeighbours(UKRAINE, SIBERIA, CHINA, AFGHANISTAN);
+        YAKUTSK.setNeighbours(SIBERIA, IRKUTSK, KAMCHATKA);
 
         //AUSTRALIA
+        EASTERN_AUSTRALIA.setNeighbours(WESTERN_AUSTRALIA, NEW_GUINEA);
+        INDONESIA.setNeighbours(SIAM, NEW_GUINEA, WESTERN_AUSTRALIA);
+        NEW_GUINEA.setNeighbours(INDONESIA, WESTERN_AUSTRALIA, EASTERN_AUSTRALIA);
+        WESTERN_AUSTRALIA.setNeighbours(EASTERN_AUSTRALIA, NEW_GUINEA, INDONESIA);
     }
 
     private ArrayList<CountryEnum> neighbours = new ArrayList<>();
 
-    private ContinentEnum continentEnum; //THIS IS SET IN CONTINENT ENUM
+    private ContinentEnum continentEnum; //THIS IS SET IN CONTINENT ENUM, yes now its coupled but do i care (other option is to pass continent to each enum of country when initializing)
 
     public void setContinentEnum(ContinentEnum continentEnum){
         this.continentEnum = continentEnum;
