@@ -1,49 +1,25 @@
-import java.io.*;
+import Enums.ContinentEnum;
+import Enums.CountryEnum;
+
 import java.util.*;
 
 public class Controller {
 
-    private Map<String, Country> countries;
-    private List<Continent> continents;
+    private Map<ContinentEnum, Continent> continents;
+    private Map<CountryEnum, Country> countries;
     private List<Player> players;
 
     public Controller(int numPlayers) {
         players = new ArrayList<>(numPlayers);
-        for (int i = 0; i < numPlayers; i++) {
-            players.add(new Player("Player" + i));
-        }
-
         countries = new HashMap<>(41);
-        continents = new ArrayList<>(6);
-    }
+        continents = new HashMap<>(6);
 
-    public void loadCountries(String filename) {
-        try {
-            BufferedReader br = new BufferedReader(new FileReader(filename));
-
-            String line;
-            Continent continent = null;
-            while ((line = br.readLine()) != null) {
-                String[] strArr = line.split(",");
-
-                if (strArr.length == 1) {
-                    continent = new Continent(strArr[0]);
-                    continents.add(continent);
-                } else {
-                    Country country = new Country(strArr[0], continent);
-
-                    for (int i = 1; i < strArr.length; i++) {
-                        country.addNeighbour(strArr[i]);
-                    }
-
-                    countries.put(strArr[0], country);
-                }
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        for (int i = 0; i < numPlayers; i++)
+            players.add(new Player("Player" + i));
+        for (CountryEnum countryEnum : CountryEnum.values())
+            countries.put(countryEnum, new Country(countryEnum));
+        for (ContinentEnum continentEnum : ContinentEnum.values())
+            continents.put(continentEnum, new Continent(continentEnum));
     }
 
     public String getMapValues() {
@@ -52,8 +28,9 @@ public class Controller {
         for (Player p : players) {
             sb.append(p.getName()).append(" controls:\n");
 
-            for (Country c : p.getCountries()) {
-                sb.append(c.getName()).append(": ").append(c.getArmies()).append('\n');
+            for (CountryEnum c : p.getCountries()) {
+                Country country = countries.get(c);
+                sb.append(c).append(": ").append(country.getArmies()).append('\n');
             }
 
             sb.append('\n');
@@ -66,31 +43,31 @@ public class Controller {
         int currentPlayer = 0;
         int initArmies = Player.getInitialArmies(players.size());
 
-        // Choose countries that a player has
-        for (Country country : countries.values()) {
-            country.setPlayer(players.get(currentPlayer));
-
+        //Random allocation of countries to each player
+        ArrayList<CountryEnum> tempCountryEnums = new ArrayList<CountryEnum>(countries.keySet());
+        Random rand = new Random(System.currentTimeMillis());
+        while (!tempCountryEnums.isEmpty()){
+            CountryEnum countryEnum = tempCountryEnums.remove(rand.nextInt(tempCountryEnums.size()));
+            countries.get(countryEnum).setPlayer(players.get(currentPlayer));
             currentPlayer = (currentPlayer + 1) % players.size();
         }
 
         // Choose how many armies are on each country.
         // Does this by randomly choosing a country and assigning 1
         // more army, until the player has no more armies left.
-        Random rand = new Random(System.currentTimeMillis());
         for (Player player : players) {
-            List<Country> countries = player.getCountries();
-            int currentArmies = initArmies - countries.size();
+            List<CountryEnum> countriesOwned = player.getCountries();
+            int currentArmies = initArmies - countriesOwned.size();
 
             while (currentArmies > 0) {
-                countries.get(rand.nextInt(countries.size())).addArmies(1);
-
+                this.countries.get(countriesOwned.get(rand.nextInt(countriesOwned.size()))).addArmies(1);
                 currentArmies -= 1;
             }
         }
     }
 
-    public Set<String> getCountryNames() {
-        return countries.keySet();
+    public CountryEnum[] getCountryNames() {
+        return CountryEnum.values();
     }
 
     public static int getInt(Scanner input, String message) {
@@ -109,11 +86,11 @@ public class Controller {
         Scanner input = new Scanner(System.in);
 
         int numPlayers = getInt(input, "Welcome to Risk, how many people are playing?: ");
-
         Controller riskController = new Controller(numPlayers);
-        riskController.loadCountries("countries.csv");
 
-        System.out.println("Countries: " + Arrays.toString(riskController.getCountryNames().toArray()) + '\n');
+        System.out.println(  CountryEnum.ALBERTA.getContinentEnum());
+
+        System.out.println("Countries: " + Arrays.toString(riskController.getCountryNames()) + '\n');
         riskController.setupMap();
         System.out.println(riskController.getMapValues());
     }

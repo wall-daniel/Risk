@@ -1,13 +1,10 @@
-import java.util.ArrayList;
-import java.util.List;
+import Enums.ContinentEnum;
 
 public class Continent {
 
-    private String name;
-    private List<Country> countries;
+    private ContinentEnum name;
 
-    public Continent(String name) {
+    public Continent(ContinentEnum name) {
         this.name = name;
-        this.countries = new ArrayList<>();
     }
 }
