@@ -23,7 +23,6 @@ public class Player {
         countriesOwned.add(c);
     }
 
-
     public static int getInitialArmies(int players) {
         switch (players) {
             case 2:
