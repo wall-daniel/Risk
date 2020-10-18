@@ -1,23 +1,28 @@
+package Players;
+
+import Enums.CountryEnum;
+
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class Player {
 
     private String name;
-    private List<Country> countries;
+    private List<CountryEnum> countriesOwned;
 
     public Player(String name) {
         this.name = name;
-        countries = new ArrayList<>();
+        countriesOwned = new ArrayList<>();
     }
 
     public String getName() { return name; }
-    public List<Country> getCountries() { return countries; }
+    public List<CountryEnum> getCountries() { return countriesOwned; }
 
-    public void removeCountry(Country c) {
-        countries.remove(c);
+    public void removeCountry(CountryEnum c) {
+        countriesOwned.remove(c);
+    }
+    public void addCountry(CountryEnum c) {
+        countriesOwned.add(c);
     }
 
     public static int getInitialArmies(int players) {

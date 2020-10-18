@@ -1,41 +1,27 @@
-import java.util.ArrayList;
-import java.util.List;
+import Enums.CountryEnum;
+import Players.Player;
 
 public class Country {
 
-    private final String name;
+    private final CountryEnum name;
     private int numArmies = 1;
-    private final List<String> neighbours;
-    private final Continent continent;
     private Player controlledBy = null;
 
-    public Country(String name, Continent continent) {
+    public Country(CountryEnum name) {
         this.name = name;
-        this.continent = continent;
-        this.neighbours = new ArrayList<>();
     }
 
     public boolean canAttack() { return numArmies > 1; }
 
-    public String[] getNeighbourNames() {
-        String[] names = new String[neighbours.size()];
-
-        for (int i = 0; i < neighbours.size(); i++) {
-            names[i] = neighbours.get(i);
-        }
-
-        return names;
-    }
-
-    public void addNeighbour(String neighbour) {
-        neighbours.add(neighbour);
+    public String getNeighbourNames() {
+        return name.getNeighbours().toString();
     }
 
     public void addArmies(int newArmies) {
         this.numArmies += newArmies;
     }
 
-    public String getName() {
+    public CountryEnum getName() {
         return name;
     }
 
@@ -46,10 +32,10 @@ public class Country {
     public void setPlayer(Player p) {
         // Remove current player from controlling it
         if (controlledBy != null) {
-            this.controlledBy.removeCountry(this);
+            this.controlledBy.removeCountry(name);
         }
 
         this.controlledBy = p;
-        p.getCountries().add(this);
+        p.addCountry(name);
     }
 }
