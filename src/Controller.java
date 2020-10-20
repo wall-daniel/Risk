@@ -115,6 +115,9 @@ public class Controller {
             case PASS:
                 finishedTurn = pass(command);
                 break;
+            case INFO:
+                printMapInfo();
+                break;
         }
         return finishedTurn;
     }
@@ -124,6 +127,13 @@ public class Controller {
      * Prints all the commands a user can type
      */
     public void printHelp(){
+
+    }
+
+    /**
+     * Prints the current state of the map.
+     */
+    public void printMapInfo(){
 
     }
 
