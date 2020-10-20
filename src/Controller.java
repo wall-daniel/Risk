@@ -12,6 +12,8 @@ public class Controller {
     private Map<CountryEnum, Country> countries;
     private Map<PlayerEnum, Player> players;
 
+    private Parser parser;
+
     private GameStatusEnum gameStatus;
     private PlayerEnum currentPlayer;
 
@@ -19,6 +21,8 @@ public class Controller {
         players = new HashMap<>(numPlayers);
         countries = new HashMap<>(41);
         continents = new HashMap<>(6);
+
+        parser = new Parser();
 
         gameStatus = GameStatusEnum.PLACING;
         currentPlayer = PlayerEnum.PLAYER_1;
@@ -35,6 +39,10 @@ public class Controller {
             continents.put(continentEnum, new Continent(continentEnum));
     }
 
+    /**
+     * Returns a string that shows who owns which country
+     * @return country ownership string
+     */
     public String getMapValues() {
         StringBuilder sb = new StringBuilder();
 
@@ -58,6 +66,7 @@ public class Controller {
      */
     public void playGame(){
         while (!isGameOver()){
+            System.out.println("Start of " + currentPlayer.name() + "'s turn...");
             Command command = parser.getCommand();
             boolean finishedTurn = processCommand(command);
             if (finishedTurn) //finishedTurn is only true if player has called PASS
@@ -233,5 +242,6 @@ public class Controller {
         System.out.println("Countries: " + Arrays.toString(riskController.getCountryNames()) + '\n');
         riskController.setupMap();
         System.out.println(riskController.getMapValues());
+        riskController.playGame();
     }
 }
