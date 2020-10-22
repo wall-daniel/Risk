@@ -1,8 +1,7 @@
-import Enums.ContinentEnum;
-import Enums.CountryEnum;
-import Enums.GameStatusEnum;
-import Enums.PlayerEnum;
-import Players.Player;
+package risk;
+
+import risk.Enums.*;
+import risk.Players.Player;
 
 import java.util.*;
 
@@ -17,12 +16,13 @@ public class Controller {
     private GameStatusEnum gameStatus;
     private PlayerEnum currentPlayer;
 
-    public Controller(int numPlayers) {
+    public Controller() {
+        parser = new Parser();
+
+        int numPlayers = parser.getInt("How many players (2-6)?: ");
         players = new HashMap<>(numPlayers);
         countries = new HashMap<>(41);
         continents = new HashMap<>(6);
-
-        parser = new Parser();
 
         gameStatus = GameStatusEnum.PLACING;
         currentPlayer = PlayerEnum.PLAYER_1;
@@ -43,18 +43,11 @@ public class Controller {
      * Returns a string that shows who owns which country
      * @return country ownership string
      */
-    public String getMapValues() {
+    public String mapString() {
         StringBuilder sb = new StringBuilder();
 
         for (Player p : players.values()) {
-            sb.append(p.getName()).append(" controls:\n");
-
-            for (CountryEnum c : p.getCountries()) {
-                Country country = countries.get(c);
-                sb.append(c).append(": ").append(country.getArmies()).append('\n');
-            }
-
-            sb.append('\n');
+            sb.append(p.getCountriesAsStringWithArmies()).append('\n');
         }
 
         return sb.toString();
@@ -65,13 +58,54 @@ public class Controller {
      * just requests commands from user and then executes them in processCommand
      */
     public void playGame(){
+        startOfTurn(currentPlayer);
+
         while (!isGameOver()){
-            System.out.println("Start of " + currentPlayer.name() + "'s turn...");
             Command command = parser.getCommand();
             boolean finishedTurn = processCommand(command);
-            if (finishedTurn) //finishedTurn is only true if player has called PASS
+            if (finishedTurn) {//finishedTurn is only true if player has called PASS
                 currentPlayer = currentPlayer.getNextPlayer(players.size());
+                startOfTurn(currentPlayer);
+            }
         }
+    }
+
+    /**
+     * Process things the user need to do at the start of the turn
+     */
+    private void startOfTurn(PlayerEnum playerEnum) {
+        System.out.println("Start of " + currentPlayer.name() + "'s turn...");
+
+        // Add armies
+        Player player = players.get(playerEnum);
+        int numArmies = player.newArmiesOnTurn();
+
+        System.out.println("The countries you own are: " + player.getCountriesAsString());
+        System.out.println("You have " + numArmies + " to place.");
+        while (numArmies > 0) {
+            String country = parser.getInput("What country do you want to place your army on (list)?: ").toUpperCase();
+
+            // List what they currently have
+            if (country.toLowerCase().equals("list")) {
+                System.out.println(player.getCountriesAsStringWithArmies());
+                continue;
+            }
+
+            CountryEnum countryEnum = CountryEnum.getEnumFromString(country);
+            if (countryEnum != null) {
+                int n = parser.getInt("How many armies do you want to place here (0-" + numArmies + "): ");
+                if (n >= 0 && n <= numArmies && player.addArmies(countryEnum, n)) {
+                    numArmies -= n;
+                } else {
+                    System.out.println("That wasn't a valid number, try again.");
+                }
+            } else {
+                System.out.println("That's not a country??");
+            }
+        }
+
+        // Print out what they own
+        System.out.println(player.getCountriesAsStringWithArmies());
     }
 
     /**
@@ -211,7 +245,7 @@ public class Controller {
             int currentArmies = initArmies - countriesOwned.size();
 
             while (currentArmies > 0) {
-                this.countries.get(countriesOwned.get(rand.nextInt(countriesOwned.size()))).addArmies(1);
+                countriesOwned.get(rand.nextInt(countriesOwned.size())).country.addArmies(1);
                 currentArmies -= 1;
             }
         }
@@ -221,27 +255,14 @@ public class Controller {
         return CountryEnum.values();
     }
 
-    public static int getInt(Scanner input, String message) {
-        while (true) {
-            try {
-                System.out.print(message);
 
-                return input.nextInt();
-            } catch (Exception e) {
-                System.out.println("That was not a number, now try again.");
-            }
-        }
-    }
 
     public static void main(String[] args) {
-        Scanner input = new Scanner(System.in);
-
-        int numPlayers = getInt(input, "Welcome to Risk, how many people are playing?: ");
-        Controller riskController = new Controller(numPlayers);
+        Controller riskController = new Controller();
 
         System.out.println("Countries: " + Arrays.toString(riskController.getCountryNames()) + '\n');
         riskController.setupMap();
-        System.out.println(riskController.getMapValues());
+        System.out.println(riskController.mapString());
         riskController.playGame();
     }
 }

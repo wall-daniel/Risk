@@ -1,3 +1,5 @@
+package risk;
+
 public class Command {
     // TODO
     public CommandWord getCommandWord() {

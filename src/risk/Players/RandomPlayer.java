@@ -1,4 +1,4 @@
-package Players;
+package risk.Players;
 
 public class RandomPlayer extends Player {
 
