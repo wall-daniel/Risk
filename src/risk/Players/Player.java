@@ -83,4 +83,8 @@ public class Player {
                 return 20;
         }
     }
+
+    public boolean ownsCountry(CountryEnum country) {
+        return countriesOwned.contains(country);
+    }
 }
