@@ -12,6 +12,7 @@ public class Controller {
     private Map<PlayerEnum, Player> players;
 
     private Parser parser;
+    private Random rand;
 
     private GameStatusEnum gameStatus;
     private PlayerEnum currentPlayer;
@@ -179,8 +180,8 @@ public class Controller {
      * after execution : (if reserve troops are 0, )
      */
     public void attack(Command command){
-
-
+        AttackController attackController = new AttackController(players.get(currentPlayer), parser, rand);
+        attackController.startAttackSequence();
     }
 
     /**
@@ -230,7 +231,7 @@ public class Controller {
 
         //Random allocation of countries to each player
         ArrayList<CountryEnum> tempCountryEnums = new ArrayList<CountryEnum>(countries.keySet());
-        Random rand = new Random(System.currentTimeMillis());
+        rand = new Random(System.currentTimeMillis());
         while (!tempCountryEnums.isEmpty()){
             CountryEnum countryEnum = tempCountryEnums.remove(rand.nextInt(tempCountryEnums.size()));
             countries.get(countryEnum).setPlayer(players.get(currentPlayer));
