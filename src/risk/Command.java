@@ -11,23 +11,18 @@ public class Command {
     }
 
     /**
-     * Returns the first word of the command.
+     * Returns the main command word entered.
      *
-     * @return the first word of the command
+     * @return the command word.
      */
     public CommandWord getCommandWord() {
         return words.get(0);
     }
 
     /**
-     * Returns whether or not the command has more than one word.
-     *
-     * @return true if the command has multiple words, false otherwise
+     * Returns true if there are more than one command word.
      */
     public boolean hasSecondWord() {
-        return !words.get(1).equals(null);
+        return words.size() > 1;
     }
-
-
-
 }

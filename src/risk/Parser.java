@@ -48,11 +48,9 @@ public class Parser {
     }
 
     /**
-     * Returns the next string the user enters
-     *
-     * @param message for user.
-     * @return what user enters.
-      */
+     * @param message displayed to user.
+     * @return what user entered.
+     */
     public String getInput(String message) {
         System.out.print(message);
         return inputScanner.nextLine();
