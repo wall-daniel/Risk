@@ -64,10 +64,21 @@ public class Controller {
         while (!isGameOver()){
             Command command = parser.getCommand();
             boolean finishedTurn = processCommand(command);
-            if (finishedTurn) {//finishedTurn is only true if player has called PASS
-                currentPlayer = currentPlayer.getNextPlayer(players.size());
+            if (finishedTurn) {
+                //finishedTurn is only true if player has called PASS
+                currentPlayer = getNextPlayer(currentPlayer);
                 startOfTurn(currentPlayer);
             }
+        }
+    }
+
+    private PlayerEnum getNextPlayer(PlayerEnum currentPlayer) {
+        PlayerEnum nextPlayer = currentPlayer.getNextPlayer(players.size());
+
+        if (players.get(nextPlayer).hasLost()) {
+            return getNextPlayer(nextPlayer);
+        } else {
+            return nextPlayer;
         }
     }
 
