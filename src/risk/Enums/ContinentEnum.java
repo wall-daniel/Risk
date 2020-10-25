@@ -1,7 +1,7 @@
-package Enums;
+package risk.Enums;
 
 import java.util.ArrayList;
-import static Enums.CountryEnum.*;
+import static risk.Enums.CountryEnum.*;
 
 public enum ContinentEnum {
     NORTH_AMERICA (10, ALASKA, ALBERTA, CENTRAL_AMERICA, EASTERN_UNITED_STATES, GREENLAND, NORTHWEST_TERRITORY, ONTARIO, QUEBEC, WESTERN_UNITED_STATES),

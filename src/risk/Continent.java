@@ -1,4 +1,6 @@
-import Enums.ContinentEnum;
+package risk;
+
+import risk.Enums.ContinentEnum;
 
 public class Continent {
 
