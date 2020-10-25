@@ -9,6 +9,7 @@ public class Player {
 
     private String name;
     private List<CountryEnum> countriesOwned;
+    private boolean lost = false;
 
     public Player(String name) {
         this.name = name;
@@ -32,7 +33,7 @@ public class Player {
     }
 
     public String getCountriesAsStringWithArmies() {
-        StringBuilder sb = new StringBuilder(name + "'s countries:\n");
+        StringBuilder sb = new StringBuilder();
         for (CountryEnum c : countriesOwned) {
             sb.append(c.name()).append(": ").append(c.country.getArmies()).append('\n');
         }

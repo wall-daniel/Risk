@@ -3,7 +3,6 @@ package risk;
 import risk.Enums.CountryEnum;
 import risk.Players.Player;
 
-import javax.sound.midi.SysexMessage;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Random;
@@ -25,17 +24,25 @@ public class AttackController {
         this.random = random;
     }
 
+    /**
+     * Starts the sequence for a player to attack another country
+     */
     public void startAttackSequence() {
         getAttackingCountry();
     }
 
-    public void getAttackingCountry() {
+    /**
+     * Gets the country the attacker wants to attack from.
+     * Includes error checking and all that.
+     * Player can end this by typing end.
+     */
+    private void getAttackingCountry() {
         while (true) {
-            System.out.println("Your countries are: " + attackingPlayer.getCountriesAsStringWithArmies());
-            String attackingCountry = parser.getInput("What country do you want to attack from(End)?:").toUpperCase();
+            System.out.println("Your countries are: \n" + attackingPlayer.getCountriesAsStringWithArmies());
+            String attackingCountry = parser.getInput("What country do you want to attack from(End)?:");
 
             // If the player types in 'end' then stop the attacking
-            if (attackingCountry.equals("END")) {
+            if (attackingCountry.equalsIgnoreCase("END")) {
                 return;
             }
 
@@ -57,13 +64,18 @@ public class AttackController {
         }
     }
 
-    public void getDefendingCountry() {
+    /**
+     * Gets the country that is being attacked.
+     * Cannot be there own country and has to be a country near by.
+     * Player can end this by typing end.
+     */
+    private void getDefendingCountry() {
         while (true) {
             System.out.println("The countries you can attack are: " + getAttackableCountries());
-            String defendingCountry = parser.getInput("What country do you want to attack (End)?:").toUpperCase();
+            String defendingCountry = parser.getInput("What country do you want to attack (End)?:");
 
             // If the player types in 'end' then stop the attacking
-            if (defendingCountry.equals("END")) {
+            if (defendingCountry.equalsIgnoreCase("END")) {
                 return;
             }
 
@@ -94,6 +106,7 @@ public class AttackController {
                 return;
             }
 
+            // The user has to enter a number between 1 and 1 less than the armies they have.
             if (attackingArmies > 0 && attackingArmies < attackingCountry.getArmies()) {
                 attackingCountry.removeArmies(attackingArmies);
                 attack();
@@ -104,11 +117,15 @@ public class AttackController {
         }
     }
 
+    /**
+     * Starts the dice rolling phase.
+     * This ends when either someone has won or the attacking player types end.
+     */
     private void attack() {
         int defendingArmies = defendingCountry.getArmies();
 
         // Continue until either one player has no armies, that player loses
-        while (attackingArmies > 0 && defendingArmies > 0) {
+        while (true) {
             // Get attacking rolls
             Integer[] attackingDice = new Integer[Math.min(attackingArmies, 3)];
             for (int i = 0; i < attackingDice.length; i++) {
@@ -137,25 +154,44 @@ public class AttackController {
                 }
             }
 
+            // Check if there is a winner
+            if (attackingArmies < 1 || defendingArmies < 1) {
+                break;
+            }
+
             // Print out the result
             System.out.println("The attacker now has " + attackingArmies + " armies, and the defender now has " + defendingArmies + " armies left.");
 
-            // Wait 1.5 seconds to simulate suspense
-            try {
-                Thread.sleep(1500L);
-            } catch (Exception ignored) {}
+            // Ask player if they want to continue the attack
+            String input = parser.getInput("Do you want to continue attacking? Type end if you don't: ");
+            if (input.equalsIgnoreCase("end")) {
+                break;
+            }
         }
 
+        // Figuer out who won, or if it is a tie
         if (attackingArmies <= 0) {
+            // If the defender won then remove the lost armies from the defender and don't add anything to what the
             defendingCountry.removeArmies(defendingCountry.getArmies() - defendingArmies);
 
             System.out.println(attackingPlayer.getName() + " lost.");
-        } else {
+        } else if (defendingArmies <= 0) {
+            // If attacker wins then...
             System.out.println(attackingPlayer.getName() + " won, " + defendingCountry.getName() + " is now your country.");
             attackerWon();
+        } else {
+            // If it is a tie then move the armies back to where they are supposed to be.
+            defendingCountry.removeArmies(defendingCountry.getArmies() - defendingArmies);
+            attackingCountry.addArmies(attackingArmies);
+
+            System.out.println("Nobody won");
         }
     }
 
+    /**
+     * When the attacker wins then they can move 1-attacking_armies_left to the new country,
+     * and make the country theirs.
+     */
     private void attackerWon() {
         while (true) {
             int moveArmies = parser.getInt("How many armies do you want to move (1-" + attackingArmies + ")?: ");
@@ -165,6 +201,7 @@ public class AttackController {
             } else {
                 attackingCountry.addArmies(attackingArmies - moveArmies);
                 defendingCountry.setPlayer(attackingPlayer, moveArmies);
+
                 break;
             }
         }

@@ -48,7 +48,7 @@ public class Controller {
         StringBuilder sb = new StringBuilder();
 
         for (Player p : players.values()) {
-            sb.append(p.getCountriesAsStringWithArmies()).append('\n');
+            sb.append(p.getName()).append("'s countries:\n").append(p.getCountriesAsStringWithArmies()).append('\n');
         }
 
         return sb.toString();
