@@ -162,7 +162,7 @@ public class Controller {
      * Prints all the commands a user can type
      */
     public void printHelp(){
-
+        System.out.println("\nThe commands you can enter are:\n" + Arrays.toString(CommandWord.values()));
     }
 
     /**
