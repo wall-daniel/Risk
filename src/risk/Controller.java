@@ -72,9 +72,16 @@ public class Controller {
         }
     }
 
+    /**
+     * Gets next player, checks if player has lost.
+     *
+     * @param currentPlayer is last turn's player
+     * @return next player
+     */
     private PlayerEnum getNextPlayer(PlayerEnum currentPlayer) {
         PlayerEnum nextPlayer = currentPlayer.getNextPlayer(players.size());
 
+        // Check if player has lost, if they have then skip to next player.
         if (players.get(nextPlayer).hasLost()) {
             return getNextPlayer(nextPlayer);
         } else {
@@ -143,9 +150,6 @@ public class Controller {
             case HELP:
                 printHelp();
                 break;
-            case PLACE:
-                placeTroops(command);
-                break;
             case ATTACK:
                 attack(command);
                 break;
@@ -183,17 +187,6 @@ public class Controller {
 
     }
 
-
-    /**
-     * Uses info from command to determine which territory to place reserve troops on
-     * info needed : territory 1, troop count
-     * restrictions : (for example (troop count <= reserve troop counts
-     * after execution : (if reserve troops are 0, move gamestatus from PLACING to ATTACKING)
-     */
-    public void placeTroops(Command command){
-
-    }
-
     /**
      * Uses info from command to determine which territory is attacking which territory with how many dice.
      * info needed : territory attack, territory defending, die count (1 - 3)
@@ -218,7 +211,6 @@ public class Controller {
      * restrictions : (for example ( territory 1 has to be connected to territory 2))
      */
     public void moveTroops(Command command){
-
 
     }
 

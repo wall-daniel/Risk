@@ -96,6 +96,9 @@ public class Player {
         return countriesOwned.contains(country);
     }
 
+    /**
+     * @return true if player has lost the game.
+     */
     public boolean hasLost() {
         return lost;
     }
