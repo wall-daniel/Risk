@@ -12,13 +12,13 @@ public class Parser {
 
     public Command getCommand() {
         System.out.print("Enter command: ");
-        inputScanner.next();
+        inputScanner.nextLine();
         return new Command();
     }
 
     public String getInput(String message) {
         System.out.print(message);
-        return inputScanner.next();
+        return inputScanner.nextLine();
     }
 
     public int getInt(String message) {
@@ -26,7 +26,7 @@ public class Parser {
             try {
                 System.out.print(message);
 
-                return Integer.parseInt(inputScanner.next());
+                return Integer.parseInt(inputScanner.nextLine());
             } catch (Exception e) {
                 System.out.println("That was not a number, now try again.");
             }
