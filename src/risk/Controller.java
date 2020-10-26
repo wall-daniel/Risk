@@ -184,7 +184,19 @@ public class Controller {
      * Prints the current state of the map.
      */
     public void printMapInfo(){
+        StringBuilder sb = new StringBuilder();
 
+        // Print the info by continent to get a better strategic view.
+        for (ContinentEnum continent : ContinentEnum.values()) {
+            sb.append(continent.name()).append(":\n");
+
+            // Use the helper method of continents
+            continent.printContinentHelper(sb);
+
+            sb.append("\n");
+        }
+
+        System.out.println(sb.toString());
     }
 
     /**
