@@ -4,20 +4,20 @@ DOCUMENTATION
 
 User Manual:
 Start of game:
-Choose how many players are playing. Between 2 and 6.
-Creates map randomly and assigns countries to them
+- Choose how many players are playing. Between 2 and 6.
+- Creates map randomly and assigns countries to them
 Game phase:
-First place armies on countries
-Each player gets country number divided by 3, with a minimum of 3 armies per turn
-Can type list to see current countries and how many armies on each.
+- First place armies on countries
+- Each player gets country number divided by 3, with a minimum of 3 armies per turn
+- Can type list to see current countries and how many armies on each.
 Playing phase:
-Can attack by typing attack. Explains what to do to attack another country.
-Help command prints out commands
-Info command prints out the status of the map by continents
-Can type pass to pass current turn
+- Can attack by typing attack. Explains what to do to attack another country.
+- Help command prints out commands
+- Info command prints out the status of the map by continents
+- Can type pass to pass current turn
 End of game
-Player loses game when they have no more countries left
-When there is only one player left then that player wins the game.
+- Player loses game when they have no more countries left
+- When there is only one player left then that player wins the game.
 
 Decisions made:
 Created enums as mapping to each object used by model gameBoard class
