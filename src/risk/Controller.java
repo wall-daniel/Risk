@@ -8,32 +8,31 @@ import java.util.*;
 public class Controller {
 
     private Map<ContinentEnum, Continent> continents;
-    private Map<CountryEnum, Country> countries;
-    private Map<PlayerEnum, Player> players;
+    private final Map<CountryEnum, Country> countries;
+    private final ArrayList<Player> players;
 
-    private Parser parser;
+    private final Parser parser;
     private Random rand;
 
     private GameStatusEnum gameStatus;
-    private PlayerEnum currentPlayer;
+    private int currentPlayerPosition = 0;
 
     public Controller() {
         parser = new Parser();
 
         int numPlayers = parser.getInt("How many players (2-6)?: ");
-        players = new HashMap<>(numPlayers);
+        players = new ArrayList<>(numPlayers);
         countries = new HashMap<>(41);
         continents = new HashMap<>(6);
 
         gameStatus = GameStatusEnum.PLACING;
-        currentPlayer = PlayerEnum.PLAYER_1;
 
-        int i = 1;
-        for (PlayerEnum playerEnum : PlayerEnum.values()){
-            if (i > numPlayers) break;
-            players.put(playerEnum, new Player("Player" + i));
-            i++;
+        // Create the players
+        for (int i = 0; i < numPlayers; i++){
+            players.add(new Player("Player" + i));
         }
+
+        // Create the map
         for (CountryEnum countryEnum : CountryEnum.values())
             countries.put(countryEnum, new Country(countryEnum));
         for (ContinentEnum continentEnum : ContinentEnum.values())
@@ -47,7 +46,7 @@ public class Controller {
     public String mapString() {
         StringBuilder sb = new StringBuilder();
 
-        for (Player p : players.values()) {
+        for (Player p : players) {
             sb.append(p.getName()).append("'s countries:\n").append(p.getCountriesAsStringWithArmies()).append('\n');
         }
 
@@ -59,6 +58,7 @@ public class Controller {
      * just requests commands from user and then executes them in processCommand
      */
     public void playGame(){
+        Player currentPlayer = players.get(currentPlayerPosition);
         startOfTurn(currentPlayer);
 
         while (!isGameOver()){
@@ -66,7 +66,7 @@ public class Controller {
             boolean finishedTurn = processCommand(command);
             if (finishedTurn) {
                 //finishedTurn is only true if player has called PASS
-                currentPlayer = getNextPlayer(currentPlayer);
+                currentPlayer = getNextPlayer();
                 startOfTurn(currentPlayer);
             }
         }
@@ -75,15 +75,15 @@ public class Controller {
     /**
      * Gets next player, checks if player has lost.
      *
-     * @param currentPlayer is last turn's player
      * @return next player
      */
-    private PlayerEnum getNextPlayer(PlayerEnum currentPlayer) {
-        PlayerEnum nextPlayer = currentPlayer.getNextPlayer(players.size());
+    private Player getNextPlayer() {
+        currentPlayerPosition = (currentPlayerPosition + 1) % players.size();
+        Player nextPlayer = players.get(currentPlayerPosition);
 
         // Check if player has lost, if they have then skip to next player.
-        if (players.get(nextPlayer).hasLost()) {
-            return getNextPlayer(nextPlayer);
+        if (nextPlayer.hasLost()) {
+            return getNextPlayer();
         } else {
             return nextPlayer;
         }
@@ -92,11 +92,10 @@ public class Controller {
     /**
      * Process things the user need to do at the start of the turn
      */
-    private void startOfTurn(PlayerEnum playerEnum) {
-        System.out.println("Start of " + currentPlayer.name() + "'s turn...");
+    private void startOfTurn(Player player) {
+        System.out.println("Start of " + player.getName() + "'s turn...");
 
         // Add armies
-        Player player = players.get(playerEnum);
         int numArmies = player.newArmiesOnTurn();
 
         System.out.println("The countries you own are: " + player.getCountriesAsString());
@@ -128,8 +127,7 @@ public class Controller {
     }
 
     /**
-     * true if game is over, false otherwise
-     * @return
+     * @return true if game is over, false otherwise
      */
     public boolean isGameOver(){
         return gameStatus == GameStatusEnum.GAME_OVER;
@@ -156,12 +154,12 @@ public class Controller {
             case END_ATTACK:
                 endAttack(command);
                 break;
-            case MOVE:
-                moveTroops(command);
-                break;
-            case END_MOVE:
-                endMoveTroops(command);
-                break;
+//            case MOVE:        Not needed for this milestone.
+//                moveTroops(command);
+//                break;
+//            case END_MOVE:
+//                endMoveTroops(command);
+//                break;
             case PASS:
                 finishedTurn = pass(command);
                 break;
@@ -206,7 +204,7 @@ public class Controller {
      * after execution : (if reserve troops are 0, )
      */
     public void attack(Command command){
-        AttackController attackController = new AttackController(players.get(currentPlayer), parser, rand);
+        AttackController attackController = new AttackController(players.get(currentPlayerPosition), parser, rand);
         attackController.startAttackSequence();
     }
 
@@ -217,21 +215,22 @@ public class Controller {
         gameStatus = GameStatusEnum.MOVING;
     }
 
-    /**
-     * Uses info from command to determine which territory is moving troops to which territory
-     * info needed : territory 1 -> territory 2, troop count
-     * restrictions : (for example ( territory 1 has to be connected to territory 2))
-     */
-    public void moveTroops(Command command){
+//    /**
+//     * Uses info from command to determine which territory is moving troops to which territory
+//     * info needed : territory 1 -> territory 2, troop count
+//     * restrictions : (for example ( territory 1 has to be connected to territory 2))
+//     */
+//    Not needed for this milestone, to be added by next one.
+//    public void moveTroops(Command command){
+//
+//    }
 
-    }
-
-    /**
-     * ends the moving phase
-     */
-    public void endMoveTroops(Command command){
-        gameStatus = GameStatusEnum.PLACING;
-    }
+//    /**
+//     * ends the moving phase
+//     */
+//    public void endMoveTroops(Command command){
+//        gameStatus = GameStatusEnum.PLACING;
+//    }
 
     /**
      * "Pass" was entered. Check the rest of the command to see
@@ -243,8 +242,7 @@ public class Controller {
         if(command.hasSecondWord()) {
             System.out.println("Pass what?");
             return false;
-        }
-        else {
+        } else {
             return true;  // signal that we want to pass turn
         }
     }
@@ -259,14 +257,15 @@ public class Controller {
         rand = new Random(System.currentTimeMillis());
         while (!tempCountryEnums.isEmpty()){
             CountryEnum countryEnum = tempCountryEnums.remove(rand.nextInt(tempCountryEnums.size()));
-            countries.get(countryEnum).setPlayer(players.get(currentPlayer));
-            currentPlayer = currentPlayer.getNextPlayer(players.size());
+            countries.get(countryEnum).setPlayer(players.get(currentPlayerPosition));
+
+            currentPlayerPosition = (currentPlayerPosition + 1) % players.size();
         }
 
         // Choose how many armies are on each country.
         // Does this by randomly choosing a country and assigning 1
         // more army, until the player has no more armies left.
-        for (Player player : players.values()) {
+        for (Player player : players) {
             List<CountryEnum> countriesOwned = player.getCountries();
             int currentArmies = initArmies - countriesOwned.size();
 
@@ -280,8 +279,6 @@ public class Controller {
     public CountryEnum[] getCountryNames() {
         return CountryEnum.values();
     }
-
-
 
     public static void main(String[] args) {
         Controller riskController = new Controller();
