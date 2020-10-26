@@ -7,23 +7,27 @@ import java.util.*;
 
 public class Controller {
 
-    private Map<ContinentEnum, Continent> continents;
-    private final Map<CountryEnum, Country> countries;
     private final ArrayList<Player> players;
 
+    private GameBoard gameBoard;
+
     private final Parser parser;
-    private Random rand;
 
     private GameStatusEnum gameStatus;
     private int currentPlayerPosition = 0;
 
+    private Random rand;
+
+
     public Controller() {
         parser = new Parser();
+        rand = new Random(System.currentTimeMillis());
+
+        gameBoard = new GameBoard(rand);
 
         int numPlayers = parser.getInt("How many players (2-6)?: ");
         players = new ArrayList<>(numPlayers);
-        countries = new HashMap<>(41);
-        continents = new HashMap<>(6);
+
 
         gameStatus = GameStatusEnum.PLACING;
 
@@ -32,11 +36,9 @@ public class Controller {
             players.add(new Player("Player" + i));
         }
 
-        // Create the map
-        for (CountryEnum countryEnum : CountryEnum.values())
-            countries.put(countryEnum, new Country(countryEnum));
-        for (ContinentEnum continentEnum : ContinentEnum.values())
-            continents.put(continentEnum, new Continent(continentEnum));
+        gameBoard.setupMap(players);
+
+
     }
 
     /**
@@ -254,32 +256,6 @@ public class Controller {
 
 
 
-    public void setupMap() {
-        int initArmies = Player.getInitialArmies(players.size());
-
-        //Random allocation of countries to each player
-        ArrayList<CountryEnum> tempCountryEnums = new ArrayList<CountryEnum>(countries.keySet());
-        rand = new Random(System.currentTimeMillis());
-        while (!tempCountryEnums.isEmpty()){
-            CountryEnum countryEnum = tempCountryEnums.remove(rand.nextInt(tempCountryEnums.size()));
-            countries.get(countryEnum).setPlayer(players.get(currentPlayerPosition));
-
-            currentPlayerPosition = (currentPlayerPosition + 1) % players.size();
-        }
-
-        // Choose how many armies are on each country.
-        // Does this by randomly choosing a country and assigning 1
-        // more army, until the player has no more armies left.
-        for (Player player : players) {
-            List<CountryEnum> countriesOwned = player.getCountries();
-            int currentArmies = initArmies - countriesOwned.size();
-
-            while (currentArmies > 0) {
-                countriesOwned.get(rand.nextInt(countriesOwned.size())).country.addArmies(1);
-                currentArmies -= 1;
-            }
-        }
-    }
 
     private void gameOver() {
         System.out.println("The game is over, " + players.get(currentPlayerPosition).getName() + " won. Congrats!");
@@ -294,7 +270,7 @@ public class Controller {
         Controller riskController = new Controller();
 
         System.out.println("Countries: " + Arrays.toString(riskController.getCountryNames()) + '\n');
-        riskController.setupMap();
+      //  riskController.gameBoard.setupMap();
         System.out.println(riskController.mapString());
         riskController.playGame();
     }
