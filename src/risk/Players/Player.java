@@ -1,6 +1,5 @@
 package risk.Players;
 
-import kotlin.ranges.ClosedRange;
 import risk.Enums.CountryEnum;
 
 import java.util.ArrayList;
@@ -43,14 +42,6 @@ public class Player {
 
     public void removeCountry(CountryEnum c) {
         countriesOwned.remove(c);
-
-        // Check if player is still in.
-        if (countriesOwned.isEmpty()) {
-            // Player has lost the game.
-            lost = true;
-
-            System.out.println(name + " has been eliminated.");
-        }
     }
 
     public void addCountry(CountryEnum c) {
@@ -88,6 +79,13 @@ public class Player {
      */
     public boolean hasLost() {
         return lost;
+    }
+
+    /**
+     * Set the player as lost.
+     */
+    public void setLost() {
+        this.lost = true;
     }
 
     public static int getInitialArmies(int players) {

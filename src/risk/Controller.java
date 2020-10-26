@@ -142,17 +142,11 @@ public class Controller {
         CommandWord commandWord = command.getCommandWord();
         boolean finishedTurn = false;
         switch(commandWord){
-            case UNKNOWN:
-                System.out.println("I don't know what you mean...");
-                break;
             case HELP:
                 printHelp();
                 break;
             case ATTACK:
                 attack(command);
-                break;
-            case END_ATTACK:
-                endAttack(command);
                 break;
 //            case MOVE:        Not needed for this milestone.
 //                moveTroops(command);
@@ -165,6 +159,10 @@ public class Controller {
                 break;
             case INFO:
                 printMapInfo();
+                break;
+            case UNKNOWN:
+            default:
+                System.out.println("I don't know what you mean...");
                 break;
         }
         return finishedTurn;
@@ -205,14 +203,21 @@ public class Controller {
      */
     public void attack(Command command){
         AttackController attackController = new AttackController(players.get(currentPlayerPosition), parser, rand);
-        attackController.startAttackSequence();
-    }
+        boolean result = attackController.startAttackSequence();
 
-    /**
-     * ends the attacking phase
-     */
-    public void endAttack(Command command){
-        gameStatus = GameStatusEnum.MOVING;
+        // Check if the attacker won
+        if (result) {
+            // Check if the attacker is only one left
+            int playersLeft = 0;
+            for (Player player : players) {
+                playersLeft++;
+            }
+
+            if (playersLeft <= 1) {
+                gameStatus = GameStatusEnum.GAME_OVER;
+                gameOver();
+            }
+        }
     }
 
 //    /**
@@ -274,6 +279,11 @@ public class Controller {
                 currentArmies -= 1;
             }
         }
+    }
+
+    private void gameOver() {
+        System.out.println("The game is over, " + players.get(currentPlayerPosition).getName() + " won. Congrats!");
+        System.exit(0);
     }
 
     public CountryEnum[] getCountryNames() {
