@@ -205,9 +205,10 @@ public class Controller {
      */
     public void attack(Command command){
         AttackController attackController = new AttackController(players.get(currentPlayerPosition), parser, rand);
+        // This method does all the attack and returns true if the defender loses game.
         boolean result = attackController.startAttackSequence();
 
-        // Check if the attacker won
+        // Check if the defender has lost.
         if (result) {
             // Check if the attacker is only one left
             int playersLeft = 0;
