@@ -61,14 +61,19 @@ public class Parser {
      * If the user does not enter an int, it loops until they do.
      *
      * @param message for user, will be displayed each loop.
+     * @param lowerBound lower bound inclusive.
+     * @param upperBound upper bound inclusive.
      * @return int value that user enters.
      */
-    public int getInt(String message) {
+    public int getInt(String message, int lowerBound, int upperBound) {
         while (true) {
             try {
                 System.out.print(message);
 
-                return Integer.parseInt(inputScanner.nextLine());
+                int result = Integer.parseInt(inputScanner.nextLine());
+                if (result >= lowerBound && result <= upperBound) {
+                    return result;
+                }
             } catch (Exception e) {
                 System.out.println("That was not a number, now try again.");
             }

@@ -13,7 +13,6 @@ public class Controller {
 
     private final Parser parser;
 
-    private GameStatusEnum gameStatus;
     private int currentPlayerPosition = 0;
 
     private Random rand;
@@ -25,11 +24,8 @@ public class Controller {
 
         gameBoard = new GameBoard(rand);
 
-        int numPlayers = parser.getInt("How many players (2-6)?: ");
+        int numPlayers = parser.getInt("How many players (2-6)?: ", 2, 6);
         players = new ArrayList<>(numPlayers);
-
-
-        gameStatus = GameStatusEnum.PLACING;
 
         // Create the players
         for (int i = 0; i < numPlayers; i++){
@@ -63,7 +59,7 @@ public class Controller {
         Player currentPlayer = players.get(currentPlayerPosition);
         startOfTurn(currentPlayer);
 
-        while (!isGameOver()){
+        while (true) {
             Command command = parser.getCommand();
             boolean finishedTurn = processCommand(command);
             if (finishedTurn) {
@@ -113,7 +109,7 @@ public class Controller {
 
             CountryEnum countryEnum = CountryEnum.getEnumFromString(country);
             if (countryEnum != null) {
-                int n = parser.getInt("How many armies do you want to place here (0-" + numArmies + "): ");
+                int n = parser.getInt("How many armies do you want to place here (0-" + numArmies + "): ", 0, numArmies);
                 if (n >= 0 && n <= numArmies && player.addArmies(countryEnum, n)) {
                     numArmies -= n;
                 } else {
@@ -126,13 +122,6 @@ public class Controller {
 
         // Print out what they own
         System.out.println(player.getCountriesAsStringWithArmies());
-    }
-
-    /**
-     * @return true if game is over, false otherwise
-     */
-    public boolean isGameOver(){
-        return gameStatus == GameStatusEnum.GAME_OVER;
     }
 
     /**
@@ -212,12 +201,11 @@ public class Controller {
         if (result) {
             // Check if the attacker is only one left
             int playersLeft = 0;
-            for (Player player : players) {
+            for (Player ignored : players) {
                 playersLeft++;
             }
 
             if (playersLeft <= 1) {
-                gameStatus = GameStatusEnum.GAME_OVER;
                 gameOver();
             }
         }
