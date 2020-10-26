@@ -99,7 +99,7 @@ public class AttackController {
      */
     private boolean getAttackingArmies() {
         while (true) {
-            attackingArmies = parser.getInt("How many armies do you want to attack with? (0-" + (attackingCountry.getArmies() - 1) + ", End=-1)?:");
+            attackingArmies = parser.getInt("How many armies do you want to attack with? (0-" + (attackingCountry.getArmies() - 1) + ", End=-1)?:", 0, attackingCountry.getArmies() - 1);
 
             // If the user enters -1 then return
             if (attackingArmies == -1) {
@@ -195,7 +195,7 @@ public class AttackController {
      */
     private boolean attackerWon() {
         while (true) {
-            int moveArmies = parser.getInt("How many armies do you want to move (1-" + attackingArmies + ")?: ");
+            int moveArmies = parser.getInt("How many armies do you want to move (1-" + attackingArmies + ")?: ", 1, attackingArmies);
 
             if (moveArmies < 1 || moveArmies > attackingArmies) {
                 System.out.println("You cannot move that many armies, try again.");

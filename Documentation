@@ -1,0 +1,32 @@
+---------------------------------------------------------------------------------------------------------
+DOCUMENTATION
+---------------------------------------------------------------------------------------------------------
+
+User Manual:
+Start of game:
+Choose how many players are playing. Between 2 and 6.
+Creates map randomly and assigns countries to them
+Game phase:
+First place armies on countries
+Each player gets country number divided by 3, with a minimum of 3 armies per turn
+Can type list to see current countries and how many armies on each.
+Playing phase:
+Can attack by typing attack. Explains what to do to attack another country.
+Help command prints out commands
+Info command prints out the status of the map by continents
+Can type pass to pass current turn
+End of game
+Player loses game when they have no more countries left
+When there is only one player left then that player wins the game.
+
+Decisions made:
+Created enums as mapping to each object used by model gameBoard class
+Controller (Controller class)  looks at Model (gameBoard class) and notifies the user through view (Console) to make actions.
+
+Descriptions of Data Structures:
+CountryEnum - enumeration that have neighbours mapped to other countries
+ContinentEnum - enumeration that has continent names and countries within
+Players - arraylist of players
+Countries - hashmap of countryenums as keys to country objects which state which player owns the country and how many armies exist.
+Continents - hashmap of continentenums as keys to continent objects.
+
