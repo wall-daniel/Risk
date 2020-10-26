@@ -48,6 +48,8 @@ public class Player {
         if (countriesOwned.isEmpty()) {
             // Player has lost the game.
             lost = true;
+
+            System.out.println(name + " has been eliminated.");
         }
     }
 
@@ -77,6 +79,17 @@ public class Player {
         return true;
     }
 
+    public boolean ownsCountry(CountryEnum country) {
+        return countriesOwned.contains(country);
+    }
+
+    /**
+     * @return true if player has lost the game.
+     */
+    public boolean hasLost() {
+        return lost;
+    }
+
     public static int getInitialArmies(int players) {
         switch (players) {
             case 2:
@@ -90,16 +103,5 @@ public class Player {
             default:    // 6 players
                 return 20;
         }
-    }
-
-    public boolean ownsCountry(CountryEnum country) {
-        return countriesOwned.contains(country);
-    }
-
-    /**
-     * @return true if player has lost the game.
-     */
-    public boolean hasLost() {
-        return lost;
     }
 }

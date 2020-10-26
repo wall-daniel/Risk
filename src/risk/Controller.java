@@ -156,12 +156,12 @@ public class Controller {
             case END_ATTACK:
                 endAttack(command);
                 break;
-            case MOVE:
-                moveTroops(command);
-                break;
-            case END_MOVE:
-                endMoveTroops(command);
-                break;
+//            case MOVE:        Not needed for this milestone.
+//                moveTroops(command);
+//                break;
+//            case END_MOVE:
+//                endMoveTroops(command);
+//                break;
             case PASS:
                 finishedTurn = pass(command);
                 break;
@@ -217,21 +217,22 @@ public class Controller {
         gameStatus = GameStatusEnum.MOVING;
     }
 
-    /**
-     * Uses info from command to determine which territory is moving troops to which territory
-     * info needed : territory 1 -> territory 2, troop count
-     * restrictions : (for example ( territory 1 has to be connected to territory 2))
-     */
-    public void moveTroops(Command command){
+//    /**
+//     * Uses info from command to determine which territory is moving troops to which territory
+//     * info needed : territory 1 -> territory 2, troop count
+//     * restrictions : (for example ( territory 1 has to be connected to territory 2))
+//     */
+//    Not needed for this milestone, to be added by next one.
+//    public void moveTroops(Command command){
+//
+//    }
 
-    }
-
-    /**
-     * ends the moving phase
-     */
-    public void endMoveTroops(Command command){
-        gameStatus = GameStatusEnum.PLACING;
-    }
+//    /**
+//     * ends the moving phase
+//     */
+//    public void endMoveTroops(Command command){
+//        gameStatus = GameStatusEnum.PLACING;
+//    }
 
     /**
      * "Pass" was entered. Check the rest of the command to see
@@ -243,8 +244,7 @@ public class Controller {
         if(command.hasSecondWord()) {
             System.out.println("Pass what?");
             return false;
-        }
-        else {
+        } else {
             return true;  // signal that we want to pass turn
         }
     }
