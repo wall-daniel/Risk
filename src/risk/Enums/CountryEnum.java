@@ -1,4 +1,6 @@
-package Enums;
+package risk.Enums;
+
+import risk.Country;
 
 import java.util.ArrayList;
 
@@ -80,6 +82,7 @@ public enum CountryEnum {
     }
 
     private ArrayList<CountryEnum> neighbours = new ArrayList<>();
+    public Country country;
 
     private ContinentEnum continentEnum; //THIS IS SET IN CONTINENT ENUM, yes now its coupled but do i care (other option is to pass continent to each enum of country when initializing)
 
@@ -98,5 +101,17 @@ public enum CountryEnum {
 
     public ArrayList<CountryEnum> getNeighbours(){
         return neighbours;
+    }
+
+    public static CountryEnum getEnumFromString(String name) {
+        name = name.toUpperCase();
+
+        for (CountryEnum c : CountryEnum.values()) {
+            if (c.name().equals(name)) {
+                return c;
+            }
+        }
+
+        return null;
     }
 }

@@ -259,7 +259,7 @@ public class Controller {
         Controller riskController = new Controller();
 
         System.out.println("Countries: " + Arrays.toString(riskController.getCountryNames()) + '\n');
-        //  riskController.gameBoard.setupMap();
+      //  riskController.gameBoard.setupMap();
         System.out.println(riskController.mapString());
         riskController.playGame();
     }
