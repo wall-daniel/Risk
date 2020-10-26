@@ -26,6 +26,8 @@ public class AttackController {
 
     /**
      * Starts the sequence for a player to attack another country
+     *
+     * @return returns true if the defending player loses last country.
      */
     public boolean startAttackSequence() {
         return getAttackingCountry();
