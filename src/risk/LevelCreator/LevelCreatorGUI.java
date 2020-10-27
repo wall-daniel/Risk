@@ -15,7 +15,7 @@ public class LevelCreatorGUI extends JFrame{
         new LevelCreatorGUI();
     }
 
-    DrawingPad drawingPad;
+   // DrawingPad drawingPad;
     JLabel status;
 
     public LevelCreatorGUI(){
@@ -53,8 +53,8 @@ public class LevelCreatorGUI extends JFrame{
         try{
 
            // addComponentToPane(getContentPane());
-            drawingPad = new DrawingPad();
-            getContentPane().add(drawingPad);
+          //  drawingPad = new DrawingPad();
+          //  getContentPane().add(drawingPad);
         } catch (Exception e){
 
         }
@@ -75,13 +75,13 @@ public class LevelCreatorGUI extends JFrame{
         JMenuItem addContinent = new JMenuItem("Add Continent");
 
         addContinent.addActionListener(e -> {
-            drawingPad.setDrawingStatus(DrawingEnum.CONTINENTS);
+            //drawingPad.setDrawingStatus(DrawingEnum.CONTINENTS);
             status.setText(DrawingEnum.CONTINENTS.getText());
         });
 
         JMenuItem addCountry = new JMenuItem("Add Country");
         addCountry.addActionListener(e -> {
-            drawingPad.setDrawingStatus(DrawingEnum.COUNTRIES);
+            //drawingPad.setDrawingStatus(DrawingEnum.COUNTRIES);
             status.setText(DrawingEnum.COUNTRIES.getText());
         });
 

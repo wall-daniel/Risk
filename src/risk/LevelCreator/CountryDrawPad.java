@@ -1,5 +1,7 @@
 package risk.LevelCreator;
 
+import risk.Country;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -17,20 +19,18 @@ public class CountryDrawPad extends JPanel implements MouseListener {
         addMouseListener(this);
     }
 
-
     public void paintComponent(Graphics g){
         if(image == null){
             // image = createImage(getSize().width, getSize().height);
             image = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_3BYTE_BGR);
             graphics2D = (Graphics2D)image.getGraphics();
-            graphics2D.setStroke(new BasicStroke(2));
+            graphics2D.setStroke(new BasicStroke(1));
             graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
             //graphics2D.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
             clear();
         }
         g.drawImage(image, 0, 0, null);
     }
-
 
     public void clear(){
         oldX = -1;
@@ -41,23 +41,54 @@ public class CountryDrawPad extends JPanel implements MouseListener {
         repaint();
     }
 
-    public void finishDrawing(){
+    public void reset(){
+        oldX = -1;
+        oldY = -1;
+    }
+
+
+    public void closeShape(){
         randomFractal(oldX, oldY, startX, startY);
         repaint();
     }
 
-    public void floodFill(){
+    public static void main(String [] args){
 
+
+    }
+
+
+    public void fill(){
+        for (int x = 0; x < image.getWidth(); x++){
+            boolean fill = false;
+            int initialY = 0;
+            for (int y = 0; y < image.getHeight(); y++){
+               if (image.getRGB(x, y) == MapColor.BORDER_COLOR.getColor().getRGB()) {
+
+                   if (fill) {
+                       System.out.println("Draw " + x + " " + initialY + " -> " + y + " " + image.getRGB(x, y) + " == " + MapColor.BORDER_COLOR.getColor().getRGB());
+                       graphics2D.drawLine(x, initialY, x, y);
+                   }
+
+                   if (image.getRGB(x, y+1) == MapColor.BACKGROUND_COLOR.getColor().getRGB()) {
+                       System.out.println("Switch " + x + " " +initialY + " -> " + y + " " + image.getRGB(x, y) + " == " + MapColor.BORDER_COLOR.getColor().getRGB());
+                       fill = !fill;
+                       initialY = y;
+                   }
+               }
+            }
+        }
+        repaint();
     }
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        if (oldX != -1) {
-            randomFractal(oldX, oldY, e.getX(), e.getY());
-            repaint();
-        } else {
+        if (oldX == -1) {
             startX = e.getX();
             startY = e.getY();
+        } else {
+            randomFractal(oldX, oldY, e.getX(), e.getY());
+            repaint();
         }
         oldX = e.getX();
         oldY = e.getY();

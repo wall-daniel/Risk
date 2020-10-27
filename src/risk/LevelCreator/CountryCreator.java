@@ -71,13 +71,11 @@ public class CountryCreator extends JFrame {
     private void addJMenuBar() {
         JMenuBar bar = new JMenuBar();
         JMenu menu = new JMenu("Options");
+
         JMenuItem clear = new JMenuItem("Clear");
         JMenuItem closeShape = new JMenuItem("Close Shape");
         JMenuItem fill = new JMenuItem("Fill");
-
-
         JMenuItem newShape = new JMenuItem("New Shape");
-
         JMenuItem finish = new JMenuItem("End");
 
         clear.addActionListener(e -> {
@@ -87,17 +85,19 @@ public class CountryCreator extends JFrame {
 
 
         closeShape.addActionListener(e -> {
-            drawingPad.finishDrawing();
+            drawingPad.closeShape();
             setDrawingStatus(CountryDrawingEnum.FILL);
         });
 
 
         fill.addActionListener(e -> {
+            drawingPad.fill();
             setDrawingStatus(CountryDrawingEnum.FILL);
         });
 
 
         newShape.addActionListener(e -> {
+            drawingPad.reset();
             setDrawingStatus(CountryDrawingEnum.FIRST_POINT);
         });
 
@@ -109,6 +109,8 @@ public class CountryCreator extends JFrame {
 
         menu.add(clear);
         menu.add(closeShape);
+        menu.add(fill);
+        menu.add(newShape);
         menu.add(finish);
 
         bar.add(menu);
