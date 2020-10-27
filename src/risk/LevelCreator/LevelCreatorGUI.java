@@ -5,20 +5,24 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.Buffer;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
 public class LevelCreatorGUI extends JFrame{
     public static void main(String[] args){
-
-
         new LevelCreatorGUI();
     }
 
    // DrawingPad drawingPad;
     JLabel status;
+    JLayeredPane layeredPane;
+    int countryCounter;
+
 
     public LevelCreatorGUI(){
+        countryCounter = 0;
+
         /* Use an appropriate Look and Feel */
         try {
             // UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
@@ -45,26 +49,18 @@ public class LevelCreatorGUI extends JFrame{
     }
 
     private void createAndShowGUI() {
+
+
+
+        addComponentToPane(getContentPane());
+
+        addJMenuBar();
+
+        getContentPane().setBackground(MapColor.BACKGROUND_COLOR.getColor());
+        setPreferredSize(Toolkit.getDefaultToolkit().getScreenSize());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
-
-        // Create and set up the content pane.
         setTitle("Custom Level Creator");
-        try{
-
-           // addComponentToPane(getContentPane());
-          //  drawingPad = new DrawingPad();
-          //  getContentPane().add(drawingPad);
-        } catch (Exception e){
-
-        }
-
-       // addJMenuBar();
-
-
-        setPreferredSize(Toolkit.getDefaultToolkit().getScreenSize());
-
-        // Display the window.
         pack();
         setVisible(true);
     }
@@ -72,21 +68,20 @@ public class LevelCreatorGUI extends JFrame{
     private void addJMenuBar() {
         JMenuBar bar = new JMenuBar();
         JMenu menu = new JMenu("Add");
-        JMenuItem addContinent = new JMenuItem("Add Continent");
-
-        addContinent.addActionListener(e -> {
-            //drawingPad.setDrawingStatus(DrawingEnum.CONTINENTS);
-            status.setText(DrawingEnum.CONTINENTS.getText());
-        });
 
         JMenuItem addCountry = new JMenuItem("Add Country");
+        JMenuItem setNeighbours = new JMenuItem("Set Neighbours");
+        JMenuItem setContinents = new JMenuItem("Set Continents");
+
         addCountry.addActionListener(e -> {
-            //drawingPad.setDrawingStatus(DrawingEnum.COUNTRIES);
+            new CountryCreator(this);
             status.setText(DrawingEnum.COUNTRIES.getText());
+
         });
 
-        menu.add(addContinent);
         menu.add(addCountry);
+        menu.add(setNeighbours);
+        menu.add(setContinents);
 
         bar.add(menu);
 
@@ -94,40 +89,30 @@ public class LevelCreatorGUI extends JFrame{
     }
 
 
-    public void addComponentToPane(Container pane) throws IOException {
-
-        JLayeredPane layeredPane = new JLayeredPane();
+    public void addComponentToPane(Container pane)  {
+        layeredPane = new JLayeredPane();
         layeredPane.setLayout(null);
         layeredPane.setName("Layered Pane");
-
         pane.setName("Pane");
 
-       // pane.setBackground(new Color(21, 80, 255));
-        //status = new JLabel(DrawingEnum.WAITING.getText(), SwingConstants.CENTER);
 
-        File img = new File("treeIcon.png");
-        BufferedImage continentImage = ImageIO.read(img);
+        status = new JLabel(DrawingEnum.COUNTRIES.getText(), SwingConstants.CENTER);
 
-        int h = continentImage.getHeight(null);
-        int w = continentImage.getWidth(null);
+        pane.add(status, BorderLayout.NORTH);
+        pane.add(layeredPane, BorderLayout.CENTER);
+    }
 
-        CustomContinent cc = new CustomContinent(continentImage, "tree 1");
-        CustomContinent cc1 = new CustomContinent(continentImage, "tree 2");
-
-        layeredPane.add(cc, Integer.valueOf(2));
-        layeredPane.add(cc1, Integer.valueOf(3));
+    public void addNewCountry(BufferedImage image){
+        EditableCustomContinent cc = new EditableCustomContinent(image, "Country " + countryCounter);
 
         Insets insets = layeredPane.getInsets();
-        Dimension size = cc.getPreferredSize();
-        cc.setBounds(100 + insets.left, 100 + insets.top, w, h);
+        cc.setBounds(insets.left, insets.top, image.getWidth(), image.getHeight());
         cc.setBorder(BorderFactory.createLineBorder(Color.black));
 
-
-        cc1.setBounds(200+ insets.left, 320 + insets.top, w, h);
-        cc1.setBorder(BorderFactory.createLineBorder(Color.black));
-
-        pane.add(layeredPane);
+        layeredPane.add(cc, Integer.valueOf(countryCounter));
+        countryCounter++;
     }
+
 
 
 }

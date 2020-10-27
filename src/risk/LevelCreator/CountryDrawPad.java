@@ -22,7 +22,7 @@ public class CountryDrawPad extends JPanel implements MouseListener {
     public void paintComponent(Graphics g){
         if(image == null){
             // image = createImage(getSize().width, getSize().height);
-            image = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_3BYTE_BGR);
+            image = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
             graphics2D = (Graphics2D)image.getGraphics();
             graphics2D.setStroke(new BasicStroke(1));
             graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
@@ -52,32 +52,26 @@ public class CountryDrawPad extends JPanel implements MouseListener {
         repaint();
     }
 
-    public static void main(String [] args){
-
-
-    }
-
-
     public void fill(){
+
+        graphics2D.setPaint(MapColor.FILL_COLOR.getColor());
         for (int x = 0; x < image.getWidth(); x++){
             boolean fill = false;
             int initialY = 0;
             for (int y = 0; y < image.getHeight(); y++){
                if (image.getRGB(x, y) == MapColor.BORDER_COLOR.getColor().getRGB()) {
-
-                   if (fill) {
-                       System.out.println("Draw " + x + " " + initialY + " -> " + y + " " + image.getRGB(x, y) + " == " + MapColor.BORDER_COLOR.getColor().getRGB());
-                       graphics2D.drawLine(x, initialY, x, y);
-                   }
+                   if (fill)
+                       graphics2D.drawLine(x, initialY, x, y-1);
 
                    if (image.getRGB(x, y+1) == MapColor.BACKGROUND_COLOR.getColor().getRGB()) {
-                       System.out.println("Switch " + x + " " +initialY + " -> " + y + " " + image.getRGB(x, y) + " == " + MapColor.BORDER_COLOR.getColor().getRGB());
                        fill = !fill;
                        initialY = y;
                    }
                }
             }
         }
+
+
         repaint();
     }
 
@@ -97,7 +91,7 @@ public class CountryDrawPad extends JPanel implements MouseListener {
     public void randomFractal(int lX, int lY, int rX, int rY){
         final int BORDER_DETAIL = 4;
         int midX, midY;
-        int delta;
+        int delta, deltaY;
 
         if (Math.abs(rX-lX) <= BORDER_DETAIL && Math.abs(rY-lY) <= BORDER_DETAIL)
             graphics2D.drawLine(lX, lY, rX, rY);
@@ -105,7 +99,6 @@ public class CountryDrawPad extends JPanel implements MouseListener {
             midX = (lX + rX)/2;
             midY = (lY + rY)/2;
             delta = (int) ((Math.random() - 0.5) * (rX - lX));
-
             if (Math.abs(rX-lX) > Math.abs(rY - lY))
                 midY += delta;
             else
@@ -115,6 +108,79 @@ public class CountryDrawPad extends JPanel implements MouseListener {
             randomFractal(lX, lY, midX, midY);
         }
     }
+
+    //process image for finish
+    public void finish(){
+        /*
+        int startX = 0, startY = 0, endX = image.getWidth() - 1, endY = image.getHeight() - 1;
+
+        startYLoop:
+        for (; startY < image.getHeight(); startY++)
+            for (int x = 0; x < image.getWidth(); x++)
+                if (image.getRGB(x, startY) != MapColor.BACKGROUND_COLOR.getColor().getRGB())
+                    break startYLoop;
+
+        startXLoop:
+        for (; startX < image.getWidth(); startX++)
+            for (int y = 0; y < image.getHeight() ; y++)
+                if (image.getRGB(startX, y) != MapColor.BACKGROUND_COLOR.getColor().getRGB())
+                    break startXLoop;
+
+        endYLoop:
+        for (; endY > 1; endY--)
+            for (int x = 0; x < image.getWidth(); x++)
+                if (image.getRGB(x, endY) != MapColor.BACKGROUND_COLOR.getColor().getRGB())
+                    break endYLoop;
+
+        endXLoop:
+        for (; endX > 1; endX--)
+            for (int y = 0; y < image.getHeight(); y++)
+                if (image.getRGB(endX, y) != MapColor.BACKGROUND_COLOR.getColor().getRGB())
+                    break endXLoop;
+
+        */
+
+        graphics2D.setPaint(MapColor.TRANSPARENT_COLOR.getColor());
+
+        for (int x = 0; x < image.getWidth(); x++){
+            boolean fill = true;
+            int initialY = 0;
+            for (int y = 0; y < image.getHeight(); y++){
+                if (image.getRGB(x, y) == MapColor.BORDER_COLOR.getColor().getRGB() || image.getRGB(x, y) == MapColor.FILL_COLOR.getColor().getRGB() ) {
+                    if (fill)
+                        graphics2D.drawLine(x, initialY, x, y-1);
+
+                    if (fill && image.getRGB(x, y+1) == MapColor.FILL_COLOR.getColor().getRGB()) {
+                        fill = false;
+                    }
+                    if (!fill && image.getRGB(x, y+1) == MapColor.BACKGROUND_COLOR.getColor().getRGB()){
+                        fill = true;
+                        initialY = y;
+                    }
+                }
+
+                if (y == image.getHeight() - 1)
+                    graphics2D.drawLine(x, initialY, x, y);
+            }
+        }
+
+        /*
+
+
+
+
+        BufferedImage img = image.getSubimage(startX, startY, endX - startX, endY - startY); //fill in the corners of the desired crop location here
+        image = img;
+
+*/
+
+    }
+
+
+    public BufferedImage getImage(){
+        return image;
+    }
+
 
     @Override
     public void mousePressed(MouseEvent e) {

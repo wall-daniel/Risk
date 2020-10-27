@@ -8,14 +8,18 @@ import java.io.IOException;
 
 public class CountryCreator extends JFrame {
     public static void main(String args[]){
-        new CountryCreator();
+        new CountryCreator(null);
     }
 
     CountryDrawingEnum drawingStatus;
     JLabel drawingStatusLabel;
     CountryDrawPad drawingPad;
 
-    public CountryCreator(){
+    LevelCreatorGUI lcg;
+
+    public CountryCreator(LevelCreatorGUI lcg){
+        this.lcg = lcg;
+
         /* Use an appropriate Look and Feel */
         try {
             // UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
@@ -57,7 +61,6 @@ public class CountryCreator extends JFrame {
     }
 
 
-
     public void addComponentToPane(Container pane) {
         drawingStatus = CountryDrawingEnum.FIRST_POINT;
         drawingStatusLabel = new JLabel(drawingStatus.getDescription());
@@ -74,8 +77,8 @@ public class CountryCreator extends JFrame {
 
         JMenuItem clear = new JMenuItem("Clear");
         JMenuItem closeShape = new JMenuItem("Close Shape");
-        JMenuItem fill = new JMenuItem("Fill");
         JMenuItem newShape = new JMenuItem("New Shape");
+        JMenuItem fill = new JMenuItem("Fill");
         JMenuItem finish = new JMenuItem("End");
 
         clear.addActionListener(e -> {
@@ -90,37 +93,33 @@ public class CountryCreator extends JFrame {
         });
 
 
+        newShape.addActionListener(e -> {
+            drawingPad.reset();
+            setDrawingStatus(CountryDrawingEnum.FIRST_POINT);
+        });
+
         fill.addActionListener(e -> {
             drawingPad.fill();
             setDrawingStatus(CountryDrawingEnum.FILL);
         });
 
 
-        newShape.addActionListener(e -> {
-            drawingPad.reset();
-            setDrawingStatus(CountryDrawingEnum.FIRST_POINT);
-        });
-
-
         finish.addActionListener(e -> {
-
+            drawingPad.finish();
+            lcg.addNewCountry(drawingPad.getImage());
+            this.dispose();
         });
 
 
         menu.add(clear);
         menu.add(closeShape);
-        menu.add(fill);
         menu.add(newShape);
+        menu.add(fill);
         menu.add(finish);
 
         bar.add(menu);
 
         setJMenuBar(bar);
-    }
-
-
-    public CountryDrawingEnum getDrawingStatus(){
-        return drawingStatus;
     }
 
     public void setDrawingStatus(CountryDrawingEnum drawingStatus){
