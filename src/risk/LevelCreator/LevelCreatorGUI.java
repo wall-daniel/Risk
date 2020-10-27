@@ -1,9 +1,11 @@
-package LevelCreator;
-import java.awt.Graphics;
+package risk.LevelCreator;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.image.ImageObserver;
-import java.awt.image.ImageProducer;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 
 public class LevelCreatorGUI extends JFrame{
@@ -48,9 +50,17 @@ public class LevelCreatorGUI extends JFrame{
 
         // Create and set up the content pane.
         setTitle("Custom Level Creator");
+        try{
 
-        addComponentToPane(getContentPane());
-        addJMenuBar();
+           // addComponentToPane(getContentPane());
+            drawingPad = new DrawingPad();
+            getContentPane().add(drawingPad);
+        } catch (Exception e){
+
+        }
+
+       // addJMenuBar();
+
 
         setPreferredSize(Toolkit.getDefaultToolkit().getScreenSize());
 
@@ -84,52 +94,39 @@ public class LevelCreatorGUI extends JFrame{
     }
 
 
-    public void addComponentToPane(Container pane) {
-        pane.setLayout(null);
+    public void addComponentToPane(Container pane) throws IOException {
 
-        status = new JLabel(DrawingEnum.WAITING.getText(), SwingConstants.CENTER);
+        JLayeredPane layeredPane = new JLayeredPane();
+        layeredPane.setLayout(null);
+        layeredPane.setName("Layered Pane");
 
-    //        drawingPad = new DrawingPad();
+        pane.setName("Pane");
 
-        Image continentImage = new ImageIcon("treeIcon.png").getImage();
+       // pane.setBackground(new Color(21, 80, 255));
+        //status = new JLabel(DrawingEnum.WAITING.getText(), SwingConstants.CENTER);
+
+        File img = new File("treeIcon.png");
+        BufferedImage continentImage = ImageIO.read(img);
+
         int h = continentImage.getHeight(null);
         int w = continentImage.getWidth(null);
 
-        CustomContinent cc = new CustomContinent(continentImage);
-        cc.addMouseListener(new MouseAdapter(){
-            @Override
-            public void mousePressed(MouseEvent e) {
-                System.out.println("pressed");
-            }
+        CustomContinent cc = new CustomContinent(continentImage, "tree 1");
+        CustomContinent cc1 = new CustomContinent(continentImage, "tree 2");
 
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                System.out.println("Entered panel");
-            }
-            @Override
-            public void mouseExited(MouseEvent e) {
-                System.out.println("Exited panel");
-            }
+        layeredPane.add(cc, Integer.valueOf(2));
+        layeredPane.add(cc1, Integer.valueOf(3));
 
-        });
+        Insets insets = layeredPane.getInsets();
+        Dimension size = cc.getPreferredSize();
+        cc.setBounds(100 + insets.left, 100 + insets.top, w, h);
+        cc.setBorder(BorderFactory.createLineBorder(Color.black));
 
 
-        pane.add(status);
-        pane.add(cc);
+        cc1.setBounds(200+ insets.left, 320 + insets.top, w, h);
+        cc1.setBorder(BorderFactory.createLineBorder(Color.black));
 
-        Insets insets = pane.getInsets();
-        Dimension size = status.getPreferredSize();
-        status.setBounds(25 + insets.left, 5 + insets.top,
-                size.width, size.height);
-
-
-        size = cc.getPreferredSize();
-        System.out.println(size);
-
-        cc.setBounds(100 + insets.left, 100 + insets.top,
-                w, h);
-
-        //pane.add(drawingPad, BorderLayout.CENTER);
+        pane.add(layeredPane);
     }
 
 
