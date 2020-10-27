@@ -1,6 +1,8 @@
-package risk;
+package risk.Controller;
 
-import risk.Enums.CountryEnum;
+import risk.Model.Country;
+import risk.Model.Countries;
+import risk.Parser;
 import risk.Players.Player;
 
 import java.util.Arrays;
@@ -48,16 +50,17 @@ public class AttackController {
                 return false;
             }
 
-            CountryEnum countryEnum = CountryEnum.getEnumFromString(attackingCountry);
-            if (countryEnum == null) {
+
+
+            if (Countries.countryExists(attackingCountry)) {
                 System.out.println("That is not a country. Try again.");
-            } else if (attackingPlayer.ownsCountry(countryEnum)) {
-                this.attackingCountry = countryEnum.country;
+            } else if (attackingPlayer.ownsCountry(attackingCountry)){
+                this.attackingCountry = Countries.getCountry(attackingCountry);
 
                 if (this.attackingCountry.getArmies() > 1) {
                     return getDefendingCountry();
                 } else {
-                    System.out.println("You don't have enough armies to attack from " + countryEnum);
+                    System.out.println("You don't have enough armies to attack from " + attackingCountry);
                 }
             } else {
                 System.out.println("You do not own that country, try again.");
@@ -80,13 +83,12 @@ public class AttackController {
                 return false;
             }
 
-            CountryEnum countryEnum = CountryEnum.getEnumFromString(defendingCountry);
-            if (countryEnum == null) {
+            if (Countries.countryExists(defendingCountry)) {
                 System.out.println("That is not a country. Try again.");
-            } else if (attackingPlayer.ownsCountry(countryEnum)) {
+            } else if (attackingPlayer.ownsCountry(defendingCountry)) {
                 System.out.println("You cannot attack your own country silly");
             } else {
-                this.defendingCountry = countryEnum.country;
+                this.defendingCountry = Countries.getCountry(defendingCountry);
                 this.defendingPlayer = this.defendingCountry.getPlayer();
                 return getAttackingArmies();
             }
@@ -219,9 +221,9 @@ public class AttackController {
     public String getAttackableCountries() {
         StringBuilder sb = new StringBuilder();
 
-        for (CountryEnum countryEnum : attackingCountry.getName().getNeighbours()) {
-            if (countryEnum.country.getPlayer() != attackingPlayer) {
-                sb.append(countryEnum).append(", ");
+        for (String countryName : attackingCountry.getNeighbourNames()) {
+            if (Countries.getCountry(countryName).getPlayer() != attackingPlayer) {
+                sb.append(countryName).append(", ");
             }
         }
 

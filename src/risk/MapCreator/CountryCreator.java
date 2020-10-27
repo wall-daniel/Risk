@@ -1,10 +1,7 @@
-package risk.LevelCreator;
-
-import risk.Country;
+package risk.MapCreator;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.IOException;
 
 public class CountryCreator extends JFrame {
     public static void main(String args[]){
@@ -15,9 +12,9 @@ public class CountryCreator extends JFrame {
     JLabel drawingStatusLabel;
     CountryDrawPad drawingPad;
 
-    LevelCreatorGUI lcg;
+    MapEditor lcg;
 
-    public CountryCreator(LevelCreatorGUI lcg){
+    public CountryCreator(MapEditor lcg){
         this.lcg = lcg;
 
         /* Use an appropriate Look and Feel */
@@ -105,8 +102,9 @@ public class CountryCreator extends JFrame {
 
 
         finish.addActionListener(e -> {
+            String countryName = JOptionPane.showInputDialog("Enter Country Name");
             drawingPad.finish();
-            lcg.addNewCountry(drawingPad.getImage());
+            lcg.addNewCountry(drawingPad.getImage(), countryName);
             this.dispose();
         });
 

@@ -1,4 +1,4 @@
-package risk.LevelCreator;
+package risk.MapCreator;
 
 public enum CountryDrawingEnum {
     FIRST_POINT ("Click the first point."),

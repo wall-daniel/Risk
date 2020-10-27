@@ -1,4 +1,4 @@
-package risk.LevelCreator;
+package risk.MapCreator;
 
 
 import java.awt.*;

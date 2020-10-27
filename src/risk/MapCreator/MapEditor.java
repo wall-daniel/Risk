@@ -1,26 +1,23 @@
-package risk.LevelCreator;
+package risk.MapCreator;
+
+import risk.Model.*;
+
 import java.awt.*;
-import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.nio.Buffer;
-import javax.imageio.ImageIO;
+import java.io.*;
 import javax.swing.*;
 
-public class LevelCreatorGUI extends JFrame{
+public class MapEditor extends JFrame{
     public static void main(String[] args){
-        new LevelCreatorGUI();
+        new MapEditor();
     }
 
-   // DrawingPad drawingPad;
     JLabel status;
     JLayeredPane layeredPane;
     int countryCounter;
+    File path;
 
-
-    public LevelCreatorGUI(){
+    public MapEditor(){
         countryCounter = 0;
 
         /* Use an appropriate Look and Feel */
@@ -49,8 +46,9 @@ public class LevelCreatorGUI extends JFrame{
     }
 
     private void createAndShowGUI() {
-
-
+        String mapName = JOptionPane.showInputDialog("Enter Map Name");
+        path = new File("maps\\" + mapName + "\\");
+        path.mkdir();
 
         addComponentToPane(getContentPane());
 
@@ -67,25 +65,79 @@ public class LevelCreatorGUI extends JFrame{
 
     private void addJMenuBar() {
         JMenuBar bar = new JMenuBar();
+
+
         JMenu menu = new JMenu("Add");
 
         JMenuItem addCountry = new JMenuItem("Add Country");
-        JMenuItem setNeighbours = new JMenuItem("Set Neighbours");
-        JMenuItem setContinents = new JMenuItem("Set Continents");
+        JMenuItem addContinent = new JMenuItem("Add Continent");
+        JMenuItem loadMap = new JMenuItem("Load Map");
+        JMenuItem saveMap = new JMenuItem("Save Map");
 
         addCountry.addActionListener(e -> {
             new CountryCreator(this);
             status.setText(DrawingEnum.COUNTRIES.getText());
+        });
+
+        addContinent.addActionListener(e -> {
+            String continentName = JOptionPane.showInputDialog("Enter Continent Name");
+            Continent continent = new Continent(continentName);
+            Continents.addContinent(continentName, continent);
+        });
+
+        loadMap.addActionListener(e -> {
+            loadMap();
+        });
+
+
+        saveMap.addActionListener(e -> {
+            try {
+                saveMap();
+            } catch (Exception e1){ }
 
         });
 
         menu.add(addCountry);
-        menu.add(setNeighbours);
-        menu.add(setContinents);
+        menu.add(addContinent);
+        menu.add(loadMap);
+        menu.add(saveMap);
 
         bar.add(menu);
 
         setJMenuBar(bar);
+    }
+
+    private void loadMap(){
+
+
+    }
+
+    /*
+    Saves:
+    named images - saved in addNewCountry()
+    countries/continents serialized - done
+    names coordinates
+     */
+
+    private void saveMap() throws IOException {
+        ContinentsSerializable continentsSerializable = new ContinentsSerializable(Continents.getContinents());
+        CountriesSerializeable countriesSerializeable = new CountriesSerializeable(Countries.getCountries());
+
+        ObjectOutputStream oos;
+
+        oos = new ObjectOutputStream(new FileOutputStream(path + "continents"));
+        oos.writeObject(continentsSerializable);
+
+        oos = new ObjectOutputStream(new FileOutputStream(path + "countries"));
+        oos.writeObject(countriesSerializeable);
+
+
+        for (Component c : layeredPane.getComponents()){
+            oos = new ObjectOutputStream(new FileOutputStream(path + "location\\" + c.getName() + "\\"));
+            oos.writeObject( c.getLocationOnScreen());
+        }
+
+        oos.close();
     }
 
 
@@ -95,15 +147,24 @@ public class LevelCreatorGUI extends JFrame{
         layeredPane.setName("Layered Pane");
         pane.setName("Pane");
 
-
         status = new JLabel(DrawingEnum.COUNTRIES.getText(), SwingConstants.CENTER);
 
         pane.add(status, BorderLayout.NORTH);
         pane.add(layeredPane, BorderLayout.CENTER);
     }
 
-    public void addNewCountry(BufferedImage image){
-        EditableCustomContinent cc = new EditableCustomContinent(image, "Country " + countryCounter);
+    //Saves images
+    public void addNewCountry(BufferedImage image, String name){
+        EditableCustomContinent cc = new EditableCustomContinent(image, name);
+
+        Country country = new Country(name);
+        Countries.addCountry(name, country);
+
+        try {
+            ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(path + "countryImages\\" + name));
+            oos.writeObject(image);
+            oos.close();
+        } catch (Exception e){ }
 
         Insets insets = layeredPane.getInsets();
         cc.setBounds(insets.left, insets.top, image.getWidth(), image.getHeight());
@@ -112,7 +173,4 @@ public class LevelCreatorGUI extends JFrame{
         layeredPane.add(cc, Integer.valueOf(countryCounter));
         countryCounter++;
     }
-
-
-
 }

@@ -1,4 +1,4 @@
-package risk.LevelCreator;
+package risk.MapCreator;
 
 public enum DrawingEnum {
    WAITING("Add continent or country"), CONTINENTS ("Draw the continents"), COUNTRIES("Draw the countries");

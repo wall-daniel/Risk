@@ -1,18 +1,15 @@
-package risk.LevelCreator;
+package risk.MapCreator;
 
-import risk.Country;
-
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.*;
-import java.io.File;
-import java.util.Map;
 
 /**
- * 
+ * TODO
+ * add name to country
+ * create moveable label of country
  *
  */
 
