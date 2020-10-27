@@ -15,7 +15,7 @@ public class MapEditor extends JFrame{
     JLabel status;
     JLayeredPane layeredPane;
     int countryCounter;
-    File path;
+    String path;
 
     public MapEditor(){
         countryCounter = 0;
@@ -47,9 +47,10 @@ public class MapEditor extends JFrame{
 
     private void createAndShowGUI() {
         String mapName = JOptionPane.showInputDialog("Enter Map Name");
-        path = new File("maps\\" + mapName + "\\");
-        path.mkdir();
-
+        path = "maps\\" + mapName + "\\";
+        new File(path).mkdirs();
+        new File(path + "countryImages\\").mkdirs();
+        new File(path + "location\\").mkdirs();
         addComponentToPane(getContentPane());
 
         addJMenuBar();
@@ -121,23 +122,38 @@ public class MapEditor extends JFrame{
 
     private void saveMap() throws IOException {
         ContinentsSerializable continentsSerializable = new ContinentsSerializable(Continents.getContinents());
-        CountriesSerializeable countriesSerializeable = new CountriesSerializeable(Countries.getCountries());
+        CountriesSerializable countriesSerializable = new CountriesSerializable(Countries.getCountries());
 
-        ObjectOutputStream oos;
+        ObjectOutputStream oos1 = new ObjectOutputStream(new FileOutputStream(path + "countries"));
+        oos1.writeObject(countriesSerializable);
+        oos1.flush();
+        oos1.close();
+        System.out.println("countries written");
 
-        oos = new ObjectOutputStream(new FileOutputStream(path + "continents"));
+        ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(path + "continents"));
         oos.writeObject(continentsSerializable);
+        oos.flush();
+        oos.close();
+        System.out.println("continents written");
 
-        oos = new ObjectOutputStream(new FileOutputStream(path + "countries"));
-        oos.writeObject(countriesSerializeable);
 
+        System.out.println("1:" + layeredPane.getComponents());
+        System.out.println("2:" + layeredPane.getComponentsInLayer(Integer.valueOf(0)));
+        System.out.println("3:" + layeredPane.getComponentsInLayer(Integer.valueOf(1)));
+        System.out.println("4:" + layeredPane.getComponent(0));
+        System.out.println("5:" + layeredPane.getComponent(1));
 
         for (Component c : layeredPane.getComponents()){
-            oos = new ObjectOutputStream(new FileOutputStream(path + "location\\" + c.getName() + "\\"));
-            oos.writeObject( c.getLocationOnScreen());
+            System.out.println("COMPONENT: " + c.getName());
+            ObjectOutputStream oos2 = new ObjectOutputStream(new FileOutputStream(path + "location\\" + c.getName()));
+            oos2.writeObject(c.getLocationOnScreen());
+            oos2.flush();
+            oos2.close();
         }
 
-        oos.close();
+
+        System.out.println("components written");
+
     }
 
 

@@ -27,8 +27,6 @@ public class EditableCustomContinent extends CustomContinent implements MouseLis
 
     @Override
     public void mousePressed(MouseEvent e) {
-        System.out.println("MOUSE PRESSED");
-
         screenX = e.getXOnScreen();
         screenY = e.getYOnScreen();
 
@@ -44,12 +42,10 @@ public class EditableCustomContinent extends CustomContinent implements MouseLis
         setLocation(myX + deltaX, myY + deltaY);
     }
 
-
-
     @Override
     public void mouseClicked(MouseEvent e) {
         //continent,
-        JPanel countryInfoPanel = new JPanel(new GridLayout(3, 2));
+        JPanel countryInfoPanel = new JPanel(new GridLayout(2, 3));
 
         String countryName = e.getComponent().getName();
 
@@ -72,12 +68,11 @@ public class EditableCustomContinent extends CustomContinent implements MouseLis
             continentJList.setSelectedValue(Countries.getCountry(countryName).getContinentName(), true);
 
         countryInfoPanel.add(countryNameLabel);
-        countryInfoPanel.add(countryNameTextField);
-
         countryInfoPanel.add(neighboursLabel);
-        countryInfoPanel.add(neighboursJList);
-
         countryInfoPanel.add(continentLabel);
+
+        countryInfoPanel.add(countryNameTextField);
+        countryInfoPanel.add(neighboursJList);
         countryInfoPanel.add(continentJList);
 
         JOptionPane.showMessageDialog(this, countryInfoPanel);
@@ -104,8 +99,6 @@ public class EditableCustomContinent extends CustomContinent implements MouseLis
     public void mouseExited(MouseEvent e) {
 
     }
-
-
 
     @Override
     public void mouseMoved(MouseEvent e) {
