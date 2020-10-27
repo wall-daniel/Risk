@@ -2,11 +2,20 @@ package risk.LevelCreator;
 
 import risk.Country;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.image.BufferedImage;
+import java.awt.image.*;
+import java.io.File;
+import java.util.Map;
+
+/**
+ * 
+ *
+ */
+
 
 public class CountryDrawPad extends JPanel implements MouseListener {
     private BufferedImage image;
@@ -53,7 +62,6 @@ public class CountryDrawPad extends JPanel implements MouseListener {
     }
 
     public void fill(){
-
         graphics2D.setPaint(MapColor.FILL_COLOR.getColor());
         for (int x = 0; x < image.getWidth(); x++){
             boolean fill = false;
@@ -70,8 +78,6 @@ public class CountryDrawPad extends JPanel implements MouseListener {
                }
             }
         }
-
-
         repaint();
     }
 
@@ -111,7 +117,6 @@ public class CountryDrawPad extends JPanel implements MouseListener {
 
     //process image for finish
     public void finish(){
-        /*
         int startX = 0, startY = 0, endX = image.getWidth() - 1, endY = image.getHeight() - 1;
 
         startYLoop:
@@ -138,42 +143,40 @@ public class CountryDrawPad extends JPanel implements MouseListener {
                 if (image.getRGB(endX, y) != MapColor.BACKGROUND_COLOR.getColor().getRGB())
                     break endXLoop;
 
-        */
+        Image img = TransformColorToTransparency();
+        image = ImageToBufferedImage(img, image.getWidth(), image.getHeight());
 
-        graphics2D.setPaint(MapColor.TRANSPARENT_COLOR.getColor());
+        BufferedImage imag = image.getSubimage(startX, startY, endX - startX, endY - startY);
+        image = imag;
+    }
 
-        for (int x = 0; x < image.getWidth(); x++){
-            boolean fill = true;
-            int initialY = 0;
-            for (int y = 0; y < image.getHeight(); y++){
-                if (image.getRGB(x, y) == MapColor.BORDER_COLOR.getColor().getRGB() || image.getRGB(x, y) == MapColor.FILL_COLOR.getColor().getRGB() ) {
-                    if (fill)
-                        graphics2D.drawLine(x, initialY, x, y-1);
+    private BufferedImage ImageToBufferedImage(Image image, int width, int height) {
+        BufferedImage dest = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2 = dest.createGraphics();
+        g2.drawImage(image, 0, 0, null);
+        g2.dispose();
+        return dest;
+    }
 
-                    if (fill && image.getRGB(x, y+1) == MapColor.FILL_COLOR.getColor().getRGB()) {
-                        fill = false;
-                    }
-                    if (!fill && image.getRGB(x, y+1) == MapColor.BACKGROUND_COLOR.getColor().getRGB()){
-                        fill = true;
-                        initialY = y;
-                    }
+    private Image TransformColorToTransparency() {
+        // Primitive test, just an example
+        final int r1 = MapColor.BACKGROUND_COLOR.getColor().getRed();
+        final int g1 = MapColor.BACKGROUND_COLOR.getColor().getGreen();
+        final int b1 = MapColor.BACKGROUND_COLOR.getColor().getBlue();
+
+        ImageFilter filter = new RGBImageFilter() {
+            public final int filterRGB(int x, int y, int rgb) {
+                int r = (rgb & 0xFF0000) >> 16;
+                int g = (rgb & 0xFF00) >> 8;
+                int b = rgb & 0xFF;
+                if (r == r1 && g == g1 && b == b1) {
+                    return rgb & 0xFFFFFF;
                 }
-
-                if (y == image.getHeight() - 1)
-                    graphics2D.drawLine(x, initialY, x, y);
+                return rgb;
             }
-        }
-
-        /*
-
-
-
-
-        BufferedImage img = image.getSubimage(startX, startY, endX - startX, endY - startY); //fill in the corners of the desired crop location here
-        image = img;
-
-*/
-
+        };
+        ImageProducer ip = new FilteredImageSource(image.getSource(), filter);
+        return Toolkit.getDefaultToolkit().createImage(ip);
     }
 
 
