@@ -34,7 +34,7 @@ public class GameMap extends JFrame {
 
         BufferedImage img = null;
         try {
-            img = ImageIO.read(new File("/home/danny/School/SYSC3110/RiskMap/risk.jpg"));
+            img = ImageIO.read(new File("resources/risk.jpg"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -67,8 +67,8 @@ public class GameMap extends JFrame {
 
             @Override
             public void mousePressed(MouseEvent mouseEvent) {
-                xCoords.add(mouseEvent.getX() - 5);
-                yCoords.add(mouseEvent.getY() - 30);
+                xCoords.add(mouseEvent.getX() - getInsets().left);
+                yCoords.add(mouseEvent.getY() - getInsets().top);
                 Polygon newCountry = new Polygon(xCoords.stream().mapToInt(i->i).toArray(), yCoords.stream().mapToInt(i->i).toArray(), xCoords.size());
                 map.put("temp", newCountry);
                 repaint();
@@ -92,7 +92,7 @@ public class GameMap extends JFrame {
             }
         });
 
-        setSize(800, 600);
+        setSize(img.getWidth(), img.getHeight());
         setVisible(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
