@@ -1,6 +1,11 @@
-package risk;
+package risk.Controller;
 
-import risk.Enums.*;
+import risk.Command;
+import risk.CommandWord;
+import risk.Model.Continents;
+import risk.Model.Countries;
+import risk.Model.GameBoard;
+import risk.Parser;
 import risk.Players.Player;
 
 import java.util.*;
@@ -99,24 +104,16 @@ public class Controller {
         System.out.println("The countries you own are: " + player.getCountriesAsString());
         System.out.println("You have " + numArmies + " to place.");
         while (numArmies > 0) {
-            String country = parser.getInput("What country do you want to place your army on (list)?: ").toUpperCase();
-
-            // List what they currently have
-            if (country.toLowerCase().equals("list")) {
-                System.out.println(player.getCountriesAsStringWithArmies());
-                continue;
+            String countryName = "";
+            while (countryName.equals("") || !Countries.countryExists(countryName)){
+                countryName = parser.getInput("What country do you want to place your army on (list)?: ").toUpperCase();
             }
 
-            CountryEnum countryEnum = CountryEnum.getEnumFromString(country);
-            if (countryEnum != null) {
-                int n = parser.getInt("How many armies do you want to place here (0-" + numArmies + "): ", 0, numArmies);
-                if (n >= 0 && n <= numArmies && player.addArmies(countryEnum, n)) {
-                    numArmies -= n;
-                } else {
-                    System.out.println("That wasn't a valid number, try again.");
-                }
+            int n = parser.getInt("How many armies do you want to place here (0-" + numArmies + "): ", 0, numArmies);
+            if (n >= 0 && n <= numArmies && player.addArmies(countryName, n)) {
+                numArmies -= n;
             } else {
-                System.out.println("That's not a country??");
+                System.out.println("That wasn't a valid number, try again.");
             }
         }
 
@@ -174,11 +171,11 @@ public class Controller {
         StringBuilder sb = new StringBuilder();
 
         // Print the info by continent to get a better strategic view.
-        for (ContinentEnum continent : ContinentEnum.values()) {
-            sb.append(continent.name()).append(":\n");
+        for (String continentName : Continents.getContinentNames()) {
+            sb.append(continentName).append(":\n");
 
             // Use the helper method of continents
-            continent.printContinentHelper(sb);
+            Continents.getContinent(continentName).printContinentHelper(sb);
 
             sb.append("\n");
         }
@@ -243,23 +240,17 @@ public class Controller {
         }
     }
 
-
-
-
     private void gameOver() {
         System.out.println("The game is over, " + players.get(currentPlayerPosition).getName() + " won. Congrats!");
         System.exit(0);
     }
 
-    public CountryEnum[] getCountryNames() {
-        return CountryEnum.values();
-    }
 
     public static void main(String[] args) {
         Controller riskController = new Controller();
 
-        System.out.println("Countries: " + Arrays.toString(riskController.getCountryNames()) + '\n');
-      //  riskController.gameBoard.setupMap();
+        System.out.println("Countries: " + Countries.getCountryNames() + '\n');
+
         System.out.println(riskController.mapString());
         riskController.playGame();
     }
