@@ -25,7 +25,6 @@ public class EditableCustomCountry extends CustomCountry implements MouseListene
         setOpaque(false);
     }
 
-
     @Override
     public void mousePressed(MouseEvent e) {
         screenX = e.getXOnScreen();

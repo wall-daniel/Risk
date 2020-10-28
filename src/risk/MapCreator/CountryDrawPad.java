@@ -47,7 +47,6 @@ public class CountryDrawPad extends JPanel implements MouseListener {
         oldY = -1;
     }
 
-
     public void closeShape(){
         randomFractal(oldX, oldY, startX, startY);
         repaint();
