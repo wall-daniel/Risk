@@ -1,7 +1,7 @@
 package risk.Model;
 
 import javax.swing.*;
-import java.io.Serializable;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
@@ -14,7 +14,6 @@ public class Countries {
         for (String s: countries.keySet())
             if (!s.equals(currentName))
                 listModel.addElement(s);
-        //listModel.addAll(countries.keySet());
         return listModel;
     }
 
@@ -25,7 +24,6 @@ public class Countries {
     public static HashMap<String, Country> getCountries(){
         return countries;
     }
-
 
     public static void addCountry(String name, Country country){
         countries.put(name, country);
@@ -56,7 +54,6 @@ public class Countries {
             Country c  = new Country(name, neighbourNames, continentName);
             countries.put(name, c);
         }
-
     }
 
     public static boolean countryExists(String countryName) {

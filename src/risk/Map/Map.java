@@ -1,4 +1,4 @@
-package risk.MapCreator;
+package risk.Map;
 
 public class Map {
 

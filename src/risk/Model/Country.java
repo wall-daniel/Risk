@@ -95,4 +95,8 @@ public class Country {
     public void setNeighbours(ArrayList<String> neighbourNames) {
         this.neighbourNames = (ArrayList<String>) neighbourNames.clone();
     }
+
+    public String toString(){
+        return name;
+    }
 }

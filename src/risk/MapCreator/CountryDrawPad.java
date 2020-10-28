@@ -1,17 +1,12 @@
 package risk.MapCreator;
 
+import risk.Enums.MapColor;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.*;
-
-/**
- * TODO
- * add name to country
- * create moveable label of country
- *
- */
 
 
 public class CountryDrawPad extends JPanel implements MouseListener {
@@ -93,15 +88,17 @@ public class CountryDrawPad extends JPanel implements MouseListener {
 
     public void randomFractal(int lX, int lY, int rX, int rY){
         final int BORDER_DETAIL = 4;
+        final double BORDER_DEVIATION = 0.5;
+
         int midX, midY;
-        int delta, deltaY;
+        int delta;
 
         if (Math.abs(rX-lX) <= BORDER_DETAIL && Math.abs(rY-lY) <= BORDER_DETAIL)
             graphics2D.drawLine(lX, lY, rX, rY);
         else{
             midX = (lX + rX)/2;
             midY = (lY + rY)/2;
-            delta = (int) ((Math.random() - 0.5) * (rX - lX));
+            delta = (int) ((Math.random() - BORDER_DEVIATION) * (rX - lX));
             if (Math.abs(rX-lX) > Math.abs(rY - lY))
                 midY += delta;
             else

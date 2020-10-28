@@ -1,10 +1,13 @@
 package risk.MapCreator;
 
+import risk.Enums.DrawingEnum;
+import risk.Enums.MapColor;
 import risk.Model.*;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 
 public class MapEditor extends JFrame{
@@ -66,8 +69,6 @@ public class MapEditor extends JFrame{
 
     private void addJMenuBar() {
         JMenuBar bar = new JMenuBar();
-
-
         JMenu menu = new JMenu("Add");
 
         JMenuItem addCountry = new JMenuItem("Add Country");
@@ -117,32 +118,14 @@ public class MapEditor extends JFrame{
     Saves:
     named images - saved in addNewCountry()
     countries/continents serialized - done
-    names coordinates
+    names and coordinates
      */
 
     private void saveMap() throws IOException {
         ContinentsSerializable continentsSerializable = new ContinentsSerializable(Continents.getContinents());
         CountriesSerializable countriesSerializable = new CountriesSerializable(Countries.getCountries());
 
-        ObjectOutputStream oos1 = new ObjectOutputStream(new FileOutputStream(path + "countries"));
-        oos1.writeObject(countriesSerializable);
-        oos1.flush();
-        oos1.close();
-        System.out.println("countries written");
-
-        ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(path + "continents"));
-        oos.writeObject(continentsSerializable);
-        oos.flush();
-        oos.close();
-        System.out.println("continents written");
-
-
-        System.out.println("1:" + layeredPane.getComponents());
-        System.out.println("2:" + layeredPane.getComponentsInLayer(Integer.valueOf(0)));
-        System.out.println("3:" + layeredPane.getComponentsInLayer(Integer.valueOf(1)));
-        System.out.println("4:" + layeredPane.getComponent(0));
-        System.out.println("5:" + layeredPane.getComponent(1));
-
+        System.out.println("attempting to write locations of all components.");
         for (Component c : layeredPane.getComponents()){
             System.out.println("COMPONENT: " + c.getName());
             ObjectOutputStream oos2 = new ObjectOutputStream(new FileOutputStream(path + "location\\" + c.getName()));
@@ -150,9 +133,41 @@ public class MapEditor extends JFrame{
             oos2.flush();
             oos2.close();
         }
-
-
         System.out.println("components written");
+
+        System.out.println("attempting to write images");
+        for (Component c : layeredPane.getComponents()){
+            if (c instanceof EditableCustomCountry){
+                EditableCustomCountry l = (EditableCustomCountry) c;
+                BufferedImage bi = new BufferedImage(c.getWidth(), c.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
+                bi.createGraphics();
+
+                String name = l.getName();
+
+                try {
+                    ImageIO.write(bi, "png", new File(path + "countryImages\\" + name));
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+        }
+        System.out.println("images written");
+
+        System.out.println("attempting to write continents");
+        ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(path + "continents"));
+        oos.writeObject(continentsSerializable);
+        oos.flush();
+        oos.close();
+        System.out.println("continents written");
+
+        System.out.println("attempting to write countries.");
+        ObjectOutputStream oos1 = new ObjectOutputStream(new FileOutputStream(path + "countries"));
+        oos1.writeObject(countriesSerializable);
+        oos1.flush();
+        oos1.close();
+        System.out.println("countries written");
+
 
     }
 
@@ -160,8 +175,6 @@ public class MapEditor extends JFrame{
     public void addComponentToPane(Container pane)  {
         layeredPane = new JLayeredPane();
         layeredPane.setLayout(null);
-        layeredPane.setName("Layered Pane");
-        pane.setName("Pane");
 
         status = new JLabel(DrawingEnum.COUNTRIES.getText(), SwingConstants.CENTER);
 
@@ -171,16 +184,10 @@ public class MapEditor extends JFrame{
 
     //Saves images
     public void addNewCountry(BufferedImage image, String name){
-        EditableCustomContinent cc = new EditableCustomContinent(image, name);
+        EditableCustomCountry cc = new EditableCustomCountry(image, name);
 
         Country country = new Country(name);
         Countries.addCountry(name, country);
-
-        try {
-            ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(path + "countryImages\\" + name));
-            oos.writeObject(image);
-            oos.close();
-        } catch (Exception e){ }
 
         Insets insets = layeredPane.getInsets();
         cc.setBounds(insets.left, insets.top, image.getWidth(), image.getHeight());

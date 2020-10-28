@@ -1,5 +1,7 @@
 package risk.MapCreator;
 
+import risk.Enums.CountryDrawingEnum;
+
 import javax.swing.*;
 import java.awt.*;
 
