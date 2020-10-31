@@ -14,10 +14,10 @@ public class CountryCreator extends JFrame {
     JLabel drawingStatusLabel;
     CountryDrawPad drawingPad;
 
-    MapEditor lcg;
+    MapEditor mapEditor;
 
-    public CountryCreator(MapEditor lcg){
-        this.lcg = lcg;
+    public CountryCreator(MapEditor mapEditor){
+        this.mapEditor = mapEditor;
 
         /* Use an appropriate Look and Feel */
         try {
@@ -105,8 +105,7 @@ public class CountryCreator extends JFrame {
 
         finish.addActionListener(e -> {
             String countryName = JOptionPane.showInputDialog("Enter Country Name");
-            drawingPad.finish();
-            lcg.addNewCountry(drawingPad.getImage(), countryName);
+            mapEditor.addNewCountry(drawingPad.imgToPolygon(), countryName);
             this.dispose();
         });
 
@@ -116,6 +115,7 @@ public class CountryCreator extends JFrame {
         menu.add(newShape);
         menu.add(fill);
         menu.add(finish);
+
 
         bar.add(menu);
 
