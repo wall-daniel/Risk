@@ -6,11 +6,32 @@ import java.util.*;
 
 public class GameBoard {
 
+    public static int NUM_COUNTRIES = 41;
+    public static int NUM_CONTINENTS = 6;
+
+    public static int NUM_ARMIES_2_PLAYERS = 50;
+    public static int NUM_ARMIES_3_PLAYERS = 35;
+    public static int NUM_ARMIES_4_PLAYERS = 30;
+    public static int NUM_ARMIES_5_PLAYERS = 25;
+    public static int NUM_ARMIES_6_PLAYERS = 20;
+
+
+    private Map<ContinentEnum, Continent> continents;
+    private Map<CountryEnum, Country> countries;
 
     private Random rand;
 
     public GameBoard(Random rand){
         this.rand = rand;
+        countries = new HashMap<>(NUM_COUNTRIES);
+        continents = new HashMap<>(NUM_CONTINENTS);
+        rand = new Random(System.currentTimeMillis());
+
+        // Create the map
+        for (CountryEnum countryEnum : CountryEnum.values())
+            countries.put(countryEnum, new Country(countryEnum));
+        for (ContinentEnum continentEnum : ContinentEnum.values())
+            continents.put(continentEnum, new Continent(continentEnum));
     }
 
 
@@ -44,15 +65,15 @@ public class GameBoard {
     public static int getInitialArmies(int players) {
         switch (players) {
             case 2:
-                return 50;
+                return NUM_ARMIES_2_PLAYERS;
             case 3:
-                return 35;
+                return NUM_ARMIES_3_PLAYERS;
             case 4:
-                return 30;
+                return NUM_ARMIES_4_PLAYERS;
             case 5:
-                return 25;
+                return NUM_ARMIES_5_PLAYERS;
             default:    // 6 players
-                return 20;
+                return NUM_ARMIES_6_PLAYERS;
         }
     }
 
