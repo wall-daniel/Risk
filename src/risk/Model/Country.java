@@ -1,5 +1,10 @@
 package risk.Model;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.sun.xml.internal.bind.v2.TODO;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import risk.Players.Player;
 
 import java.util.ArrayList;
@@ -98,5 +103,42 @@ public class Country {
 
     public String toString(){
         return name;
+    }
+
+    /**
+     * @return the json representation of the country which has name, neighbours, and the coordinates of points.
+     */
+    public JsonObject toJson() {
+        JsonObject json = new JsonObject();
+
+        // Add country name
+        json.addProperty("name", name);
+
+        // Add the neighbours
+        JsonArray arr = new JsonArray();
+        neighbourNames.forEach(arr::add);
+        json.add("neighbours", arr);
+
+        // Add the points of the polygon
+        // TODO
+
+        return json;
+    }
+
+    /**
+     * Contructor from json object.
+     *
+     * @param json, contains info about the name, neighoburs, and the polygon points
+     */
+    public Country(JsonObject json) {
+        this.name = json.get("name").getAsString();
+
+        // Get the neighbours
+        JsonArray arr = json.getAsJsonArray();
+        this.neighbourNames = new ArrayList<>(arr.size());
+        arr.forEach((item) -> neighbourNames.add(item.getAsString()));
+
+        // Get the points
+        // TODO
     }
 }

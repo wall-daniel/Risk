@@ -61,7 +61,7 @@ public class MapEditor extends JFrame{
         getContentPane().setBackground(MapColor.BACKGROUND_COLOR.getColor());
         setPreferredSize(Toolkit.getDefaultToolkit().getScreenSize());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setResizable(false);
+        setResizable(true);
         setTitle("Custom Level Creator");
         pack();
         setVisible(true);
