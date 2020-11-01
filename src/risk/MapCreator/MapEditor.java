@@ -183,17 +183,17 @@ public class MapEditor extends JFrame{
     }
 
     //Saves images
-    public void addNewCountry(BufferedImage image, String name){
-        EditableCustomCountry cc = new EditableCustomCountry(image, name);
+    public void addNewCountry(Polygon image, String name){ //we need to save image as polygon instead
+        //EditableCustomCountry cc = new EditableCustomCountry(image, name);
 
         Country country = new Country(name);
         Countries.addCountry(name, country);
 
         Insets insets = layeredPane.getInsets();
-        cc.setBounds(insets.left, insets.top, image.getWidth(), image.getHeight());
-        cc.setBorder(BorderFactory.createLineBorder(Color.black));
+        //cc.setBounds(insets.left, insets.top, image.getWidth(), image.getHeight());
+        //cc.setBorder(BorderFactory.createLineBorder(Color.black));
 
-        layeredPane.add(cc, Integer.valueOf(countryCounter));
+        //layeredPane.add(image, Integer.valueOf(countryCounter));
         countryCounter++;
     }
 }

@@ -7,6 +7,7 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.*;
+import java.util.ArrayList;
 
 
 public class CountryDrawPad extends JPanel implements MouseListener {
@@ -52,6 +53,19 @@ public class CountryDrawPad extends JPanel implements MouseListener {
         repaint();
     }
 
+    public Polygon imgToPolygon(){
+        Polygon imgPolygon = new Polygon();
+        int n = 0;
+        for (int x = 0; x < image.getWidth(); x++){
+            for (int y = 0; y < image.getHeight(); y++){
+                if (image.getRGB(x,y) == MapColor.BORDER_COLOR.getColor().getRGB()){
+                    imgPolygon.addPoint(x,y);
+                }
+            }
+        }
+        return imgPolygon;
+    }
+
     public void fill(){
         graphics2D.setPaint(MapColor.FILL_COLOR.getColor());
         for (int x = 0; x < image.getWidth(); x++){
@@ -71,6 +85,7 @@ public class CountryDrawPad extends JPanel implements MouseListener {
         }
         repaint();
     }
+
 
     @Override
     public void mouseClicked(MouseEvent e) {
