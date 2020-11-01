@@ -1,7 +1,5 @@
-package risk;
+package risk.Model;
 
-import risk.Enums.ContinentEnum;
-import risk.Enums.CountryEnum;
 import risk.Players.Player;
 
 import java.util.*;
@@ -42,10 +40,10 @@ public class GameBoard {
         int currentPlayerPosition = 0;
 
         //Random allocation of countries to each player
-        ArrayList<CountryEnum> tempCountryEnums = new ArrayList<CountryEnum>(countries.keySet());
-        while (!tempCountryEnums.isEmpty()){
-            CountryEnum countryEnum = tempCountryEnums.remove(rand.nextInt(tempCountryEnums.size()));
-            countries.get(countryEnum).setPlayer(players.get(currentPlayerPosition));
+        ArrayList<String> tempCountryNames = new ArrayList<String>(Countries.getCountryNames());
+        while (!tempCountryNames.isEmpty()){
+            String countryName = tempCountryNames.remove(rand.nextInt(tempCountryNames.size()));
+            Countries.getCountry(countryName).setPlayer(players.get(currentPlayerPosition));
 
             currentPlayerPosition = (currentPlayerPosition + 1) % players.size();
         }
@@ -54,11 +52,11 @@ public class GameBoard {
         // Does this by randomly choosing a country and assigning 1
         // more army, until the player has no more armies left.
         for (Player player : players) {
-            List<CountryEnum> countriesOwned = player.getCountries();
+            ArrayList<String> countriesOwned = player.getCountries();
             int currentArmies = initArmies - countriesOwned.size();
 
             while (currentArmies > 0) {
-                countriesOwned.get(rand.nextInt(countriesOwned.size())).country.addArmies(1);
+                Countries.getCountry(countriesOwned.get(rand.nextInt(countriesOwned.size()))).addArmies(1);
                 currentArmies -= 1;
             }
         }

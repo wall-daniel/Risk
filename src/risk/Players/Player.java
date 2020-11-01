@@ -1,14 +1,14 @@
 package risk.Players;
 
-import risk.Enums.CountryEnum;
+import risk.Model.Country;
+import risk.Model.Countries;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class Player {
 
     private String name;
-    private List<CountryEnum> countriesOwned;
+    private ArrayList<String> countriesOwned;
     private boolean lost = false;
 
     public Player(String name) {
@@ -20,32 +20,32 @@ public class Player {
         return name;
     }
 
-    public List<CountryEnum> getCountries() {
+    public ArrayList<String> getCountries() {
         return countriesOwned;
     }
 
     public String getCountriesAsString() {
-        StringBuilder sb = new StringBuilder(countriesOwned.get(0).name());
+        StringBuilder sb = new StringBuilder(countriesOwned.get(0));
         for (int i = 1; i < countriesOwned.size(); i++) {
-            sb.append(", ").append(countriesOwned.get(i).name());
+            sb.append(", ").append(countriesOwned.get(i));
         }
         return sb.toString();
     }
 
     public String getCountriesAsStringWithArmies() {
         StringBuilder sb = new StringBuilder();
-        for (CountryEnum c : countriesOwned) {
-            sb.append(c.name()).append(": ").append(c.country.getArmies()).append('\n');
+        for (String s : countriesOwned) {
+            sb.append(s).append(": ").append(Countries.getCountry(s).getArmies()).append('\n');
         }
         return sb.toString();
     }
 
-    public void removeCountry(CountryEnum c) {
-        countriesOwned.remove(c);
+    public void removeCountry(String countryName) {
+        countriesOwned.remove(countryName);
     }
 
-    public void addCountry(CountryEnum c) {
-        countriesOwned.add(c);
+    public void addCountry(String countryName) {
+        countriesOwned.add(countryName);
     }
 
     /**
@@ -58,19 +58,18 @@ public class Player {
         return Math.max(3, countriesOwned.size() / 3);
     }
 
-    public boolean addArmies(CountryEnum country, int numArmies) {
-        int index = countriesOwned.indexOf(country);
+    public boolean addArmies(String countryName, int numArmies) {
+        Country country = Countries.getCountry(countryName);
 
-        // Check if the country is owned or not.
-        if (index == -1) {
+        if (country.getPlayer() != this)
             return false;
-        }
 
-        countriesOwned.get(index).country.addArmies(numArmies);
+        country.addArmies(numArmies);
+
         return true;
     }
 
-    public boolean ownsCountry(CountryEnum country) {
+    public boolean ownsCountry(String country) {
         return countriesOwned.contains(country);
     }
 

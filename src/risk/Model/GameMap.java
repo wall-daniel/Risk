@@ -1,4 +1,4 @@
-package risk;
+package risk.Model;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
