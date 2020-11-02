@@ -147,12 +147,13 @@ public class MapEditor extends JFrame{
                 try {
                     ImageIO.write(bi, "png", new File(path + "countryImages\\" + name));
                 } catch (IOException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
             }
         }
         System.out.println("images written");
+
+
 
         System.out.println("attempting to write continents");
         ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(path + "continents"));
@@ -167,8 +168,6 @@ public class MapEditor extends JFrame{
         oos1.flush();
         oos1.close();
         System.out.println("countries written");
-
-
     }
 
 

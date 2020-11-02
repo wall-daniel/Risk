@@ -1,17 +1,18 @@
 package risk.Map;
 
+import risk.Enums.MapColor;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.image.BufferedImage;
 
 public class CustomCountry extends JPanel implements MouseListener {
-    private BufferedImage continentImage;
+    private Polygon countryPolygon;
 
-    public CustomCountry(BufferedImage continentImage, String name) {
+    public CustomCountry(Polygon polygon, String name) {
         setOpaque(false);
-        this.continentImage = continentImage;
+        this.countryPolygon = polygon;
         this.setName(name);
         addMouseListener(this);
     }
@@ -21,40 +22,37 @@ public class CustomCountry extends JPanel implements MouseListener {
         super.paintComponent(g);
 
         Graphics2D g2d = (Graphics2D) g.create();
-        g2d.drawImage(continentImage, 0, 0, null);
-
+        g2d.drawPolygon(countryPolygon);
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     }
 
-    public boolean isTransparent(int x, int y){
-        return ((continentImage.getRGB(x, y) >> 24) & 0xff) == 0;
+    public boolean isPointInPolygon(int x, int y){
+        return countryPolygon.contains(x, y);
+    }
+
+
+    /**
+     * Maybe change the border color if a new player conquers the country.
+     */
+    public void setPolygonBorder(MapColor borderColor){
+
     }
 
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        //Figure out which component was clicked and get the name of it
-        /*
-        component is clicked if:
-            - is not transparent at x, y (get us all components that are not transparent at that point)
-            - higher layer than all components at that point
-         */
         CustomCountry countryClicked = (CustomCountry) e.getSource();
         int x = e.getX(), y = e.getY();
         String countryName = "";
-        if (countryClicked.isTransparent(x, y)){
+        if (countryClicked.isPointInPolygon(x, y)){
 
-            System.out.println("is transparent");
+
         } else {
             countryName = e.getComponent().getName();
         }
 
 
         //Depending on phase, allow or disallow actions
-
-
-
-
     }
 
     @Override

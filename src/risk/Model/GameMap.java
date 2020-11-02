@@ -39,6 +39,7 @@ public class GameMap extends JFrame {
             e.printStackTrace();
         }
         BufferedImage finalImg = img;
+
         JPanel p = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
@@ -62,7 +63,6 @@ public class GameMap extends JFrame {
                         System.out.println("Clicked in poly " + countryName);
                     }
                 }
-
             }
 
             @Override
