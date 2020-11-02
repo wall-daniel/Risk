@@ -12,6 +12,7 @@ import java.awt.image.*;
 public class CountryDrawPad extends JPanel implements MouseListener {
     private BufferedImage image;
     private Graphics2D graphics2D;
+    private Polygon polygon;
 
     private int oldX = -1, oldY = -1, startX, startY;
 
