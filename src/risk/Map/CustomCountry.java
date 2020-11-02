@@ -1,29 +1,39 @@
 package risk.Map;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import risk.Enums.MapColor;
+import risk.Model.Country;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-public class CustomCountry extends JPanel implements MouseListener {
+public class CustomCountry extends Country {
     private Polygon countryPolygon;
 
     public CustomCountry(Polygon polygon, String name) {
-        setOpaque(false);
+        super(name);
+
         this.countryPolygon = polygon;
-        this.setName(name);
-        addMouseListener(this);
     }
 
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
+    public CustomCountry(JsonObject json) {
+        super(json);
 
-        Graphics2D g2d = (Graphics2D) g.create();
-        g2d.drawPolygon(countryPolygon);
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        // Load the polygon from the json
+        JsonArray pointArray = json.getAsJsonArray("points");
+        int[] xPoints = new int[pointArray.size()];
+        int[] yPoints = new int[pointArray.size()];
+
+        for (int i = 0; i < xPoints.length; i++) {
+            JsonObject point = pointArray.get(i).getAsJsonObject();
+            xPoints[i] = point.get("x").getAsInt();
+            yPoints[i] = point.get("y").getAsInt();
+        }
+
+        this.countryPolygon = new Polygon(xPoints, yPoints, xPoints.length);
     }
 
     public boolean isPointInPolygon(int x, int y){
@@ -38,40 +48,22 @@ public class CustomCountry extends JPanel implements MouseListener {
 
     }
 
-
     @Override
-    public void mouseClicked(MouseEvent e) {
-        CustomCountry countryClicked = (CustomCountry) e.getSource();
-        int x = e.getX(), y = e.getY();
-        String countryName = "";
-        if (countryClicked.isPointInPolygon(x, y)){
+    public JsonObject toJson() {
+        JsonObject obj = super.toJson();
 
+        // Add the points of the polygon
+        JsonArray pointArray = new JsonArray(countryPolygon.npoints);
+        for (int i = 0; i < countryPolygon.npoints; i++) {
+            JsonObject point = new JsonObject();
 
-        } else {
-            countryName = e.getComponent().getName();
+            point.addProperty("x", countryPolygon.xpoints[i]);
+            point.addProperty("y", countryPolygon.ypoints[i]);
+
+            pointArray.add(point);
         }
+        obj.add("points", pointArray);
 
-
-        //Depending on phase, allow or disallow actions
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-
+        return obj;
     }
 }
