@@ -119,9 +119,6 @@ public class Country {
         neighbourNames.forEach(arr::add);
         json.add("neighbours", arr);
 
-        // Add the points of the polygon
-        // TODO
-
         return json;
     }
 
