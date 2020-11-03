@@ -2,14 +2,20 @@ package risk.Model;
 
 import java.util.ArrayList;
 
-// Not useful right now, but later for bonuses and gui will be.
 public class Continent {
 
     private String name;
     private ArrayList<String> countries;
+    private int continentBonus;
 
-    public Continent(String name) {
+    public Continent(String name, int continentBonus) {
         this.name = name;
+        this.countries = new ArrayList<>();
+        this.continentBonus = continentBonus;
+    }
+
+    public String getName(){
+        return name;
     }
 
     public void printContinentHelper(StringBuilder sb) {

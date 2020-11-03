@@ -2,11 +2,13 @@ package risk.Model;
 
 import risk.Players.Player;
 
+
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Country {
+public class Country implements Serializable {
 
-    private final String name;
+    private String name;
     private int numArmies = 1;
     private Player controlledBy = null;
 
@@ -99,4 +101,7 @@ public class Country {
     public String toString(){
         return name;
     }
+
+
+
 }

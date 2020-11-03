@@ -18,8 +18,10 @@ public class EditableCustomCountry extends CustomCountry implements MouseListene
     private volatile int myX = 0;
     private volatile int myY = 0;
 
-    public EditableCustomCountry(BufferedImage continentImage, String name) {
-        super(continentImage, name);
+
+    public EditableCustomCountry(Polygon countryPolygon, String name) {
+        super(countryPolygon, name);
+
         addMouseMotionListener(this);
         addMouseListener(this);
         setOpaque(false);
@@ -42,28 +44,47 @@ public class EditableCustomCountry extends CustomCountry implements MouseListene
         setLocation(myX + deltaX, myY + deltaY);
     }
 
+    public EditableCustomCountry getCountryClicked(int x, int y){
+        int highestLayer = -1;
+        EditableCustomCountry editableCustomCountry = null;
+
+        for (Component component : MapEditor.layeredPane.getComponents()){
+            if (component instanceof EditableCustomCountry){
+                EditableCustomCountry ecc = (EditableCustomCountry) component;
+                int layer = MapEditor.layeredPane.getLayer(ecc);
+                int xLocation = ecc.getLocationOnScreen().x;
+                int yLocation = ecc.getLocationOnScreen().y;
+
+                if (layer > highestLayer && ecc.getCountryPolygon().contains(x - xLocation, y - yLocation)){
+                    highestLayer = layer;
+                    editableCustomCountry = ecc;
+                }
+            }
+        }
+
+        return editableCustomCountry;
+    }
+
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        CustomCountry countryClicked = (CustomCountry) e.getSource();
-        int x = e.getX(), y = e.getY();
+        if (!(e.getSource() instanceof EditableCustomCountry))
+            return;
 
-        String countryName = "";
+        int x = e.getXOnScreen(), y = e.getYOnScreen();
+        System.out.println("clicked: " + x + " , " + y);
 
+        CustomCountry countryClicked;
 
-        //Figure out which component was clicked and get the name of it
-          /*
-        component is clicked if:
-            - is not transparent at x, y (get us all components that are not transparent at that point)
-            - higher layer than all components at that point
-        */
-        if (countryClicked.isTransparent(x, y)){
+        if (((EditableCustomCountry) e.getSource()).isPointInPolygon(x, y))
+            countryClicked = (EditableCustomCountry) e.getSource();
+        else
+            countryClicked = getCountryClicked(x, y);
 
+        if (countryClicked == null)
+            return;
 
-            System.out.println("is transparent");
-        } else {
-            countryName = e.getComponent().getName();
-        }
+        String countryName = countryClicked.getName();
 
         //Create the input panel for the user to input neighbours, continents etc.
         JPanel countryInfoPanel = new JPanel(new GridLayout(2, 3));
@@ -98,6 +119,7 @@ public class EditableCustomCountry extends CustomCountry implements MouseListene
         ArrayList<String> neighbourNames = neighboursJList.isSelectionEmpty() ? new ArrayList<>() : (ArrayList<String>) neighboursJList.getSelectedValuesList();
         String continentName = continentJList.getSelectedValue();
 
+
         Countries.editCountry(name, neighbourNames, continentName);
     }
 
@@ -121,4 +143,5 @@ public class EditableCustomCountry extends CustomCountry implements MouseListene
     public void mouseMoved(MouseEvent e) {
 
     }
+
 }

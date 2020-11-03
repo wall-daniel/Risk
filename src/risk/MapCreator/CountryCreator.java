@@ -14,10 +14,10 @@ public class CountryCreator extends JFrame {
     JLabel drawingStatusLabel;
     CountryDrawPad drawingPad;
 
-    MapEditor lcg;
+    MapEditor mapEditor;
 
-    public CountryCreator(MapEditor lcg){
-        this.lcg = lcg;
+    public CountryCreator(MapEditor mapEditor){
+        this.mapEditor = mapEditor;
 
         /* Use an appropriate Look and Feel */
         try {
@@ -77,8 +77,7 @@ public class CountryCreator extends JFrame {
         JMenuItem clear = new JMenuItem("Clear");
         JMenuItem closeShape = new JMenuItem("Close Shape");
         JMenuItem newShape = new JMenuItem("New Shape");
-        JMenuItem fill = new JMenuItem("Fill");
-        JMenuItem finish = new JMenuItem("End");
+        JMenuItem finish = new JMenuItem("Finish");
 
         clear.addActionListener(e -> {
             drawingPad.clear();
@@ -97,16 +96,10 @@ public class CountryCreator extends JFrame {
             setDrawingStatus(CountryDrawingEnum.FIRST_POINT);
         });
 
-        fill.addActionListener(e -> {
-            drawingPad.fill();
-            setDrawingStatus(CountryDrawingEnum.FILL);
-        });
-
 
         finish.addActionListener(e -> {
             String countryName = JOptionPane.showInputDialog("Enter Country Name");
-            drawingPad.finish();
-            lcg.addNewCountry(drawingPad.getImage(), countryName);
+            mapEditor.addNewCountry(drawingPad.getPolygon(), countryName);
             this.dispose();
         });
 
@@ -114,7 +107,6 @@ public class CountryCreator extends JFrame {
         menu.add(clear);
         menu.add(closeShape);
         menu.add(newShape);
-        menu.add(fill);
         menu.add(finish);
 
         bar.add(menu);

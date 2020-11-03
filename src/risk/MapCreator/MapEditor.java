@@ -1,12 +1,16 @@
 package risk.MapCreator;
 
 import risk.Enums.DrawingEnum;
+import risk.Enums.FileNames;
 import risk.Enums.MapColor;
+import risk.Enums.PlayerColor;
 import risk.Model.*;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
@@ -16,7 +20,7 @@ public class MapEditor extends JFrame{
     }
 
     JLabel status;
-    JLayeredPane layeredPane;
+    static JLayeredPane layeredPane;
     int countryCounter;
     String path;
 
@@ -51,9 +55,7 @@ public class MapEditor extends JFrame{
     private void createAndShowGUI() {
         String mapName = JOptionPane.showInputDialog("Enter Map Name");
         path = "maps\\" + mapName + "\\";
-        new File(path).mkdirs();
-        new File(path + "countryImages\\").mkdirs();
-        new File(path + "location\\").mkdirs();
+
         addComponentToPane(getContentPane());
 
         addJMenuBar();
@@ -62,7 +64,7 @@ public class MapEditor extends JFrame{
         setPreferredSize(Toolkit.getDefaultToolkit().getScreenSize());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
-        setTitle("Custom Level Creator");
+        setTitle("Custom Map Creator");
         pack();
         setVisible(true);
     }
@@ -83,12 +85,14 @@ public class MapEditor extends JFrame{
 
         addContinent.addActionListener(e -> {
             String continentName = JOptionPane.showInputDialog("Enter Continent Name");
-            Continent continent = new Continent(continentName);
+            int continentBonus = Integer.valueOf(JOptionPane.showInputDialog("Enter Continent Bonus"));
+            Continent continent = new Continent(continentName, continentBonus);
             Continents.addContinent(continentName, continent);
         });
 
         loadMap.addActionListener(e -> {
-            loadMap();
+            String mapName = JOptionPane.showInputDialog("Enter Map Name");
+            loadMap(mapName);
         });
 
 
@@ -98,6 +102,7 @@ public class MapEditor extends JFrame{
             } catch (Exception e1){ }
 
         });
+
 
         menu.add(addCountry);
         menu.add(addContinent);
@@ -109,65 +114,62 @@ public class MapEditor extends JFrame{
         setJMenuBar(bar);
     }
 
-    private void loadMap(){
+    private void loadMap(String mapName){
+        File f = new File(path);
+        if (f.exists() && f.isDirectory()) {
 
-
+        }
     }
 
-    /*
-    Saves:
-    named images - saved in addNewCountry()
-    countries/continents serialized - done
-    names and coordinates
-     */
-
     private void saveMap() throws IOException {
-        ContinentsSerializable continentsSerializable = new ContinentsSerializable(Continents.getContinents());
-        CountriesSerializable countriesSerializable = new CountriesSerializable(Countries.getCountries());
+        new File(path + FileNames.POLYGONS.getPath()).mkdirs();
+        new File(path + FileNames.CONTINENTS.getPath()).mkdirs();
+        new File(path + FileNames.COUNTRIES.getPath()).mkdirs();
+        new File(path + FileNames.LOCATIONS.getPath()).mkdirs();
+
+        System.out.println("attempting to write countries.");
+        for (Country country: Countries.getCountries().values()){
+            ObjectOutputStream oos1 = new ObjectOutputStream(new FileOutputStream(path + FileNames.COUNTRIES.getPath() + country.getName()));
+            oos1.writeObject(country);
+            oos1.flush();
+            oos1.close();
+        }
+        System.out.println("countries written");
+
+        System.out.println("attempting to write continents");
+        for (Continent continent : Continents.getContinents().values()){
+            ObjectOutputStream oos1 = new ObjectOutputStream(new FileOutputStream(path + FileNames.CONTINENTS.getPath() + continent.getName()));
+            oos1.writeObject(continent);
+            oos1.flush();
+            oos1.close();
+        }
+        System.out.println("continents written");
 
         System.out.println("attempting to write locations of all components.");
         for (Component c : layeredPane.getComponents()){
-            System.out.println("COMPONENT: " + c.getName());
-            ObjectOutputStream oos2 = new ObjectOutputStream(new FileOutputStream(path + "location\\" + c.getName()));
-            oos2.writeObject(c.getLocationOnScreen());
-            oos2.flush();
-            oos2.close();
+            if (c instanceof EditableCustomCountry) {
+                System.out.println("COMPONENT: " + c.getName());
+                ObjectOutputStream oos2 = new ObjectOutputStream(new FileOutputStream(path + FileNames.LOCATIONS.getPath() + c.getName()));
+                oos2.writeObject(c.getLocationOnScreen());
+                oos2.flush();
+                oos2.close();
+            }
         }
         System.out.println("components written");
 
-        System.out.println("attempting to write images");
+        System.out.println("attempting to write polygons");
         for (Component c : layeredPane.getComponents()){
             if (c instanceof EditableCustomCountry){
-                EditableCustomCountry l = (EditableCustomCountry) c;
-                BufferedImage bi = new BufferedImage(c.getWidth(), c.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
-                bi.createGraphics();
+                EditableCustomCountry ecc = (EditableCustomCountry) c;
 
-                String name = l.getName();
-
-                try {
-                    ImageIO.write(bi, "png", new File(path + "countryImages\\" + name));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                ObjectOutputStream oos2 = new ObjectOutputStream(new FileOutputStream(path + FileNames.POLYGONS.getPath() + ecc.getName()));
+                oos2.writeObject(ecc.getCountryPolygon());
+                oos2.flush();
+                oos2.close();
             }
         }
-        System.out.println("images written");
+        System.out.println("polygons written");
 
-
-
-        System.out.println("attempting to write continents");
-        ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(path + "continents"));
-        oos.writeObject(continentsSerializable);
-        oos.flush();
-        oos.close();
-        System.out.println("continents written");
-
-        System.out.println("attempting to write countries.");
-        ObjectOutputStream oos1 = new ObjectOutputStream(new FileOutputStream(path + "countries"));
-        oos1.writeObject(countriesSerializable);
-        oos1.flush();
-        oos1.close();
-        System.out.println("countries written");
     }
 
 
@@ -182,14 +184,14 @@ public class MapEditor extends JFrame{
     }
 
     //Saves images
-    public void addNewCountry(BufferedImage image, String name){
-        EditableCustomCountry cc = new EditableCustomCountry(image, name);
+    public void addNewCountry(Polygon polygon, String name){
+        EditableCustomCountry cc = new EditableCustomCountry(polygon, name);
 
         Country country = new Country(name);
         Countries.addCountry(name, country);
 
         Insets insets = layeredPane.getInsets();
-        cc.setBounds(insets.left, insets.top, image.getWidth(), image.getHeight());
+        cc.setBounds(insets.left, insets.top, polygon.getBounds().width + 30,  polygon.getBounds().height  + 30);
         cc.setBorder(BorderFactory.createLineBorder(Color.black));
 
         layeredPane.add(cc, Integer.valueOf(countryCounter));
