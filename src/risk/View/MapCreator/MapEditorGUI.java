@@ -26,6 +26,10 @@ public class MapEditorGUI extends JFrame{
         });
     }
 
+    public JLayeredPane getLayeredPane(){
+        return layeredPane;
+    }
+
     private void createAndShowGUI() {
         mapName = JOptionPane.showInputDialog("Enter Map Name");
 

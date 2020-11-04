@@ -20,9 +20,12 @@ public class EditableCustomCountry extends JPanel implements MouseListener, Mous
     Polygon countryPolygon;
     //TODO clicking on tranparent section to drag panel behind does nothing.
 
-    public EditableCustomCountry(Polygon countryPolygon, String name) {
+    MapEditorGUI mapEditorGUI;
+
+    public EditableCustomCountry(MapEditorGUI mapEditorGUI, Polygon countryPolygon, String name) {
         this.countryPolygon = countryPolygon;
         this.setName(name);
+        this.mapEditorGUI = mapEditorGUI;
         addMouseMotionListener(this);
     }
 
@@ -33,6 +36,11 @@ public class EditableCustomCountry extends JPanel implements MouseListener, Mous
         this.add(countryLabel);
     }
     */
+
+    public Polygon getCountryPolygon(){
+        return countryPolygon;
+    }
+
 
     @Override
     public void mousePressed(MouseEvent e) {
@@ -62,10 +70,10 @@ public class EditableCustomCountry extends JPanel implements MouseListener, Mous
         int highestLayer = -1;
         EditableCustomCountry editableCustomCountry = null;
 
-        for (Component component : MapEditorGUI.layeredPane.getComponents()){
+        for (Component component : mapEditorGUI.getLayeredPane().getComponents()){
             if (component instanceof EditableCustomCountry){
                 EditableCustomCountry ecc = (EditableCustomCountry) component;
-                int layer = MapEditorGUI.layeredPane.getLayer(ecc);
+                int layer = mapEditorGUI.getLayeredPane().getLayer(ecc);
                 int xLocation = ecc.getLocationOnScreen().x;
                 int yLocation = ecc.getLocationOnScreen().y;
 
@@ -77,6 +85,10 @@ public class EditableCustomCountry extends JPanel implements MouseListener, Mous
         }
 
         return editableCustomCountry;
+    }
+
+    public boolean isPointInPolygon(int x, int y){
+        return countryPolygon.contains(x, y);
     }
 
 
