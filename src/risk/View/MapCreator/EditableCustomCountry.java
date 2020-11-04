@@ -121,6 +121,9 @@ public class EditableCustomCountry extends JPanel implements MouseListener, Mous
 
         JTextField countryNameTextField = new JTextField(countryName);
 
+
+
+
         JList<String> neighboursJList = new JList<>(GameModel.getCountryNamesDefaultListModel(countryName));
         neighboursJList.setSelectionMode(DefaultListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         if (GameModel.countryExists(countryName))

@@ -18,7 +18,8 @@ import java.util.HashMap;
 public class Map extends JLayeredPane implements GameModelListener, MouseListener {
     Controller controller;
 
-    HashMap<String, Polygon> polygonList = new HashMap<String, Polygon>();
+    HashMap<String, Polygon> polygonList = new HashMap<>();
+
     OneCountryEvent countryEvent = null;
 
     public Map(Controller controller){
@@ -31,23 +32,54 @@ public class Map extends JLayeredPane implements GameModelListener, MouseListene
         super.paintComponent(g);
         if (countryEvent!=null){
             Graphics2D g2d = (Graphics2D) g.create();
-            drawPolygon(g2d, countryEvent.getFirstCountry().getPolygon(), countryEvent.getFirstCountry().getPlayer().getPlayerColor().getColor()); //demeter? i dont even know her
-            if (countryEvent instanceof TwoCountryEvent){
-                drawPolygon(g2d, ((TwoCountryEvent) countryEvent).getSecondCountry().getPolygon(), ((TwoCountryEvent) countryEvent).getSecondCountry().getPlayer().getPlayerColor().getColor());
+
+            Country country = countryEvent.getFirstCountry();
+            Polygon polygon = country.getPolygon();
+
+            int midX = (int) (polygon.getBounds().getWidth()/2 +  polygon.getBounds().getX());
+            int midY = (int) (polygon.getBounds().getHeight()/2 +  polygon.getBounds().getX());
+
+            drawPolygon(g2d, polygon, country.getPlayer().getPlayerColor().getColor(), country.getName(), midX, midY, country.getArmies()); //demeter? i dont even know her
+            if (countryEvent instanceof TwoCountryEvent) {
+                country = ((TwoCountryEvent) countryEvent).getSecondCountry();
+                polygon = country.getPolygon();
+
+                midX = (int) (polygon.getBounds().getWidth() / 2 + polygon.getBounds().getX());
+                midY = (int) (polygon.getBounds().getHeight() / 2 + polygon.getBounds().getX());
+
+                drawPolygon(g2d, polygon, country.getPlayer().getPlayerColor().getColor(), country.getName(), midX, midY, country.getArmies());
             }
         }
     }
 
-    public void drawPolygon(Graphics2D g2d, Polygon polygon, Color color){
+    public void drawPolygon(Graphics2D g2d, Polygon polygon, Color color, String countryName, int x, int y, int numArmies){
+        //drawing polygon
         g2d.setColor(MapColor.BORDER_COLOR.getColor());
         g2d.setStroke(new BasicStroke(10));
         g2d.drawPolygon(polygon);
 
+        //filling polygon
         g2d.setColor(color);
         g2d.fillPolygon(polygon);
+
+        //adding countryname and armycount
+        g2d.setColor(MapColor.TEXT_COLOR.getColor());
+        g2d.drawString(countryName + ": " + numArmies, x, y);
+
+        /* //TODO will remove
+        JLabel countryNameLabel = new JLabel(countryName);
+        countryNameLabel.setBackground(MapColor.TRANSPARENT_COLOR.getColor());
+        countryNameLabel.setForeground(MapColor.TEXT_COLOR.getColor());
+        countryNameLabel.setFont(new Font("TimesRoman", Font.BOLD, 25));
+        countryNameLabel.setBorder(BorderFactory.createLineBorder(Color.black));
+        countryNameLabel.setOpaque(false);
+        countryNameLabel.setLocation(x, y);
+
+        add(countryNameLabel, Integer.MAX_VALUE);
+         */
     }
 
-    //put update
+
     @Override
     public void onNewCountry(OneCountryEvent oce) {
 
@@ -56,18 +88,23 @@ public class Map extends JLayeredPane implements GameModelListener, MouseListene
     @Override
     public void onPlaceTroops(OneCountryEvent oce) {
         countryEvent = oce;
+        polygonList.put(oce.getFirstCountry().getName(), oce.getFirstCountry().getPolygon());
         repaint();
     }
 
     @Override
     public void onAttack(TwoCountryEvent tce) {
         countryEvent = tce;
+        polygonList.put(tce.getFirstCountry().getName(), tce.getFirstCountry().getPolygon());
+        polygonList.put(tce.getSecondCountry().getName(), tce.getSecondCountry().getPolygon());
         repaint();
     }
 
     @Override
     public void onTroopMovement(TwoCountryEvent tce) {
         countryEvent = tce;
+        polygonList.put(tce.getFirstCountry().getName(), tce.getFirstCountry().getPolygon());
+        polygonList.put(tce.getSecondCountry().getName(), tce.getSecondCountry().getPolygon());
         repaint();
     }
 
