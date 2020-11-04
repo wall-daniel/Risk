@@ -1,5 +1,6 @@
 package risk.Players;
 
+import risk.Enums.PlayerColor;
 import risk.Model.Country;
 import risk.Model.Countries;
 
@@ -10,10 +11,17 @@ public class Player {
     private String name;
     private ArrayList<String> countriesOwned;
     private boolean lost = false;
+    private PlayerColor playerColor;
+
 
     public Player(String name) {
         this.name = name;
         countriesOwned = new ArrayList<>();
+        playerColor = PlayerColor.PLAYER_1_COLOR; //TODO must change so each player gets distinct color
+    }
+
+    public PlayerColor getPlayerColor() {
+        return playerColor;
     }
 
     public String getName() {

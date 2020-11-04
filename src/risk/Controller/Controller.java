@@ -42,6 +42,7 @@ public class Controller {
 
     }
 
+
     /**
      * Returns a string that shows who owns which country
      * @return country ownership string

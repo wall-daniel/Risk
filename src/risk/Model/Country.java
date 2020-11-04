@@ -7,6 +7,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import risk.Players.Player;
 
+import java.awt.*;
 import java.util.ArrayList;
 
 public class Country {
@@ -18,6 +19,8 @@ public class Country {
     private ArrayList<String> neighbourNames;
     private String continentName = "";
 
+    private Polygon polygon;
+
     public Country(String name) {
         this.name = name;
         neighbourNames = new ArrayList<>();
@@ -27,6 +30,10 @@ public class Country {
         this.name = name;
         this.neighbourNames = (ArrayList<String>) neighbourNames.clone();
         this.continentName = continentName;
+    }
+
+    public Polygon getPolygon(){
+        return polygon;
     }
 
 //    public boolean canAttack() { return numArmies > 1; }
