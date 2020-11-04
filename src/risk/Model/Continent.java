@@ -1,25 +1,38 @@
 package risk.Model;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
 import java.util.ArrayList;
+import java.util.List;
 
 // Not useful right now, but later for bonuses and gui will be.
 public class Continent {
 
     private String name;
-    private ArrayList<String> countries;
+    private List<Country> countries;
 
     public Continent(String name) {
         this.name = name;
     }
+    public Continent(JsonObject json) {
+        // Get name
+        this.name = json.get("name").getAsString();
 
-    public void printContinentHelper(StringBuilder sb) {
-        for (String countryName : countries) {
-            sb.append(countryName)
-                    .append(": ")
-                    .append(Countries.getCountry(countryName).getPlayer().getName())
-                    .append(", ")
-                    .append(Countries.getCountry(countryName).getArmies())
-                    .append("\n");
-        }
+        // Get countries
+        this.countries = new ArrayList<>();
+        JsonArray countryArr = json.get("countries").getAsJsonArray();
+        countryArr.forEach(country -> {
+            Country c = new Country(country.getAsJsonObject());
+            c.setContinent(this);
+        });
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public List<Country> getCountries() {
+        return this.countries;
     }
 }

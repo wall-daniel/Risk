@@ -38,9 +38,9 @@ public class MainGUI extends JFrame {
         addComponentToPane(getContentPane());
 
         getContentPane().setBackground(MapColor.BACKGROUND_COLOR.getColor());
-        setPreferredSize(Toolkit.getDefaultToolkit().getScreenSize());
+//        setPreferredSize(Toolkit.getDefaultToolkit().getScreenSize());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setResizable(false);
+        setResizable(true);
         setTitle("Risk");
         pack();
         setVisible(true);

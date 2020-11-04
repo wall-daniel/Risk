@@ -121,15 +121,15 @@ public class EditableCustomCountry extends JPanel implements MouseListener, Mous
 
         JTextField countryNameTextField = new JTextField(countryName);
 
-        JList<String> neighboursJList = new JList<>(GameModel.getCountryNamesDefaultListModel(countryName));
-        neighboursJList.setSelectionMode(DefaultListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        if (GameModel.countryExists(countryName))
-            neighboursJList.setSelectedIndices(GameModel.getCountry(countryName).getNeighbours());
+        JList<String> neighboursJList = new JList<>();//GameModel.getCountryNamesDefaultListModel(countryName));
+//        neighboursJList.setSelectionMode(DefaultListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+//        if (GameModel.countryExists(countryName))
+//            neighboursJList.setSelectedIndices(GameModel.getCountry(countryName).getNeighbours());
 
-        JList<String> continentJList = new JList<>(GameModel.getContinentNamesDefaultListModel());
-        continentJList.setSelectionMode(DefaultListSelectionModel.SINGLE_SELECTION);
-        if (GameModel.countryExists(countryName))
-            continentJList.setSelectedValue(GameModel.getCountry(countryName).getContinentName(), true);
+        JList<String> continentJList = new JList<>();//GameModel.getContinentNamesDefaultListModel());
+//        continentJList.setSelectionMode(DefaultListSelectionModel.SINGLE_SELECTION);
+//        if (GameModel.countryExists(countryName))
+//            continentJList.setSelectedValue(GameModel.getCountry(countryName).getContinentName(), true);
 
         countryInfoPanel.add(countryNameLabel);
         countryInfoPanel.add(neighboursLabel);
@@ -146,7 +146,7 @@ public class EditableCustomCountry extends JPanel implements MouseListener, Mous
         String continentName = continentJList.getSelectedValue();
 
 
-        GameModel.editCountry(name, neighbourNames, continentName);
+//        GameModel.editCountry(name, neighbourNames, continentName);
     }
 
 

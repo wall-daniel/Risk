@@ -4,7 +4,6 @@ import risk.Command;
 import risk.CommandWord;
 import risk.Model.Continents;
 import risk.Model.Countries;
-import risk.Model.GameBoard;
 import risk.Parser;
 import risk.Players.Player;
 
@@ -13,8 +12,6 @@ import java.util.*;
 public class Controller {
 
     private final ArrayList<Player> players;
-
-    private GameBoard gameBoard;
 
     private final Parser parser;
 
@@ -27,8 +24,6 @@ public class Controller {
         parser = new Parser();
         rand = new Random(System.currentTimeMillis());
 
-        gameBoard = new GameBoard(rand);
-
         int numPlayers = parser.getInt("How many players (2-6)?: ", 2, 6);
         players = new ArrayList<>(numPlayers);
 
@@ -36,10 +31,6 @@ public class Controller {
         for (int i = 0; i < numPlayers; i++){
             players.add(new Player("Player" + i));
         }
-
-        gameBoard.setupMap(players);
-
-
     }
 
 
