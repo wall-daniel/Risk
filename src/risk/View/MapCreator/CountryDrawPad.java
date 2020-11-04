@@ -1,4 +1,4 @@
-package risk.MapCreator;
+package risk.View.MapCreator;
 
 import risk.Enums.MapColor;
 

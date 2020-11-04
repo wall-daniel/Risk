@@ -1,14 +1,13 @@
-package risk.MapCreator;
+package risk.View.MapCreator;
 
-import risk.Map.CustomCountry;
-import risk.Model.Continents;
-import risk.Model.Countries;
+import risk.Model.GameModel;
+import risk.View.Map.CustomCountry;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 public class EditableCustomCountry extends CustomCountry implements MouseListener, MouseMotionListener {
@@ -48,10 +47,10 @@ public class EditableCustomCountry extends CustomCountry implements MouseListene
         int highestLayer = -1;
         EditableCustomCountry editableCustomCountry = null;
 
-        for (Component component : MapEditor.layeredPane.getComponents()){
+        for (Component component : MapEditorGUI.layeredPane.getComponents()){
             if (component instanceof EditableCustomCountry){
                 EditableCustomCountry ecc = (EditableCustomCountry) component;
-                int layer = MapEditor.layeredPane.getLayer(ecc);
+                int layer = MapEditorGUI.layeredPane.getLayer(ecc);
                 int xLocation = ecc.getLocationOnScreen().x;
                 int yLocation = ecc.getLocationOnScreen().y;
 
@@ -74,7 +73,7 @@ public class EditableCustomCountry extends CustomCountry implements MouseListene
         int x = e.getXOnScreen(), y = e.getYOnScreen();
         System.out.println("clicked: " + x + " , " + y);
 
-        CustomCountry countryClicked;
+        EditableCustomCountry countryClicked;
 
         if (((EditableCustomCountry) e.getSource()).isPointInPolygon(x, y))
             countryClicked = (EditableCustomCountry) e.getSource();
@@ -95,15 +94,15 @@ public class EditableCustomCountry extends CustomCountry implements MouseListene
 
         JTextField countryNameTextField = new JTextField(countryName);
 
-        JList<String> neighboursJList = new JList<>(Countries.getCountryNamesDefaultListModel(countryName));
+        JList<String> neighboursJList = new JList<>(GameModel.getCountryNamesDefaultListModel(countryName));
         neighboursJList.setSelectionMode(DefaultListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        if (Countries.countryExists(countryName))
-            neighboursJList.setSelectedIndices(Countries.getCountry(countryName).getNeighbours());
+        if (GameModel.countryExists(countryName))
+            neighboursJList.setSelectedIndices(GameModel.getCountry(countryName).getNeighbours());
 
-        JList<String> continentJList = new JList<>(Continents.getContinentNamesDefaultListModel());
+        JList<String> continentJList = new JList<>(GameModel.getContinentNamesDefaultListModel());
         continentJList.setSelectionMode(DefaultListSelectionModel.SINGLE_SELECTION);
-        if (Countries.countryExists(countryName))
-            continentJList.setSelectedValue(Countries.getCountry(countryName).getContinentName(), true);
+        if (GameModel.countryExists(countryName))
+            continentJList.setSelectedValue(GameModel.getCountry(countryName).getContinentName(), true);
 
         countryInfoPanel.add(countryNameLabel);
         countryInfoPanel.add(neighboursLabel);
@@ -120,7 +119,7 @@ public class EditableCustomCountry extends CustomCountry implements MouseListene
         String continentName = continentJList.getSelectedValue();
 
 
-        Countries.editCountry(name, neighbourNames, continentName);
+        GameModel.editCountry(name, neighbourNames, continentName);
     }
 
 

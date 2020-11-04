@@ -1,7 +1,5 @@
 package risk.Model;
 
-import risk.Players.Player;
-
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -10,7 +8,7 @@ public class Country implements Serializable {
 
     private String name;
     private int numArmies = 1;
-    private Player controlledBy = null;
+    private int controlledBy = -1;
 
     private ArrayList<String> neighbourNames;
     private String continentName = "";
@@ -39,7 +37,7 @@ public class Country implements Serializable {
         int [] neighbourIndicies = new int[neighbourNames.size()];
         int i = 0;
         for (String s : neighbourNames)
-            neighbourIndicies[i++] = Countries.getIndexOfCountry(s);
+            neighbourIndicies[i++] = GameModel.getIndexOfCountry(s);
         return neighbourIndicies;
     }
 
@@ -55,7 +53,7 @@ public class Country implements Serializable {
         return neighbourNames;
     }
 
-    public Player getPlayer() {
+    public int getPlayer() {
         return controlledBy;
     }
 
@@ -63,19 +61,19 @@ public class Country implements Serializable {
         return name;
     }
 
-    public void setPlayer(Player p) {
-        setPlayer(p, 1);
+    public void setPlayer(int playerNum) {
+        setPlayer(playerNum, 1);
     }
 
-    public void setPlayer(Player p, int numArmies) {
+    public void setPlayer(int playerNum, int numArmies) {
         // Remove current player from controlling it
-        if (controlledBy != null) {
-            this.controlledBy.removeCountry(name);
+        if (controlledBy != -1) {
+            GameModel.getPlayers().get(controlledBy).removeCountry(name);
         }
 
-        this.controlledBy = p;
+        this.controlledBy = playerNum;
         this.numArmies = numArmies;
-        p.addCountry(name);
+        GameModel.getPlayers().get(playerNum).addCountry(name);
     }
 
     public void addArmies(int newArmies) {

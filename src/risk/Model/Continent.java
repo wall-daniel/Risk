@@ -17,15 +17,4 @@ public class Continent {
     public String getName(){
         return name;
     }
-
-    public void printContinentHelper(StringBuilder sb) {
-        for (String countryName : countries) {
-            sb.append(countryName)
-                    .append(": ")
-                    .append(Countries.getCountry(countryName).getPlayer().getName())
-                    .append(", ")
-                    .append(Countries.getCountry(countryName).getArmies())
-                    .append("\n");
-        }
-    }
 }

@@ -1,9 +1,8 @@
 package risk.Controller;
 
 import risk.Model.Country;
-import risk.Model.Countries;
-import risk.Parser;
-import risk.Players.Player;
+import risk.Model.GameModel;
+import risk.Model.Player;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -12,17 +11,15 @@ import java.util.Random;
 public class AttackController {
 
     private Random random;
-    private Parser parser;
 
-    private Player attackingPlayer;
-    private Player defendingPlayer;
+    private int attackingPlayer;
+    private int defendingPlayer;
     private Country attackingCountry;
     private Country defendingCountry;
     private int attackingArmies = 0;
 
-    public AttackController(Player player, Parser parser, Random random) {
+    public AttackController(int player,  Random random) {
         this.attackingPlayer = player;
-        this.parser = parser;
         this.random = random;
     }
 
@@ -42,8 +39,11 @@ public class AttackController {
      */
     private boolean getAttackingCountry() {
         while (true) {
-            System.out.println("Your countries are: \n" + attackingPlayer.getCountriesAsStringWithArmies());
-            String attackingCountry = parser.getInput("What country do you want to attack from(End)?:");
+            System.out.println("Your countries are: \n" + GameModel.getPlayers().get(attackingPlayer).getCountriesAsStringWithArmies());
+            //TODO
+            String attackingCountry = "yes";
+
+                    //parser.getInput("What country do you want to attack from(End)?:");
 
             // If the player types in 'end' then stop the attacking
             if (attackingCountry.equalsIgnoreCase("END")) {
@@ -52,10 +52,10 @@ public class AttackController {
 
 
 
-            if (Countries.countryExists(attackingCountry)) {
+            if (GameModel.countryExists(attackingCountry)) {
                 System.out.println("That is not a country. Try again.");
-            } else if (attackingPlayer.ownsCountry(attackingCountry)){
-                this.attackingCountry = Countries.getCountry(attackingCountry);
+            } else if (GameModel.getPlayers().get(attackingPlayer).ownsCountry(attackingCountry)){
+                this.attackingCountry = GameModel.getCountry(attackingCountry);
 
                 if (this.attackingCountry.getArmies() > 1) {
                     return getDefendingCountry();
@@ -76,19 +76,21 @@ public class AttackController {
     private boolean getDefendingCountry() {
         while (true) {
             System.out.println("The countries you can attack are: " + getAttackableCountries());
-            String defendingCountry = parser.getInput("What country do you want to attack (End)?:");
+            String defendingCountry = "End";  //TODO
+
+            // parser.getInput("What country do you want to attack (End)?:");
 
             // If the player types in 'end' then stop the attacking
             if (defendingCountry.equalsIgnoreCase("END")) {
                 return false;
             }
 
-            if (Countries.countryExists(defendingCountry)) {
+            if (GameModel.countryExists(defendingCountry)) {
                 System.out.println("That is not a country. Try again.");
-            } else if (attackingPlayer.ownsCountry(defendingCountry)) {
+            } else if (GameModel.getPlayers().get(attackingPlayer).ownsCountry(defendingCountry)) {
                 System.out.println("You cannot attack your own country silly");
             } else {
-                this.defendingCountry = Countries.getCountry(defendingCountry);
+                this.defendingCountry = GameModel.getCountry(defendingCountry);
                 this.defendingPlayer = this.defendingCountry.getPlayer();
                 return getAttackingArmies();
             }
@@ -101,7 +103,9 @@ public class AttackController {
      */
     private boolean getAttackingArmies() {
         while (true) {
-            attackingArmies = parser.getInt("How many armies do you want to attack with? (0-" + (attackingCountry.getArmies() - 1) + ", End=-1)?:", 0, attackingCountry.getArmies() - 1);
+            attackingArmies = 3;
+            //TODO
+            // parser.getInt("How many armies do you want to attack with? (0-" + (attackingCountry.getArmies() - 1) + ", End=-1)?:", 0, attackingCountry.getArmies() - 1);
 
             // If the user enters -1 then return
             if (attackingArmies == -1) {
@@ -142,8 +146,8 @@ public class AttackController {
             // Print out the result
             Arrays.sort(attackingDice, Collections.reverseOrder());
             Arrays.sort(defendingDice, Collections.reverseOrder());
-            System.out.println(attackingPlayer.getName() + " roled: " + Arrays.toString(attackingDice));
-            System.out.println(defendingPlayer.getName() + " roled: " + Arrays.toString(defendingDice));
+            System.out.println(GameModel.getPlayers().get(attackingPlayer).getName() + " roled: " + Arrays.toString(attackingDice));
+            System.out.println(GameModel.getPlayers().get(defendingPlayer).getName() + " roled: " + Arrays.toString(defendingDice));
 
             // Find outcome of dice roll
             // Sort dice and then compare the highest dice of each player until
@@ -164,7 +168,9 @@ public class AttackController {
             System.out.println("The attacker now has " + attackingArmies + " armies, and the defender now has " + defendingArmies + " armies left.");
 
             // Ask player if they want to continue the attack
-            String input = parser.getInput("Do you want to continue attacking? Type end if you don't: ");
+            String input = "end";
+            //TODO
+            //parser.getInput("Do you want to continue attacking? Type end if you don't: ");
             if (input.equalsIgnoreCase("end")) {
                 break;
             }
@@ -175,10 +181,10 @@ public class AttackController {
             // If the defender won then remove the lost armies from the defender and don't add anything to what the
             defendingCountry.removeArmies(defendingCountry.getArmies() - defendingArmies);
 
-            System.out.println(attackingPlayer.getName() + " lost.");
+            System.out.println(GameModel.getPlayers().get(attackingPlayer).getName() + " lost.");
         } else if (defendingArmies <= 0) {
             // If attacker wins then...
-            System.out.println(attackingPlayer.getName() + " won, " + defendingCountry.getName() + " is now your country.");
+            System.out.println(GameModel.getPlayers().get(attackingPlayer).getName() + " won, " + defendingCountry.getName() + " is now your country.");
             return attackerWon();
         } else {
             // If it is a tie then move the armies back to where they are supposed to be.
@@ -197,7 +203,10 @@ public class AttackController {
      */
     private boolean attackerWon() {
         while (true) {
-            int moveArmies = parser.getInt("How many armies do you want to move (1-" + attackingArmies + ")?: ", 1, attackingArmies);
+            //TODO
+            int moveArmies = 3;
+
+            // parser.getInt("How many armies do you want to move (1-" + attackingArmies + ")?: ", 1, attackingArmies);
 
             if (moveArmies < 1 || moveArmies > attackingArmies) {
                 System.out.println("You cannot move that many armies, try again.");
@@ -206,8 +215,8 @@ public class AttackController {
                 defendingCountry.setPlayer(attackingPlayer, moveArmies);
 
                 // Check if the player has lost, e.g. has no more countries.
-                if (defendingPlayer.getCountries().isEmpty()) {
-                    defendingPlayer.setLost();
+                if (GameModel.getPlayers().get(defendingPlayer).getCountries().isEmpty()) {
+                    GameModel.getPlayers().get(defendingPlayer).setLost();
 
                     // Check if game has been won.
                     return true;
@@ -222,7 +231,7 @@ public class AttackController {
         StringBuilder sb = new StringBuilder();
 
         for (String countryName : attackingCountry.getNeighbourNames()) {
-            if (Countries.getCountry(countryName).getPlayer() != attackingPlayer) {
+            if (GameModel.getCountry(countryName).getPlayer() != attackingPlayer) {
                 sb.append(countryName).append(", ");
             }
         }

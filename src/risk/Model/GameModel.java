@@ -1,13 +1,42 @@
 package risk.Model;
 
 import javax.swing.*;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
-public class Countries {
+public class GameModel {
+    private static HashMap<String, Continent> continents = new HashMap<>();
     private static HashMap<String, Country> countries = new HashMap<>();
+    private static HashMap<Integer, Player> players = new HashMap<>();
+
+    public static ArrayList<Player> getPlayers(){
+        return (ArrayList<Player>) players.values();
+    }
+
+    public static DefaultListModel<String> getContinentNamesDefaultListModel() {
+        DefaultListModel<String> listModel = new DefaultListModel<>();
+        for (String s: continents.keySet())
+            listModel.addElement(s);
+        return listModel;
+    }
+
+    public static HashMap<String, Continent> getContinents(){
+        return continents;
+    }
+
+
+    public static void addContinent(String name, Continent continent){
+        continents.put(name, continent);
+    }
+
+    public static Continent getContinent(String name){
+        return continents.get(name);
+    }
+
+    public static Set<String> getContinentNames(){
+        return continents.keySet();
+    }
 
     public static DefaultListModel<String> getCountryNamesDefaultListModel(String currentName){
         DefaultListModel<String> listModel = new DefaultListModel<>();
@@ -59,4 +88,6 @@ public class Countries {
     public static boolean countryExists(String countryName) {
         return countries.containsKey(countryName);
     }
+
+
 }

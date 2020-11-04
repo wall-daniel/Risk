@@ -1,30 +1,27 @@
-package risk.MapCreator;
+package risk.View.MapCreator;
 
 import risk.Enums.DrawingEnum;
 import risk.Enums.FileNames;
 import risk.Enums.MapColor;
-import risk.Enums.PlayerColor;
-import risk.Model.*;
+import risk.Model.Continent;
+import risk.Model.Country;
+import risk.Model.GameModel;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import javax.imageio.ImageIO;
 import javax.swing.*;
 
-public class MapEditor extends JFrame{
+public class MapEditorGUI extends JFrame{
     public static void main(String[] args){
-        new MapEditor();
+        new MapEditorGUI();
     }
 
     JLabel status;
-    static JLayeredPane layeredPane;
+    public static JLayeredPane layeredPane;
     int countryCounter;
     String path;
 
-    public MapEditor(){
+    public MapEditorGUI(){
         countryCounter = 0;
 
         /* Use an appropriate Look and Feel */
@@ -79,7 +76,7 @@ public class MapEditor extends JFrame{
         JMenuItem saveMap = new JMenuItem("Save Map");
 
         addCountry.addActionListener(e -> {
-            new CountryCreator(this);
+            new CountryCreatorGUI(this);
             status.setText(DrawingEnum.COUNTRIES.getText());
         });
 
@@ -87,7 +84,7 @@ public class MapEditor extends JFrame{
             String continentName = JOptionPane.showInputDialog("Enter Continent Name");
             int continentBonus = Integer.valueOf(JOptionPane.showInputDialog("Enter Continent Bonus"));
             Continent continent = new Continent(continentName, continentBonus);
-            Continents.addContinent(continentName, continent);
+            GameModel.addContinent(continentName, continent);
         });
 
         loadMap.addActionListener(e -> {
@@ -118,6 +115,10 @@ public class MapEditor extends JFrame{
         File f = new File(path);
         if (f.exists() && f.isDirectory()) {
 
+
+
+
+
         }
     }
 
@@ -128,7 +129,7 @@ public class MapEditor extends JFrame{
         new File(path + FileNames.LOCATIONS.getPath()).mkdirs();
 
         System.out.println("attempting to write countries.");
-        for (Country country: Countries.getCountries().values()){
+        for (Country country:  GameModel.getCountries().values()){
             ObjectOutputStream oos1 = new ObjectOutputStream(new FileOutputStream(path + FileNames.COUNTRIES.getPath() + country.getName()));
             oos1.writeObject(country);
             oos1.flush();
@@ -137,7 +138,7 @@ public class MapEditor extends JFrame{
         System.out.println("countries written");
 
         System.out.println("attempting to write continents");
-        for (Continent continent : Continents.getContinents().values()){
+        for (Continent continent : GameModel.getContinents().values()){
             ObjectOutputStream oos1 = new ObjectOutputStream(new FileOutputStream(path + FileNames.CONTINENTS.getPath() + continent.getName()));
             oos1.writeObject(continent);
             oos1.flush();
@@ -169,7 +170,6 @@ public class MapEditor extends JFrame{
             }
         }
         System.out.println("polygons written");
-
     }
 
 
@@ -188,7 +188,7 @@ public class MapEditor extends JFrame{
         EditableCustomCountry cc = new EditableCustomCountry(polygon, name);
 
         Country country = new Country(name);
-        Countries.addCountry(name, country);
+        GameModel.addCountry(name, country);
 
         Insets insets = layeredPane.getInsets();
         cc.setBounds(insets.left, insets.top, polygon.getBounds().width + 30,  polygon.getBounds().height  + 30);

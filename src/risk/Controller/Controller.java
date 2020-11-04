@@ -1,79 +1,85 @@
 package risk.Controller;
 
-import risk.Command;
-import risk.CommandWord;
-import risk.Model.Continents;
-import risk.Model.Countries;
-import risk.Model.GameBoard;
-import risk.Parser;
-import risk.Players.Player;
+import risk.Enums.GameStatusEnum;
+import risk.Enums.NumPlayers;
+import risk.Model.GameModel;
+import risk.Model.Player;
 
 import java.util.*;
 
 public class Controller {
 
-    private final ArrayList<Player> players;
-
-    private GameBoard gameBoard;
-
-    private final Parser parser;
-
-    private int currentPlayerPosition = 0;
+    private static int currentPlayerNum = 0;
 
     private Random rand;
 
+    private static GameStatusEnum gameStatus;
 
+    //creates GUI
     public Controller() {
-        parser = new Parser();
+
+
+    }
+
+    public static GameStatusEnum getGameStatus(){
+        return gameStatus;
+    }
+
+    public static int getCurrentPlayerNum(){
+        return currentPlayerNum;
+    }
+
+    public static Player getCurrentPlayer(){
+        return GameModel.getPlayers().get(currentPlayerNum);
+    }
+
+
+
+    public void setupGame(int numPlayers){
         rand = new Random(System.currentTimeMillis());
+        gameStatus = GameStatusEnum.TROOP_PLACEMENT_PHASE;
 
-        gameBoard = new GameBoard(rand);
+        //int numPlayers = parser.getInt("How many GameModel.getPlayers() (2-6)?: ", 2, 6);
 
-        int numPlayers = parser.getInt("How many players (2-6)?: ", 2, 6);
-        players = new ArrayList<>(numPlayers);
-
-        // Create the players
+        // Create the GameModel.getPlayers()
         for (int i = 0; i < numPlayers; i++){
-            players.add(new Player("Player" + i));
+            GameModel.getPlayers().add(new Player("Player" + i));
         }
 
-        gameBoard.setupMap(players);
-
-
-    }
-
-    /**
-     * Returns a string that shows who owns which country
-     * @return country ownership string
-     */
-    public String mapString() {
-        StringBuilder sb = new StringBuilder();
-
-        for (Player p : players) {
-            sb.append(p.getName()).append("'s countries:\n").append(p.getCountriesAsStringWithArmies()).append('\n');
-        }
-
-        return sb.toString();
+        autoSetupMap(NumPlayers.SIX_PLAYERS);
+        currentPlayerNum = 0;
     }
 
 
-    /**
-     * just requests commands from user and then executes them in processCommand
-     */
-    public void playGame(){
-        Player currentPlayer = players.get(currentPlayerPosition);
-        startOfTurn(currentPlayer);
 
-        while (true) {
-            Command command = parser.getCommand();
-            boolean finishedTurn = processCommand(command);
-            if (finishedTurn) {
-                //finishedTurn is only true if player has called PASS
-                currentPlayer = getNextPlayer();
-                startOfTurn(currentPlayer);
+
+    public void autoSetupMap(NumPlayers numPlayers){
+        int initArmies = numPlayers.getInitialArmySize();
+
+        //Random allocation of countries to each player
+        ArrayList<String> tempCountryNames = new ArrayList<String>(GameModel.getCountryNames());
+        while (!tempCountryNames.isEmpty()){
+            String countryName = tempCountryNames.remove(rand.nextInt(tempCountryNames.size()));
+            GameModel.getCountry(countryName).setPlayer(currentPlayerNum);
+
+            Controller.currentPlayerNum = (Controller.currentPlayerNum + 1) % GameModel.getPlayers().size();
+        }
+
+        // Choose how many armies are on each country.
+        // Does this by randomly choosing a country and assigning 1
+        // more army, until the player has no more armies left.
+        for (Player player : GameModel.getPlayers()) {
+            ArrayList<String> countriesOwned = player.getCountries();
+            int currentArmies = initArmies - countriesOwned.size();
+
+            while (currentArmies > 0) {
+                GameModel.getCountry(countriesOwned.get(rand.nextInt(countriesOwned.size()))).addArmies(1);
+                currentArmies -= 1;
             }
         }
     }
+
+
 
     /**
      * Gets next player, checks if player has lost.
@@ -81,8 +87,8 @@ public class Controller {
      * @return next player
      */
     private Player getNextPlayer() {
-        currentPlayerPosition = (currentPlayerPosition + 1) % players.size();
-        Player nextPlayer = players.get(currentPlayerPosition);
+        currentPlayerNum = (currentPlayerNum + 1) % GameModel.getPlayers().size();
+        Player nextPlayer = GameModel.getPlayers().get(currentPlayerNum);
 
         // Check if player has lost, if they have then skip to next player.
         if (nextPlayer.hasLost()) {
@@ -105,11 +111,13 @@ public class Controller {
         System.out.println("You have " + numArmies + " to place.");
         while (numArmies > 0) {
             String countryName = "";
-            while (countryName.equals("") || !Countries.countryExists(countryName)){
-                countryName = parser.getInput("What country do you want to place your army on (list)?: ").toUpperCase();
+            while (countryName.equals("") || !GameModel.countryExists(countryName)){
+                countryName = "mhm"; //TODO
+                      //  parser.getInput("What country do you want to place your army on (list)?: ").toUpperCase();
             }
 
-            int n = parser.getInt("How many armies do you want to place here (0-" + numArmies + "): ", 0, numArmies);
+            int n = 3; //TODO
+            //parser.getInt("How many armies do you want to place here (0-" + numArmies + "): ", 0, numArmies);
             if (n >= 0 && n <= numArmies && player.addArmies(countryName, n)) {
                 numArmies -= n;
             } else {
@@ -121,67 +129,12 @@ public class Controller {
         System.out.println(player.getCountriesAsStringWithArmies());
     }
 
-    /**
-     * processes the commands.
-     * @param command to be executed
-     * @return true if player has passed, false otherwise
-     */
-    public boolean processCommand(Command command){
-        CommandWord commandWord = command.getCommandWord();
-        boolean finishedTurn = false;
-        switch(commandWord){
-            case HELP:
-                printHelp();
-                break;
-            case ATTACK:
-                attack(command);
-                break;
-//            case MOVE:        Not needed for this milestone.
-//                moveTroops(command);
-//                break;
-//            case END_MOVE:
-//                endMoveTroops(command);
-//                break;
-            case PASS:
-                finishedTurn = pass(command);
-                break;
-            case INFO:
-                printMapInfo();
-                break;
-            case UNKNOWN:
-            default:
-                System.out.println("I don't know what you mean...");
-                break;
-        }
-        return finishedTurn;
+    public static void placeTroops(){
+
+
     }
 
 
-    /**
-     * Prints all the commands a user can type
-     */
-    public void printHelp(){
-        System.out.println("\nThe commands you can enter are:\n" + Arrays.toString(CommandWord.values()));
-    }
-
-    /**
-     * Prints the current state of the map.
-     */
-    public void printMapInfo(){
-        StringBuilder sb = new StringBuilder();
-
-        // Print the info by continent to get a better strategic view.
-        for (String continentName : Continents.getContinentNames()) {
-            sb.append(continentName).append(":\n");
-
-            // Use the helper method of continents
-            Continents.getContinent(continentName).printContinentHelper(sb);
-
-            sb.append("\n");
-        }
-
-        System.out.println(sb.toString());
-    }
 
     /**
      * Uses info from command to determine which territory is attacking which territory with how many dice.
@@ -189,8 +142,8 @@ public class Controller {
      * restrictions : (for example (territory 1 has to be adjacent to territory 2))
      * after execution : (if reserve troops are 0, )
      */
-    public void attack(Command command){
-        AttackController attackController = new AttackController(players.get(currentPlayerPosition), parser, rand);
+    public void attack(){
+        AttackController attackController = new AttackController(currentPlayerNum, rand);
         // This method does all the attack and returns true if the defender loses game.
         boolean result = attackController.startAttackSequence();
 
@@ -198,7 +151,7 @@ public class Controller {
         if (result) {
             // Check if the attacker is only one left
             int playersLeft = 0;
-            for (Player ignored : players) {
+            for (Player ignored : GameModel.getPlayers()) {
                 playersLeft++;
             }
 
@@ -208,50 +161,33 @@ public class Controller {
         }
     }
 
-//    /**
-//     * Uses info from command to determine which territory is moving troops to which territory
-//     * info needed : territory 1 -> territory 2, troop count
-//     * restrictions : (for example ( territory 1 has to be connected to territory 2))
-//     */
-//    Not needed for this milestone, to be added by next one.
-//    public void moveTroops(Command command){
-//
-//    }
+    public void endAttack(){
 
-//    /**
-//     * ends the moving phase
-//     */
-//    public void endMoveTroops(Command command){
-//        gameStatus = GameStatusEnum.PLACING;
-//    }
 
+    }
     /**
-     * "Pass" was entered. Check the rest of the command to see
-     * whether we really want to pass turn.
-     * @return true, if this command passes the turn, false otherwise.
+        * Uses info from command to determine which territory is moving troops to which territory
+     * info needed : territory 1 -> territory 2, troop count
+    * restrictions : (for example ( territory 1 has to be connected to territory 2))
      */
-    private boolean pass(Command command)
-    {
-        if(command.hasSecondWord()) {
-            System.out.println("Pass what?");
-            return false;
-        } else {
-            return true;  // signal that we want to pass turn
-        }
+    public void moveTroops(){
+
+
     }
 
+    public void endTurn(){
+
+
+    }
+
+
+
     private void gameOver() {
-        System.out.println("The game is over, " + players.get(currentPlayerPosition).getName() + " won. Congrats!");
+        System.out.println("The game is over, " + GameModel.getPlayers().get(currentPlayerNum).getName() + " won. Congrats!");
         System.exit(0);
     }
 
-
     public static void main(String[] args) {
         Controller riskController = new Controller();
-
-        System.out.println("Countries: " + Countries.getCountryNames() + '\n');
-
-        System.out.println(riskController.mapString());
-        riskController.playGame();
     }
 }

@@ -1,7 +1,7 @@
-package risk.Players;
+package risk.Model;
 
 import risk.Model.Country;
-import risk.Model.Countries;
+import risk.Model.GameModel;
 
 import java.util.ArrayList;
 
@@ -35,7 +35,7 @@ public class Player {
     public String getCountriesAsStringWithArmies() {
         StringBuilder sb = new StringBuilder();
         for (String s : countriesOwned) {
-            sb.append(s).append(": ").append(Countries.getCountry(s).getArmies()).append('\n');
+            sb.append(s).append(": ").append(GameModel.getCountry(s).getArmies()).append('\n');
         }
         return sb.toString();
     }
@@ -59,7 +59,7 @@ public class Player {
     }
 
     public boolean addArmies(String countryName, int numArmies) {
-        Country country = Countries.getCountry(countryName);
+        Country country = GameModel.getCountry(countryName);
 
         if (country.getPlayer() != this)
             return false;

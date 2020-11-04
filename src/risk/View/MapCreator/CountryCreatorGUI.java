@@ -1,22 +1,22 @@
-package risk.MapCreator;
+package risk.View.MapCreator;
 
 import risk.Enums.CountryDrawingEnum;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class CountryCreator extends JFrame {
+public class CountryCreatorGUI extends JFrame {
     public static void main(String args[]){
-        new CountryCreator(null);
+        new CountryCreatorGUI(null);
     }
 
     CountryDrawingEnum drawingStatus;
     JLabel drawingStatusLabel;
     CountryDrawPad drawingPad;
 
-    MapEditor mapEditor;
+    MapEditorGUI mapEditor;
 
-    public CountryCreator(MapEditor mapEditor){
+    public CountryCreatorGUI(MapEditorGUI mapEditor){
         this.mapEditor = mapEditor;
 
         /* Use an appropriate Look and Feel */
