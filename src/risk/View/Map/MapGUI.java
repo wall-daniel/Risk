@@ -24,7 +24,7 @@ public class MapGUI extends JFrame {
         setPreferredSize(Toolkit.getDefaultToolkit().getScreenSize());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
-        setTitle("Risk");
+        setTitle("Game of Risk");
         pack();
         setVisible(true);
     }

@@ -1,6 +1,12 @@
 package risk.View.MapCreator;
 
 
+import risk.Enums.MapColor;
+import risk.Enums.PlayerColor;
+import risk.Listener.Events.ContinentEvent;
+import risk.Listener.Events.OneCountryEvent;
+import risk.Listener.Listeners.GameModelListener;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -8,7 +14,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 
-public class EditableCustomCountry extends JPanel implements MouseListener, MouseMotionListener {
+public class EditableCustomCountry extends JPanel implements MouseListener, MouseMotionListener, GameModelListener {
 
     private volatile int screenX = 0;
     private volatile int screenY = 0;
@@ -18,24 +24,46 @@ public class EditableCustomCountry extends JPanel implements MouseListener, Mous
     private boolean pressed = false;;
 
     Polygon countryPolygon;
-    //TODO clicking on tranparent section to drag panel behind does nothing.
 
     MapEditorGUI mapEditorGUI;
 
-    public EditableCustomCountry(MapEditorGUI mapEditorGUI, Polygon countryPolygon, String name) {
+    DefaultListModel<String> countries = new DefaultListModel<>();
+    DefaultListModel<String> continents = new DefaultListModel<>();
+
+    private Color color;
+
+
+    public EditableCustomCountry(MapEditorGUI mapEditorGUI, String name,  Polygon countryPolygon) {
         this.countryPolygon = countryPolygon;
         this.setName(name);
         this.mapEditorGUI = mapEditorGUI;
+        this.color = PlayerColor.PLAYER_1_COLOR.getRandomPlayerColor();
+        setOpaque(false);
         addMouseMotionListener(this);
+        addMouseListener(this);
     }
 
-    /*
     @Override
-    public void setUpCountryLabel(){
-        this.countryLabel = new MoveableCountryLabel(getName());
-        this.add(countryLabel);
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Graphics2D graphics2D = (Graphics2D) g.create();
+
+        //draw border polygon
+        graphics2D.setColor(MapColor.BORDER_COLOR.getColor());
+        graphics2D.setStroke(new BasicStroke(10));
+        graphics2D.drawPolygon(countryPolygon);
+
+        //fill polygon
+        graphics2D.setColor(color);
+        graphics2D.fillPolygon(countryPolygon);
+
+        //draw name
+        graphics2D.setColor(MapColor.TEXT_COLOR.getColor());
+        graphics2D.setFont(new Font("TimesRoman", Font.BOLD, 25));
+        int midX = countryPolygon.getBounds().width/2;
+        int midY = countryPolygon.getBounds().height/2;
+        graphics2D.drawString(this.getName(), midX, midY);
     }
-    */
 
     public Polygon getCountryPolygon(){
         return countryPolygon;
@@ -121,18 +149,20 @@ public class EditableCustomCountry extends JPanel implements MouseListener, Mous
 
         JTextField countryNameTextField = new JTextField(countryName);
 
-
-
-
-        JList<String> neighboursJList = new JList<>(GameModel.getCountryNamesDefaultListModel(countryName));
+        JList<String> neighboursJList = new JList<>(countries);
         neighboursJList.setSelectionMode(DefaultListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+
+        /*
         if (GameModel.countryExists(countryName))
             neighboursJList.setSelectedIndices(GameModel.getCountry(countryName).getNeighbours());
+         */
 
-        JList<String> continentJList = new JList<>(GameModel.getContinentNamesDefaultListModel());
+        JList<String> continentJList = new JList<>(continents);
         continentJList.setSelectionMode(DefaultListSelectionModel.SINGLE_SELECTION);
+        /*
         if (GameModel.countryExists(countryName))
             continentJList.setSelectedValue(GameModel.getCountry(countryName).getContinentName(), true);
+        */
 
         countryInfoPanel.add(countryNameLabel);
         countryInfoPanel.add(neighboursLabel);
@@ -148,8 +178,8 @@ public class EditableCustomCountry extends JPanel implements MouseListener, Mous
         ArrayList<String> neighbourNames = neighboursJList.isSelectionEmpty() ? new ArrayList<>() : (ArrayList<String>) neighboursJList.getSelectedValuesList();
         String continentName = continentJList.getSelectedValue();
 
-
-        GameModel.editCountry(name, neighbourNames, continentName);
+        //TODO controller must edit country
+        mapEditorGUI.editCountry(name, neighbourNames, continentName);
     }
 
 
@@ -172,5 +202,17 @@ public class EditableCustomCountry extends JPanel implements MouseListener, Mous
     public void mouseMoved(MouseEvent e) {
 
     }
+
+    @Override
+    public void onNewCountry(OneCountryEvent oce) {
+        if (!oce.getFirstCountry().getName().equals(getName()))
+            countries.addElement(oce.getFirstCountry().getName());
+    }
+
+    @Override
+    public void onNewContinent(ContinentEvent cce) {
+
+    }
+
 
 }

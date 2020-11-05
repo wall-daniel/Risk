@@ -1,4 +1,4 @@
-package risk.Listener;
+package risk.Listener.Events;
 
 import risk.Model.Country;
 

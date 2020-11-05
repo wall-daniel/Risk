@@ -2,12 +2,10 @@ package risk.View.Map;
 
 import risk.Controller.Controller;
 import risk.Enums.MapColor;
-import risk.Enums.PlayerColor;
-import risk.Listener.GameModelListener;
-import risk.Listener.OneCountryEvent;
-import risk.Listener.TwoCountryEvent;
+import risk.Listener.Listeners.GameActionListener;
+import risk.Listener.Events.OneCountryEvent;
+import risk.Listener.Events.TwoCountryEvent;
 import risk.Model.Country;
-import risk.Players.Player;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,16 +13,23 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.HashMap;
 
-public class Map extends JLayeredPane implements GameModelListener, MouseListener {
+public class Map extends JLayeredPane implements GameActionListener, MouseListener {
     Controller controller;
 
     HashMap<String, Polygon> polygonList = new HashMap<>();
 
     OneCountryEvent countryEvent = null;
 
+    public static void main (String args[]){
+
+
+    }
+
+
     public Map(Controller controller){
         this.controller = controller;
         setLayout(null);
+        setBackground(MapColor.BACKGROUND_COLOR.getColor());
     }
 
     @Override
@@ -64,6 +69,7 @@ public class Map extends JLayeredPane implements GameModelListener, MouseListene
 
         //adding countryname and armycount
         g2d.setColor(MapColor.TEXT_COLOR.getColor());
+        g2d.setFont(new Font("TimesRoman", Font.BOLD, 25));
         g2d.drawString(countryName + ": " + numArmies, x, y);
 
         /* //TODO will remove
@@ -80,10 +86,6 @@ public class Map extends JLayeredPane implements GameModelListener, MouseListene
     }
 
 
-    @Override
-    public void onNewCountry(OneCountryEvent oce) {
-
-    }
 
     @Override
     public void onPlaceTroops(OneCountryEvent oce) {
@@ -131,13 +133,6 @@ public class Map extends JLayeredPane implements GameModelListener, MouseListene
             }
         }
     }
-
-
-
-
-
-
-
 
 
     @Override

@@ -3,12 +3,16 @@ package risk.View.MapCreator;
 import risk.Controller.Controller;
 import risk.Enums.DrawingEnum;
 import risk.Enums.MapColor;
+import risk.Listener.Events.ContinentEvent;
+import risk.Listener.Listeners.GameModelListener;
+import risk.Listener.Events.OneCountryEvent;
 import risk.Model.*;
 
 import java.awt.*;
+import java.util.ArrayList;
 import javax.swing.*;
 
-public class MapEditorGUI extends JFrame{
+public class MapEditorGUI extends JFrame implements GameModelListener {
     JLabel status;
     JLayeredPane layeredPane;
     int countryCounter;
@@ -16,15 +20,16 @@ public class MapEditorGUI extends JFrame{
     Controller controller;
     String mapName;
 
+    public static void main(String args[]){
+        new MapEditorGUI(null);
+    }
+
     public MapEditorGUI(Controller controller){
         countryCounter = 0;
         this.controller = controller;
-        javax.swing.SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                createAndShowGUI();
-            }
-        });
+        javax.swing.SwingUtilities.invokeLater(() -> createAndShowGUI());
     }
+
 
     public JLayeredPane getLayeredPane(){
         return layeredPane;
@@ -60,14 +65,12 @@ public class MapEditorGUI extends JFrame{
         });
 
         addContinent.addActionListener(e -> {
-            String continentName = JOptionPane.showInputDialog("Enter Continent Name");
-            Continent continent = new Continent(continentName);
-            Continents.addContinent(continentName, continent);
+            addNewContinent();
+
         });
 
         saveMap.addActionListener(e -> {
-            //TODO have the controller save the map given mapName
-            //controller.saveMap(mapName);
+            saveMap();
         });
 
         menu.add(addCountry);
@@ -79,10 +82,25 @@ public class MapEditorGUI extends JFrame{
         setJMenuBar(bar);
     }
 
+    private void addNewContinent() {
+        String continentName = JOptionPane.showInputDialog("Enter Continent Name");
+        int continentBonus = Integer.parseInt(JOptionPane.showInputDialog("Enter Continent Bonus"));
+        controller.createNewContinent(continentName, continentBonus);
+        System.out.println("controller must add new continent");
+    }
+
+
     private void loadMap(){
 
 
     }
+
+    private void saveMap() {
+        //TODO have the controller save the map
+        controller.saveMap();
+    }
+
+
 
     public void addComponentToPane(Container pane)  {
         layeredPane = new JLayeredPane();
@@ -94,17 +112,34 @@ public class MapEditorGUI extends JFrame{
         pane.add(layeredPane, BorderLayout.CENTER);
     }
 
-    //Saves images
-    public void addNewCountry(Polygon image, String name){ //we need to save image as polygon instead
-        //EditableCustomCountry cc = new EditableCustomCountry(image, name);
-        Country country = new Country(name);
-        Countries.addCountry(name, country);
 
+    public void editCountry(String name, ArrayList<String> neighbourNames, String continentName) {
+        controller.editCountry(name, neighbourNames, continentName);
+        System.out.println("controller must edit country: " + name);
+    }
+
+    public void addNewCountry(String name, Polygon polygon){
+        controller.createNewCountry(name, polygon);
+        System.out.println("controller must add new country");
+    }
+
+    @Override
+    public void onNewCountry(OneCountryEvent oce) {
+        EditableCustomCountry cc = new EditableCustomCountry(this, oce.getFirstCountry().getName(), oce.getFirstCountry().getPolygon());
         Insets insets = layeredPane.getInsets();
-        //cc.setBounds(insets.left, insets.top, image.getWidth(), image.getHeight());
-        //cc.setBorder(BorderFactory.createLineBorder(Color.black));
+        cc.setBounds(insets.left, insets.top, cc.getCountryPolygon().getBounds().width + 30, cc.getCountryPolygon().getBounds().height + 30);
 
-        //layeredPane.add(image, Integer.valueOf(countryCounter));
+        cc.setBorder(BorderFactory.createLineBorder(Color.black)); //TODO will remove
+
+        layeredPane.add(cc, Integer.valueOf(countryCounter));
         countryCounter++;
+    }
+
+    @Override
+    public void onNewContinent(ContinentEvent cce) {
+
+
+
+
     }
 }

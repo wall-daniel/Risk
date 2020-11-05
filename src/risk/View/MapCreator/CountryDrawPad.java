@@ -17,6 +17,8 @@ public class CountryDrawPad extends JPanel implements MouseListener {
 
     private int oldX = -1, oldY = -1, startX, startY;
 
+
+
     public CountryDrawPad(){
         polygon = new Polygon();
         setDoubleBuffered(true);

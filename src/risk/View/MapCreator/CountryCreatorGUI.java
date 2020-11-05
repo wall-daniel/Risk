@@ -76,7 +76,7 @@ public class CountryCreatorGUI extends JFrame {
 
         finish.addActionListener(e -> {
             String countryName = JOptionPane.showInputDialog("Enter Country Name");
-            mapEditorGUI.addNewCountry(drawingPad.getPolygon(), countryName);
+            mapEditorGUI.addNewCountry(countryName, drawingPad.getPolygon());
             this.dispose();
         });
 
