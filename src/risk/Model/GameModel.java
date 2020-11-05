@@ -104,4 +104,12 @@ public class GameModel {
         fileWriter.flush();
         fileWriter.close();
     }
+
+    public List<Continent> getContinents() {
+        return continents;
+    }
+
+    public List<Country> getCountries() {
+        return countries;
+    }
 }

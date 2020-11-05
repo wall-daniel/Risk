@@ -46,4 +46,15 @@ public class Controller {
             e.printStackTrace();
         }
     }
+
+    public List<Continent> getContinents() {
+        return gameModel.getContinents();
+    }
+
+    public List<Country> getCountryForNeighbours(Country country) {
+        // Need to clone this, otherwise will have direct access to the list and would remove countries.
+        List<Country> countries = gameModel.getCountries().clone();
+        countries.remove(country);
+        return countries;
+    }
 }
