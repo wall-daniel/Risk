@@ -1,7 +1,10 @@
 package risk.View.Map;
 
 import risk.Controller.Controller;
+import risk.Enums.DrawingEnum;
 import risk.Enums.MapColor;
+import risk.View.Main.MainGUI;
+import risk.View.MapCreator.CountryCreatorGUI;
 
 import javax.swing.*;
 import java.awt.*;
@@ -25,12 +28,33 @@ public class MapGUI extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
         setTitle("Game of Risk");
+
         pack();
         setVisible(true);
     }
 
     public void addComponentToPane(Container pane)  {
+        addJMenuBar();
         pane.add(map);
+    }
+
+    private void addJMenuBar() {
+        JMenuBar bar = new JMenuBar();
+        JMenu menu = new JMenu("Options");
+
+        JMenuItem quit = new JMenuItem("Quit");
+
+        quit.addActionListener(e -> {
+           new MainGUI();
+           this.dispose();
+        });
+
+        menu.add(quit);
+
+
+        bar.add(menu);
+
+        setJMenuBar(bar);
     }
 
 
