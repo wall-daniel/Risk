@@ -10,6 +10,8 @@ import risk.Players.Player;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -92,9 +94,14 @@ public class GameModel {
         gameModelListeners.forEach(it -> it.onNewContinent(new ContinentEvent(this, continent)));
     }
 
-    public void saveMap(String filename) {
-        JsonArray continents = new JsonArray();
+    public void saveMap(String filename) throws IOException {
+        JsonArray json = new JsonArray();
 
-//        this.continents.forEach(continent -> continents.add(continent.toJson()));
+        this.continents.forEach(continent -> json.add(continent.toJson()));
+
+        FileWriter fileWriter = new FileWriter(filename);
+        fileWriter.write(json.toString());
+        fileWriter.flush();
+        fileWriter.close();
     }
 }

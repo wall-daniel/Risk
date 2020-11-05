@@ -40,6 +40,10 @@ public class Controller {
     }
 
     public void saveMap() {
-        gameModel.saveMap("map.txt");
+        try {
+            gameModel.saveMap("map.txt");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

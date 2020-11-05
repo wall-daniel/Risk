@@ -16,10 +16,14 @@ public class Continent {
     public Continent(String name, int bonus) {
         this.name = name;
         this.bonus = bonus;
+
+        this.countries = new ArrayList<>();
     }
+
     public Continent(JsonObject json) {
         // Get name
         this.name = json.get("name").getAsString();
+        this.bonus = json.get("bonus").getAsInt();
 
         // Get countries
         this.countries = new ArrayList<>();
@@ -36,5 +40,20 @@ public class Continent {
 
     public List<Country> getCountries() {
         return this.countries;
+    }
+
+    public JsonObject toJson() {
+        JsonObject json = new JsonObject();
+
+        // Set continent values
+        json.addProperty("name", name);
+        json.addProperty("bonus", bonus);
+
+        // Add the countries
+        JsonArray countryArr = new JsonArray();
+        countries.forEach(it -> countryArr.add(it.toJson()));
+        json.add("countries", countryArr);
+
+        return json;
     }
 }
