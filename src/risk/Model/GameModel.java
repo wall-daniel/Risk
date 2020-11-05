@@ -1,31 +1,58 @@
 package risk.Model;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonParser;
+import risk.Listener.Events.ContinentEvent;
+import risk.Listener.Events.OneCountryEvent;
+import risk.Listener.Listeners.GameActionListener;
 import risk.Listener.Listeners.GameModelListener;
 import risk.Players.Player;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class GameModel {
 
     private List<Player> players;
-    private Map<String, Continent> continents;
+    private List<Continent> continents;
     private List<Country> countries;
-    private List<GameModelListener> listeners;
+    private List<GameActionListener> gameActionListeners;
+    private List<GameModelListener> gameModelListeners;
 
     private int currentPlayer = 0;
     private boolean isGameOver = false;
 
-    public GameModel(JsonArray json) {
-        players = new ArrayList<>();
-        continents = new HashMap<>();
+    /**
+     * Used for the editor
+     */
+    public GameModel() {
+        continents = new ArrayList<>();
         countries = new ArrayList<>();
-        listeners = new ArrayList<>();
+        gameActionListeners = new ArrayList<>();
+        gameModelListeners = new ArrayList<>();
+    }
 
-        loadMap(json);
+    /**
+     * Used for the game.
+     *
+     * @param numPlayers
+     * @throws FileNotFoundException
+     */
+    public GameModel(int numPlayers) throws FileNotFoundException {
+        players = new ArrayList<>(numPlayers);
+        continents = new ArrayList<>();
+        countries = new ArrayList<>();
+        gameActionListeners = new ArrayList<>();
+
+        // Add the players
+        for (int i = 0; i < numPlayers; i++) {
+            players.add(new Player("Player " + i));
+        }
+
+        // Load the map
+        loadMap(JsonParser.parseReader(new FileReader("map.txt")).getAsJsonArray());
     }
 
     /**
@@ -38,12 +65,36 @@ public class GameModel {
             Continent continent = new Continent(json.get(i).getAsJsonObject());
 
             // Add the continent and all the countries
-            continents.put(continent.getName(), continent);
+            continents.add(continent);
             countries.addAll(continent.getCountries());
         }
     }
 
-    public void addListener(GameModelListener listener) {
-        listeners.add(listener);
+    public void addActionListener(GameActionListener listener) {
+        gameActionListeners.add(listener);
+    }
+
+    public void addGameModelListener(GameModelListener listener) {
+        gameModelListeners.add(listener);
+    }
+
+    public void updateGame() {
+//        listeners.forEach(it -> it.);
+    }
+
+    public void addCountry(Country country) {
+        this.countries.add(country);
+        gameModelListeners.forEach(it -> it.onNewCountry(new OneCountryEvent(this, country)));
+    }
+
+    public void addContinent(Continent continent) {
+        this.continents.add(continent);
+        gameModelListeners.forEach(it -> it.onNewContinent(new ContinentEvent(this, continent)));
+    }
+
+    public void saveMap(String filename) {
+        JsonArray continents = new JsonArray();
+
+//        this.continents.forEach(continent -> continents.add(continent.toJson()));
     }
 }

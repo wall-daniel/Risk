@@ -10,10 +10,12 @@ import java.util.List;
 public class Continent {
 
     private String name;
+    private int bonus = 0;
     private List<Country> countries;
 
-    public Continent(String name) {
+    public Continent(String name, int bonus) {
         this.name = name;
+        this.bonus = bonus;
     }
     public Continent(JsonObject json) {
         // Get name

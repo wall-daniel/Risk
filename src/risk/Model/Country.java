@@ -18,8 +18,9 @@ public class Country {
 
     private Polygon polygon;
 
-    public Country(String name) {
+    public Country(String name, Polygon polygon) {
         this.name = name;
+        this.polygon = polygon;
         neighbourNames = new ArrayList<>();
     }
 

@@ -22,6 +22,7 @@ public class Map extends JPanel implements GameActionListener, MouseListener {
 
     public Map(Controller controller){
         this.controller = controller;
+
         setLayout(null);
         setBackground(MapColor.BACKGROUND_COLOR.getColor());
     }
