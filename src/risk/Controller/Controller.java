@@ -2,11 +2,14 @@ package risk.Controller;
 
 import risk.Command;
 import risk.CommandWord;
+import risk.Listener.Listeners.GameActionListener;
+import risk.Listener.Listeners.GameModelListener;
 import risk.Model.Continents;
 import risk.Model.Countries;
 import risk.Model.GameBoard;
 import risk.Parser;
 import risk.Players.Player;
+import risk.View.Map.Map;
 
 import java.awt.*;
 import java.util.*;
@@ -277,4 +280,25 @@ public class Controller {
     public void saveMap() {
 
     }
+
+    public void addAsGameActionListener(GameActionListener gameActionListener) {
+
+
+    }
+
+    public void addAsGameModelListener(GameModelListener gameModelListener) {
+
+
+    }
+
+    public void removeAsGameActionListener(GameActionListener gameActionListener) {
+
+
+    }
+
+    public void removeAsGameModelListener(GameModelListener gameModelListener) {
+
+
+    }
+
 }

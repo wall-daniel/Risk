@@ -29,6 +29,7 @@ public class MapEditorGUI extends JFrame implements GameModelListener {
         countryCounter = 0;
         this.controller = controller;
         javax.swing.SwingUtilities.invokeLater(() -> createAndShowGUI());
+        this.controller.addAsGameModelListener(this);
     }
 
 
@@ -77,6 +78,7 @@ public class MapEditorGUI extends JFrame implements GameModelListener {
 
 
         quit.addActionListener(e -> {
+            controller.removeAsGameModelListener(this);
             new MainGUI();
             this.dispose();
         });
