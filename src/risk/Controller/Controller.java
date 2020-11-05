@@ -7,6 +7,7 @@ import risk.Model.Countries;
 import risk.Parser;
 import risk.Players.Player;
 
+import java.awt.*;
 import java.util.*;
 
 public class Controller {
@@ -21,16 +22,22 @@ public class Controller {
 
 
     public Controller() {
+
         parser = new Parser();
+        players = new ArrayList<>();
+          /*
         rand = new Random(System.currentTimeMillis());
 
         int numPlayers = parser.getInt("How many players (2-6)?: ", 2, 6);
-        players = new ArrayList<>(numPlayers);
+
 
         // Create the players
         for (int i = 0; i < numPlayers; i++){
             players.add(new Player("Player" + i));
         }
+
+        gameBoard.setupMap(players);
+        */
     }
 
 
@@ -167,7 +174,7 @@ public class Controller {
             sb.append(continentName).append(":\n");
 
             // Use the helper method of continents
-            Continents.getContinent(continentName).printContinentHelper(sb);
+//            Continents.getContinent(continentName).printContinentHelper(sb);
 
             sb.append("\n");
         }
@@ -245,5 +252,23 @@ public class Controller {
 
         System.out.println(riskController.mapString());
         riskController.playGame();
+    }
+
+    public void editCountry(String name, ArrayList<String> neighbourNames, String continentName) {
+
+    }
+
+
+    public void createNewCountry(String name, Polygon polygon) {
+
+
+    }
+
+
+    public void createNewContinent(String continentName, int continentBonus) {
+    }
+
+    public void saveMap() {
+
     }
 }

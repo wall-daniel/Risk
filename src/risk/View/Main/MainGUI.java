@@ -6,6 +6,7 @@ import risk.View.Map.MapGUI;
 import risk.View.MapCreator.MapEditorGUI;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
 public class MainGUI extends JFrame {
@@ -14,29 +15,16 @@ public class MainGUI extends JFrame {
         new MainGUI();
     }
 
-    /*
-     - new game
-        - select each player (upto 6) to be ai/random player or human
-        - select map
-     - load game
-        - select save
-
-     - create new map
-     - load map editor
-        - select map
-     */
-
     Controller controller;
-
 
     public MainGUI(){
         controller = new Controller();
+
         javax.swing.SwingUtilities.invokeLater(() -> createAndShowGUI());
     }
 
     private void createAndShowGUI() {
         addComponentToPane(getContentPane());
-
         getContentPane().setBackground(MapColor.BACKGROUND_COLOR.getColor());
 //        setPreferredSize(Toolkit.getDefaultToolkit().getScreenSize());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -47,6 +35,10 @@ public class MainGUI extends JFrame {
     }
 
     public void addComponentToPane(Container pane)  {
+
+        JPanel p = new JPanel(new GridLayout(4, 1));
+        p.setBorder(new EmptyBorder(100, 100, 100, 100));
+
         JButton newGame = new JButton("New Game");
         JButton loadGame = new JButton("Load Game");
         JButton createMap = new JButton("Create New Map");
@@ -69,10 +61,13 @@ public class MainGUI extends JFrame {
             loadMapOptions();
         });
 
-        pane.add(newGame);
-        pane.add(loadGame);
-        pane.add(createMap);
-        pane.add(editMap);
+
+        p.add(newGame);
+        p.add(loadGame);
+        p.add(createMap);
+        p.add(editMap);
+
+        pane.add(p, BorderLayout.CENTER);
     }
 
     /**

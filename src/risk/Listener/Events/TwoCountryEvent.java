@@ -1,8 +1,6 @@
-package risk.Listener;
+package risk.Listener.Events;
 
 import risk.Model.Country;
-
-import java.util.EventObject;
 
 public class TwoCountryEvent extends OneCountryEvent {
     private Country country2;

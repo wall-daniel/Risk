@@ -1,7 +1,7 @@
 package risk.Model;
 
 import com.google.gson.JsonArray;
-import risk.Listener.GameModelListener;
+import risk.Listener.Listeners.GameModelListener;
 import risk.Players.Player;
 
 import java.util.ArrayList;
