@@ -13,18 +13,12 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.HashMap;
 
-public class Map extends JLayeredPane implements GameActionListener, MouseListener {
+public class Map extends JPanel implements GameActionListener, MouseListener {
     Controller controller;
 
     HashMap<String, Polygon> polygonList = new HashMap<>();
 
     OneCountryEvent countryEvent = null;
-
-    public static void main (String args[]){
-
-
-    }
-
 
     public Map(Controller controller){
         this.controller = controller;

@@ -7,6 +7,7 @@ import risk.Listener.Events.ContinentEvent;
 import risk.Listener.Listeners.GameModelListener;
 import risk.Listener.Events.OneCountryEvent;
 import risk.Model.*;
+import risk.View.Main.MainGUI;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -36,7 +37,7 @@ public class MapEditorGUI extends JFrame implements GameModelListener {
     }
 
     private void createAndShowGUI() {
-        mapName = JOptionPane.showInputDialog("Enter Map Name");
+        mapName = JOptionPane.showInputDialog("Enter New Map Name");
 
         addComponentToPane(getContentPane());
 
@@ -58,6 +59,7 @@ public class MapEditorGUI extends JFrame implements GameModelListener {
         JMenuItem addCountry = new JMenuItem("Add Country");
         JMenuItem addContinent = new JMenuItem("Add Continent");
         JMenuItem saveMap = new JMenuItem("Save Map");
+        JMenuItem quit = new JMenuItem("Quit");
 
         addCountry.addActionListener(e -> {
             new CountryCreatorGUI(this);
@@ -73,9 +75,16 @@ public class MapEditorGUI extends JFrame implements GameModelListener {
             saveMap();
         });
 
+
+        quit.addActionListener(e -> {
+            new MainGUI();
+            this.dispose();
+        });
+
         menu.add(addCountry);
         menu.add(addContinent);
         menu.add(saveMap);
+        menu.add(quit);
 
         bar.add(menu);
 

@@ -25,13 +25,16 @@ public class Controller {
 
 
     public Controller() {
+
         parser = new Parser();
+        players = new ArrayList<>();
+          /*
         rand = new Random(System.currentTimeMillis());
 
         gameBoard = new GameBoard(rand);
 
         int numPlayers = parser.getInt("How many players (2-6)?: ", 2, 6);
-        players = new ArrayList<>(numPlayers);
+
 
         // Create the players
         for (int i = 0; i < numPlayers; i++){
@@ -39,7 +42,7 @@ public class Controller {
         }
 
         gameBoard.setupMap(players);
-
+*/
 
     }
 
