@@ -1,47 +1,24 @@
-package risk.MapCreator;
+package risk.View.MapCreator;
 
 import risk.Enums.CountryDrawingEnum;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class CountryCreator extends JFrame {
-    public static void main(String args[]){
-        new CountryCreator(null);
-    }
+public class CountryCreatorGUI extends JFrame {
 
     CountryDrawingEnum drawingStatus;
     JLabel drawingStatusLabel;
     CountryDrawPad drawingPad;
 
-    MapEditor mapEditor;
+    MapEditorGUI mapEditorGUI;
 
-    public CountryCreator(MapEditor mapEditor){
-        this.mapEditor = mapEditor;
+    //TODO add menu items to set border_detail and border_deviation of countrydrawpad
 
-        /* Use an appropriate Look and Feel */
-        try {
-            // UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-            UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
-        } catch (UnsupportedLookAndFeelException ex) {
-            ex.printStackTrace();
-        } catch (IllegalAccessException ex) {
-            ex.printStackTrace();
-        } catch (InstantiationException ex) {
-            ex.printStackTrace();
-        } catch (ClassNotFoundException ex) {
-            ex.printStackTrace();
-        }
-        /* Turn off metal's use of bold fonts */
-        UIManager.put("swing.boldMetal", Boolean.FALSE);
+    public CountryCreatorGUI(MapEditorGUI mapEditorGUI){
+        this.mapEditorGUI = mapEditorGUI;
 
-        // Schedule a job for the event patch thread:
-        // creating and showing this application's GUI.
-        javax.swing.SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                createAndShowGUI();
-            }
-        });
+        javax.swing.SwingUtilities.invokeLater(() -> createAndShowGUI());
     }
 
     private void createAndShowGUI() {
@@ -77,8 +54,7 @@ public class CountryCreator extends JFrame {
         JMenuItem clear = new JMenuItem("Clear");
         JMenuItem closeShape = new JMenuItem("Close Shape");
         JMenuItem newShape = new JMenuItem("New Shape");
-        JMenuItem fill = new JMenuItem("Fill");
-        JMenuItem finish = new JMenuItem("End");
+        JMenuItem finish = new JMenuItem("Finish");
 
         clear.addActionListener(e -> {
             drawingPad.clear();
@@ -97,15 +73,10 @@ public class CountryCreator extends JFrame {
             setDrawingStatus(CountryDrawingEnum.FIRST_POINT);
         });
 
-        fill.addActionListener(e -> {
-            drawingPad.fill();
-            setDrawingStatus(CountryDrawingEnum.FILL);
-        });
-
 
         finish.addActionListener(e -> {
             String countryName = JOptionPane.showInputDialog("Enter Country Name");
-            mapEditor.addNewCountry(drawingPad.imgToPolygon(), countryName);
+            mapEditorGUI.addNewCountry(countryName, drawingPad.getPolygon());
             this.dispose();
         });
 
@@ -113,9 +84,7 @@ public class CountryCreator extends JFrame {
         menu.add(clear);
         menu.add(closeShape);
         menu.add(newShape);
-        menu.add(fill);
         menu.add(finish);
-
 
         bar.add(menu);
 

@@ -16,22 +16,24 @@ public class GameBoard {
     public static int NUM_ARMIES_6_PLAYERS = 20;
 
 
-    private Map<ContinentEnum, Continent> continents;
-    private Map<CountryEnum, Country> countries;
+   // private Map<ContinentEnum, Continent> continents;
+   // private Map<CountryEnum, Country> countries;
 
     private Random rand;
 
     public GameBoard(Random rand){
         this.rand = rand;
-        countries = new HashMap<>(NUM_COUNTRIES);
-        continents = new HashMap<>(NUM_CONTINENTS);
+       // countries = new HashMap<>(NUM_COUNTRIES);
+       // continents = new HashMap<>(NUM_CONTINENTS);
         rand = new Random(System.currentTimeMillis());
 
         // Create the map
+        /*
         for (CountryEnum countryEnum : CountryEnum.values())
             countries.put(countryEnum, new Country(countryEnum));
         for (ContinentEnum continentEnum : ContinentEnum.values())
             continents.put(continentEnum, new Continent(continentEnum));
+            */
     }
 
 

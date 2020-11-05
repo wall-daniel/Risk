@@ -8,6 +8,7 @@ import risk.Model.GameBoard;
 import risk.Parser;
 import risk.Players.Player;
 
+import java.awt.*;
 import java.util.*;
 
 public class Controller {
@@ -41,6 +42,7 @@ public class Controller {
 
 
     }
+
 
     /**
      * Returns a string that shows who owns which country
@@ -253,5 +255,23 @@ public class Controller {
 
         System.out.println(riskController.mapString());
         riskController.playGame();
+    }
+
+    public void editCountry(String name, ArrayList<String> neighbourNames, String continentName) {
+
+    }
+
+
+    public void createNewCountry(String name, Polygon polygon) {
+
+
+    }
+
+
+    public void createNewContinent(String continentName, int continentBonus) {
+    }
+
+    public void saveMap() {
+
     }
 }
