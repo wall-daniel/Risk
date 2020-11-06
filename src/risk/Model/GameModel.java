@@ -13,6 +13,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class GameModel {
@@ -47,6 +48,7 @@ public class GameModel {
         continents = new ArrayList<>();
         countries = new ArrayList<>();
         gameActionListeners = new ArrayList<>();
+        gameModelListeners = new ArrayList<>();
 
         // Add the players
         for (int i = 0; i < numPlayers; i++) {
@@ -55,6 +57,9 @@ public class GameModel {
 
         // Load the map
         loadMap(JsonParser.parseReader(new FileReader("map.txt")).getAsJsonArray());
+
+        // Setup the map with players
+        setupMap();
     }
 
     /**
@@ -72,6 +77,22 @@ public class GameModel {
         }
     }
 
+    private void setupMap() {
+        // Choose player that owns each country
+        // TODO make random
+        int currentPlayer = 0;
+        for (Country c : countries) {
+            c.setPlayer(players.get(0));
+            currentPlayer = (currentPlayer + 1) % players.size();
+            c.addArmies(1);
+        }
+
+        // TODO Setup the armies
+        for (Player p : players) {
+
+        }
+    }
+
     public void addActionListener(GameActionListener listener) {
         gameActionListeners.add(listener);
     }
@@ -81,7 +102,7 @@ public class GameModel {
     }
 
     public void updateGame() {
-//        listeners.forEach(it -> it.);
+        gameActionListeners.forEach(it -> it.updateMap(this));
     }
 
     public void addCountry(Country country) {
@@ -110,6 +131,13 @@ public class GameModel {
     }
 
     public List<Country> getCountries() {
-        return countries;
+        return new ArrayList<>(countries);
+    }
+
+    public void editCountry(Country country, ArrayList<String> names, Continent continent) {
+        country.setContinent(continent);
+        country.setNeighbourNames(names);
+
+        gameModelListeners.forEach(it -> it.onNewCountry(new OneCountryEvent(this, country)));
     }
 }

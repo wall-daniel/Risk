@@ -125,9 +125,8 @@ public class MapEditorGUI extends JFrame implements GameModelListener {
     }
 
 
-    public void editCountry(String name, ArrayList<String> neighbourNames, String continentName) {
-        controller.editCountry(name, neighbourNames, continentName);
-        System.out.println("controller must edit country: " + name);
+    public void editCountry(String countryName, ArrayList<Country> neighbourNames, Continent continent) {
+        controller.editCountry(countryName, neighbourNames, continent);
     }
 
     public void addNewCountry(String name, Polygon polygon){

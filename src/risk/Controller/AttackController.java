@@ -221,11 +221,11 @@ public class AttackController {
     public String getAttackableCountries() {
         StringBuilder sb = new StringBuilder();
 
-        for (String countryName : attackingCountry.getNeighbourNames()) {
-            if (Countries.getCountry(countryName).getPlayer() != attackingPlayer) {
-                sb.append(countryName).append(", ");
-            }
-        }
+//        for (String countryName : attackingCountry.getNeighbours()) {
+//            if (Countries.getCountry(countryName).getPlayer() != attackingPlayer) {
+//                sb.append(countryName).append(", ");
+//            }
+//        }
 
         return sb.toString();
     }

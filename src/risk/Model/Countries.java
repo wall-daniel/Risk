@@ -48,7 +48,7 @@ public class Countries {
         if (countries.containsKey(name)){
             Country c = countries.get(name);
             c.setContinent(continentName);
-            c.setNeighbours(neighbourNames);
+            c.setNeighbourNames(neighbourNames);
             countries.replace(name, c);
         } else {
             Country c  = new Country(name, neighbourNames, continentName);

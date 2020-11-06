@@ -1,13 +1,10 @@
 package risk.Controller;
 
-import risk.Command;
-import risk.CommandWord;
 import risk.Model.*;
-import risk.Parser;
-import risk.Players.Player;
 
 import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 public class Controller {
 
@@ -25,8 +22,17 @@ public class Controller {
         System.exit(0);
     }
 
-    public void editCountry(String name, ArrayList<String> neighbourNames, String continentName) {
+    public void editCountry(String countryName, ArrayList<Country> neighbours, Continent continent) {
+        // Get the neighbour names
+        ArrayList<String> names = new ArrayList<>();
+        neighbours.forEach(it -> names.add(it.getName()));
 
+        // Get the country and then edit it
+        for (Country c : gameModel.getCountries()) {
+            if (c.getName().equals(countryName)) {
+                gameModel.editCountry(c, names, continent);
+            }
+        }
     }
 
 
@@ -51,10 +57,11 @@ public class Controller {
         return gameModel.getContinents();
     }
 
-    public List<Country> getCountryForNeighbours(Country country) {
-        // Need to clone this, otherwise will have direct access to the list and would remove countries.
-        List<Country> countries = gameModel.getCountries().clone();
-        countries.remove(country);
-        return countries;
+    public List<Country> getCountriesForNeigbhours(String countryName) {
+        return gameModel.getCountries();
+    }
+
+    public void updateGame() {
+        gameModel.updateGame();
     }
 }

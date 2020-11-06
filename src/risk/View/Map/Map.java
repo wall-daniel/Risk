@@ -6,23 +6,27 @@ import risk.Listener.Listeners.GameActionListener;
 import risk.Listener.Events.OneCountryEvent;
 import risk.Listener.Events.TwoCountryEvent;
 import risk.Model.Country;
+import risk.Model.GameModel;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.HashMap;
+import java.util.List;
 
 public class Map extends JPanel implements GameActionListener, MouseListener {
     Controller controller;
 
     HashMap<String, Polygon> polygonList = new HashMap<>();
+    private List<Country> countries;
 
     OneCountryEvent countryEvent = null;
 
     public Map(Controller controller){
         this.controller = controller;
 
+        addMouseListener(this);
         setLayout(null);
         setBackground(MapColor.BACKGROUND_COLOR.getColor());
     }
@@ -30,24 +34,25 @@ public class Map extends JPanel implements GameActionListener, MouseListener {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        if (countryEvent!=null){
+
+        if (countries != null) {
             Graphics2D g2d = (Graphics2D) g.create();
 
-            Country country = countryEvent.getFirstCountry();
-            Polygon polygon = country.getPolygon();
+            for (Country country : countries) {
+                Polygon polygon = country.getPolygon();
+                int midX = (int) (polygon.getBounds().getWidth()/2 +  polygon.getBounds().getX());
+                int midY = (int) (polygon.getBounds().getHeight()/2 +  polygon.getBounds().getY());
 
-            int midX = (int) (polygon.getBounds().getWidth()/2 +  polygon.getBounds().getX());
-            int midY = (int) (polygon.getBounds().getHeight()/2 +  polygon.getBounds().getX());
+                drawPolygon(g2d, polygon, country.getPlayer().getPlayerColor().getColor(), country.getName(), midX, midY, country.getArmies()); //demeter? i dont even know her
+                if (countryEvent instanceof TwoCountryEvent) {
+                    country = ((TwoCountryEvent) countryEvent).getSecondCountry();
+                    polygon = country.getPolygon();
 
-            drawPolygon(g2d, polygon, country.getPlayer().getPlayerColor().getColor(), country.getName(), midX, midY, country.getArmies()); //demeter? i dont even know her
-            if (countryEvent instanceof TwoCountryEvent) {
-                country = ((TwoCountryEvent) countryEvent).getSecondCountry();
-                polygon = country.getPolygon();
+                    midX = (int) (polygon.getBounds().getWidth() / 2 + polygon.getBounds().getX());
+                    midY = (int) (polygon.getBounds().getHeight() / 2 + polygon.getBounds().getX());
 
-                midX = (int) (polygon.getBounds().getWidth() / 2 + polygon.getBounds().getX());
-                midY = (int) (polygon.getBounds().getHeight() / 2 + polygon.getBounds().getX());
-
-                drawPolygon(g2d, polygon, country.getPlayer().getPlayerColor().getColor(), country.getName(), midX, midY, country.getArmies());
+                    drawPolygon(g2d, polygon, country.getPlayer().getPlayerColor().getColor(), country.getName(), midX, midY, country.getArmies());
+                }
             }
         }
     }
@@ -81,6 +86,12 @@ public class Map extends JPanel implements GameActionListener, MouseListener {
     }
 
 
+    @Override
+    public void updateMap(GameModel gameModel) {
+        countries = gameModel.getCountries();
+//        gameModel.getCountries().forEach(country -> polygonList.put(country.getName(), country.getPolygon()));
+        repaint();
+    }
 
     @Override
     public void onPlaceTroops(OneCountryEvent oce) {

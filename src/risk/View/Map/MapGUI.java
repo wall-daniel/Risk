@@ -45,6 +45,8 @@ public class MapGUI extends JFrame {
 
         pack();
         setVisible(true);
+
+        controller.updateGame();
     }
 
     public void addComponentToPane(Container pane)  {
