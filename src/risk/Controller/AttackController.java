@@ -128,21 +128,26 @@ public class AttackController {
 
     public void setAttackingCountry(Country country) {
         if (gameModel.getCurrentPlayer() == country.getPlayer()) {
-            this.attackingCountry = country;
-            System.out.println("Attacking from " + country);
 
             // Get how many armies
             while (true) {
                 try {
-                    int armies = Integer.parseInt(
-                            JOptionPane.showInputDialog(
-                                    window,
-                                    "How many armies do you want to attack with?",
-                                    JOptionPane.INFORMATION_MESSAGE
-                            )
+                    String response = JOptionPane.showInputDialog(
+                            window,
+                            "How many armies do you want to attack with?",
+                            JOptionPane.INFORMATION_MESSAGE
                     );
 
+                    // If null then exited
+                    if (response == null) {
+                        return;
+                    }
+
+                    int armies = Integer.parseInt(response);
                     if (country.getArmies() > armies && armies > 0) {
+                        this.attackingCountry = country;
+                        System.out.println("Attacking from " + country);
+
                         attackingCountry.removeArmies(armies);
                         attackingArmies = armies;
                         gameModel.nextPhase();

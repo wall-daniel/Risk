@@ -162,6 +162,7 @@ public class GameModel {
     }
 
     public void nextTurn() {
+        getCurrentPlayer().endTurn();
         currentPlayer = (currentPlayer + 1) % players.size();
         System.out.println("Start of " + players.get(currentPlayer).getName() + " turn.");
         gameStatus = GameStatus.TROOP_PLACEMENT_PHASE;
@@ -174,7 +175,7 @@ public class GameModel {
     }
 
     public boolean donePlacingArmies() {
-        return players.get(currentPlayer).getPlaceableArmies() <= 0;
+        return getCurrentPlayer().getPlaceableArmies() <= 0;
     }
 
     public void nextPhase() {
