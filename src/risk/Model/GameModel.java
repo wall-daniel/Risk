@@ -193,8 +193,9 @@ public class GameModel {
             case SELECT_TROOP_MOVING_TO_PHASE:
                 nextTurn();
                 break;
-
         }
+
+        updateGame();
     }
 
     public void startEndTurn() {

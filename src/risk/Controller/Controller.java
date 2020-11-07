@@ -6,12 +6,14 @@ import risk.Listener.Listeners.GameModelListener;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.*;
 import java.util.List;
 
-public class Controller implements MouseListener {
+public class Controller implements MouseListener, ActionListener {
 
 
     private GameModel gameModel;
@@ -175,4 +177,29 @@ public class Controller implements MouseListener {
 
     }
 
+    @Override
+    public void actionPerformed(ActionEvent actionEvent) {
+        System.out.println("Clicked");
+        switch (gameModel.gameStatus) {
+            case TROOP_PLACEMENT_PHASE:
+                return;
+            case SELECT_ATTACKING_PHASE:
+                gameModel.startEndTurn();
+                break;
+            case SELECT_DEFENDING_PHASE:
+                attackController.resetController();
+                gameModel.nextPhase();
+                break;
+            case SELECT_TROOP_MOVING_FROM_PHASE:
+                gameModel.nextTurn();
+                break;
+            case SELECT_TROOP_MOVING_TO_PHASE:
+                gameModel.gameStatus = GameModel.GameStatus.SELECT_TROOP_MOVING_FROM_PHASE;
+                break;
+            case WAITING:
+                return;
+        }
+
+        gameModel.updateGame();
+    }
 }

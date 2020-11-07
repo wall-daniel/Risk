@@ -163,11 +163,7 @@ public class AttackController {
             // Attack country
             attack();
             resetController();
-            if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(window, "Do you want to go to army placement phase?", "End", JOptionPane.YES_NO_OPTION)) {
-                gameModel.startEndTurn();
-            } else {
-                gameModel.nextPhase();
-            }
+            gameModel.nextPhase();
         }
     }
 }
