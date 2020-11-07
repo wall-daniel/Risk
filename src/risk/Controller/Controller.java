@@ -1,15 +1,7 @@
 package risk.Controller;
 
-import risk.Command;
-import risk.CommandWord;
 import risk.Listener.Listeners.GameActionListener;
 import risk.Listener.Listeners.GameModelListener;
-import risk.Model.Continents;
-import risk.Model.Countries;
-
-import risk.Parser;
-import risk.Players.Player;
-import risk.View.Map.Map;
 
 import risk.Model.*;
 
@@ -18,7 +10,6 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.*;
-import java.util.List;
 
 public class Controller implements MouseListener {
 
@@ -26,12 +17,16 @@ public class Controller implements MouseListener {
     private JFrame gameView;
     private Random rand;
 
-
     public Controller(GameModel gameModel, JFrame view) {
         this.gameModel = gameModel;
         this.gameView = view;
         rand = new Random(System.currentTimeMillis());
     }
+
+    public GameModel getGameModel(){
+        return gameModel;
+    }
+
 
     private void gameOver() {
 //        System.out.println("The game is over, " + players.get(currentPlayerPosition).getName() + " won. Congrats!");
@@ -69,11 +64,15 @@ public class Controller implements MouseListener {
         }
     }
 
-    public List<Continent> getContinents() {
+    public ArrayList<Continent> getContinents() {
         return gameModel.getContinents();
     }
 
-    public List<Country> getCountriesForNeigbhours(String countryName) {
+    public ArrayList<Country> getCountriesForNeighbours(String countryName) {
+        return gameModel.getCountries();
+    }
+
+    public Iterable<Country> getCountriesForNeigbhours(String countryName) {
         return gameModel.getCountries();
     }
 
@@ -165,5 +164,7 @@ public class Controller implements MouseListener {
 
 
     }
+
+
 
 }

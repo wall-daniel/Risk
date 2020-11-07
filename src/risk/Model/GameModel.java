@@ -15,6 +15,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 public class GameModel {
@@ -22,8 +23,8 @@ public class GameModel {
     public enum GameStatus { TROOP_PLACEMENT_PHASE, SELECT_ATTACKING_PHASE, SELECT_DEFENDING_PHASE, SELECT_TROOP_MOVING_FROM_PHASE, SELECT_TROOP_MOVING_TO_PHASE, WAITING }
 
     private List<Player> players;
-    private List<Continent> continents;
-    private List<Country> countries;
+    private HashMap<String, Continent> continents;
+    private HashMap<String, Country> countries;
     private List<GameActionListener> gameActionListeners;
     private List<GameModelListener> gameModelListeners;
 
@@ -36,8 +37,8 @@ public class GameModel {
      * Used for the editor
      */
     public GameModel() {
-        continents = new ArrayList<>();
-        countries = new ArrayList<>();
+        continents = new HashMap<>();
+        countries = new HashMap<>();
         gameActionListeners = new ArrayList<>();
         gameModelListeners = new ArrayList<>();
     }
@@ -50,8 +51,8 @@ public class GameModel {
      */
     public GameModel(int numPlayers) throws FileNotFoundException {
         players = new ArrayList<>(numPlayers);
-        continents = new ArrayList<>();
-        countries = new ArrayList<>();
+        continents = new HashMap<>();
+        countries = new HashMap<>();
         gameActionListeners = new ArrayList<>();
         gameModelListeners = new ArrayList<>();
 
@@ -77,8 +78,10 @@ public class GameModel {
             Continent continent = new Continent(json.get(i).getAsJsonObject());
 
             // Add the continent and all the countries
-            continents.add(continent);
-            countries.addAll(continent.getCountries());
+            continents.put(continent.getName(), continent);
+
+            for (Country country : continent.getCountries())
+                countries.put(country.getName(), country);
         }
     }
 
@@ -86,7 +89,7 @@ public class GameModel {
         // Choose player that owns each country
         // TODO make random
         int currentPlayer = 0;
-        for (Country c : countries) {
+        for (Country c : countries.values()) {
             c.setPlayer(players.get(0));
             currentPlayer = (currentPlayer + 1) % players.size();
             c.addArmies(1);
@@ -97,6 +100,8 @@ public class GameModel {
 
         }
     }
+
+
 
     public void addActionListener(GameActionListener listener) {
         gameActionListeners.add(listener);
@@ -111,19 +116,23 @@ public class GameModel {
     }
 
     public void addCountry(Country country) {
-        this.countries.add(country);
+        this.countries.put(country.getName(), country);
         gameModelListeners.forEach(it -> it.onNewCountry(new OneCountryEvent(this, country)));
     }
 
+    public Country getCountry(String countryName){
+        return countries.get(countryName);
+    }
+
     public void addContinent(Continent continent) {
-        this.continents.add(continent);
+        this.continents.put(continent.getName(), continent);
         gameModelListeners.forEach(it -> it.onNewContinent(new ContinentEvent(this, continent)));
     }
 
     public void saveMap(String filename) throws IOException {
         JsonArray json = new JsonArray();
 
-        this.continents.forEach(continent -> json.add(continent.toJson()));
+        this.continents.values().forEach(continent -> json.add(continent.toJson()));
 
         FileWriter fileWriter = new FileWriter(filename);
         fileWriter.write(json.toString());
@@ -131,12 +140,16 @@ public class GameModel {
         fileWriter.close();
     }
 
-    public List<Continent> getContinents() {
-        return continents;
+    public int getCurrentPlayer(){
+        return currentPlayer;
     }
 
-    public List<Country> getCountries() {
-        return new ArrayList<>(countries);
+    public  ArrayList<Continent>getContinents() {
+        return new ArrayList<Continent>(continents.values());
+    }
+
+    public ArrayList<Country> getCountries() {
+        return new ArrayList<Country>(countries.values());
     }
 
     public void editCountry(Country country, ArrayList<String> names, Continent continent) {

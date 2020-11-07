@@ -13,7 +13,7 @@ public class Country {
     private int numArmies = 1;
     private Player controlledBy = null;
 
-    private ArrayList<String> neighbourNames;
+    private ArrayList<String> neighbours;
     private Continent continent;
 
     private Polygon polygon;
@@ -21,12 +21,17 @@ public class Country {
     public Country(String name, Polygon polygon) {
         this.name = name;
         this.polygon = polygon;
-        neighbourNames = new ArrayList<>();
+        neighbours = new ArrayList<>();
     }
 
     public Country(String name, ArrayList<String> neighbourNames, Continent continent) {
         this.name = name;
-        this.neighbourNames = (ArrayList<String>) neighbourNames.clone();
+        for (String neighbourName: neighbourNames){
+
+        }
+
+
+        this.neighbours = (ArrayList<String>) neighbourNames.clone();
         this.continent = continent;
     }
 
@@ -40,8 +45,8 @@ public class Country {
 
         // Get the neighbours
         JsonArray arr = json.get("neighbours").getAsJsonArray();
-        this.neighbourNames = new ArrayList<>(arr.size());
-        arr.forEach((item) -> neighbourNames.add(item.getAsString()));
+        this.neighbours = new ArrayList<>(arr.size());
+        arr.forEach((item) -> neighbours.add(item.getAsString()));
 
         // Get the points
         polygon = new Polygon();
@@ -56,11 +61,7 @@ public class Country {
         return polygon;
     }
 
-//    public boolean canAttack() { return numArmies > 1; }
 
-    public void addNeighbour(String name, Country country){
-        neighbourNames.add(name);
-    }
 
     public void setContinent(Continent continent){
         if (this.continent != null) {
@@ -79,7 +80,7 @@ public class Country {
     }
 
     public ArrayList<String> getNeighbours() {
-        return neighbourNames;
+        return neighbours;
     }
 
     public Player getPlayer() {
@@ -122,7 +123,7 @@ public class Country {
     }
 
     public void setNeighbourNames(ArrayList<String> neighbourNames) {
-        this.neighbourNames = neighbourNames;
+        this.neighbours = neighbourNames;
     }
 
     public String toString(){
@@ -140,7 +141,7 @@ public class Country {
 
         // Add the neighbours
         JsonArray arr = new JsonArray();
-        neighbourNames.forEach(arr::add);
+        neighbours.forEach(arr::add);
         json.add("neighbours", arr);
 
         // Add the points
@@ -155,4 +156,6 @@ public class Country {
 
         return json;
     }
+
+
 }
