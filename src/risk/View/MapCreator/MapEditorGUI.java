@@ -21,13 +21,17 @@ public class MapEditorGUI extends JFrame implements GameModelListener {
     Controller controller;
     String mapName;
 
-    public static void main(String args[]){
-        new MapEditorGUI(null);
-    }
-
-    public MapEditorGUI(Controller controller){
+    public MapEditorGUI(){
         countryCounter = 0;
-        this.controller = controller;
+
+        try {
+            GameModel gameModel = new GameModel();
+            gameModel.addGameModelListener(this);
+            this.controller = new Controller(gameModel, this);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         javax.swing.SwingUtilities.invokeLater(() -> createAndShowGUI());
         this.controller.addAsGameModelListener(this);
     }
@@ -107,7 +111,6 @@ public class MapEditorGUI extends JFrame implements GameModelListener {
     }
 
     private void saveMap() {
-        //TODO have the controller save the map
         controller.saveMap();
     }
 
@@ -124,14 +127,12 @@ public class MapEditorGUI extends JFrame implements GameModelListener {
     }
 
 
-    public void editCountry(String name, ArrayList<String> neighbourNames, String continentName) {
-        controller.editCountry(name, neighbourNames, continentName);
-        System.out.println("controller must edit country: " + name);
+    public void editCountry(String countryName, ArrayList<Country> neighbourNames, Continent continent) {
+        controller.editCountry(countryName, neighbourNames, continent);
     }
 
     public void addNewCountry(String name, Polygon polygon){
         controller.createNewCountry(name, polygon);
-        System.out.println("controller must add new country");
     }
 
     @Override

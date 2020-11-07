@@ -42,7 +42,7 @@ public class AttackController {
      */
     private boolean getAttackingCountry() {
         while (true) {
-            System.out.println("Your countries are: \n" + attackingPlayer.getCountriesAsStringWithArmies());
+//            System.out.println("Your countries are: \n" + attackingPlayer.getCountriesAsStringWithArmies());
             String attackingCountry = parser.getInput("What country do you want to attack from(End)?:");
 
             // If the player types in 'end' then stop the attacking
@@ -221,11 +221,11 @@ public class AttackController {
     public String getAttackableCountries() {
         StringBuilder sb = new StringBuilder();
 
-        for (String countryName : attackingCountry.getNeighbourNames()) {
-            if (Countries.getCountry(countryName).getPlayer() != attackingPlayer) {
-                sb.append(countryName).append(", ");
-            }
-        }
+//        for (String countryName : attackingCountry.getNeighbours()) {
+//            if (Countries.getCountry(countryName).getPlayer() != attackingPlayer) {
+//                sb.append(countryName).append(", ");
+//            }
+//        }
 
         return sb.toString();
     }

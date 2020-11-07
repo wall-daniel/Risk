@@ -44,11 +44,11 @@ public class Countries {
     }
 
 
-    public static void editCountry(String name, ArrayList<String> neighbourNames, String continentName) {
+    public static void editCountry(String name, ArrayList<String> neighbourNames, Continent continentName) {
         if (countries.containsKey(name)){
             Country c = countries.get(name);
-            c.setContinentName(continentName);
-            c.setNeighbours(neighbourNames);
+            c.setContinent(continentName);
+            c.setNeighbourNames(neighbourNames);
             countries.replace(name, c);
         } else {
             Country c  = new Country(name, neighbourNames, continentName);
