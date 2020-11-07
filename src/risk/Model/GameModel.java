@@ -151,8 +151,9 @@ public class GameModel {
         gameModelListeners.forEach(it -> it.onNewCountry(new OneCountryEvent(this, country)));
     }
 
-    public boolean placeTroops(Country country, int armies) {
-        return players.get(currentPlayer).placeArmies(country, armies);
+    public void placeArmies(Country country, int armies) {
+        getCurrentPlayer().placeArmies(country, armies);
+        updateGame();
     }
 
     public void startGame() {
