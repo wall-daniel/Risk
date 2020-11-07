@@ -98,6 +98,11 @@ public class MovementController {
             System.out.println("Moving from " + country);
             fromCountry = country;
             gameModel.nextPhase();
+        } else {
+            JOptionPane.showMessageDialog(
+                    frame,
+                    "Invalid Country"
+            );
         }
     }
 
@@ -108,6 +113,11 @@ public class MovementController {
 
             getArmiesToMove();
             gameModel.nextPhase();
+        } else {
+            JOptionPane.showMessageDialog(
+                    frame,
+                    "Invalid Country"
+            );
         }
     }
 
