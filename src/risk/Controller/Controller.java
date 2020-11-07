@@ -16,10 +16,14 @@ public class Controller implements MouseListener {
     private JFrame gameView;
     private Random rand;
 
+    private AttackController attackController;
+    private MovementController movementController;
 
     public Controller(GameModel gameModel, JFrame view) {
         this.gameModel = gameModel;
         this.gameView = view;
+        this.attackController = new AttackController(gameModel, view);
+        this.movementController = new MovementController(view, gameModel);
         rand = new Random(System.currentTimeMillis());
     }
 
@@ -67,10 +71,6 @@ public class Controller implements MouseListener {
         return gameModel.getCountries();
     }
 
-    public void updateGame() {
-        gameModel.updateGame();
-    }
-
     public void clickedInCountry(Country country) {
         switch (gameModel.gameStatus) {
             case WAITING:
@@ -79,12 +79,17 @@ public class Controller implements MouseListener {
                 placeTroops(country);
                 break;
             case SELECT_ATTACKING_PHASE:
+                attackController.setAttackingCountry(country);
                 break;
             case SELECT_DEFENDING_PHASE:
+                attackController.setDefendingCountry(country);
+                attackController.resetController();
                 break;
             case SELECT_TROOP_MOVING_TO_PHASE:
+                movementController.setMovingToCountry(country);
                 break;
             case SELECT_TROOP_MOVING_FROM_PHASE:
+                movementController.setMovingFromCountry(country);
                 break;
         }
     }
@@ -99,9 +104,16 @@ public class Controller implements MouseListener {
                     )
             );
 
-            if (gameModel.placeTroops(country, troops)) {
-
+            if (!gameModel.placeTroops(country, troops)) {
+                System.out.println("That didn't work, you can't do that.");
             }
+
+            // Check if done placing troops
+            if (gameModel.donePlacingArmies()) {
+                gameModel.nextPhase();
+            }
+
+            gameModel.updateGame();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -112,6 +124,7 @@ public class Controller implements MouseListener {
         for (Country country : gameModel.getCountries()) {
             if (country.getPolygon().contains(mouseEvent.getX(), mouseEvent.getY())) {
                 System.out.println(country.getName());
+                clickedInCountry(country);
             }
          }
     }
@@ -134,5 +147,9 @@ public class Controller implements MouseListener {
     @Override
     public void mouseExited(MouseEvent mouseEvent) {
 
+    }
+
+    public void startGame() {
+        gameModel.startGame();
     }
 }

@@ -42,7 +42,7 @@ public class Player {
         countriesOwned.add(countryName);
     }
 
-    private void startTurn() {
+    public void startTurn() {
         // Number of armies is equal to countries divided by 3 rounded down, minimum 3.
         placeableArmies = Math.max(3, countriesOwned.size() / 3);
     }

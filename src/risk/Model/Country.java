@@ -115,7 +115,8 @@ public class Country {
 
     public void removeArmies(int armies) {
         if (this.numArmies - armies < 1) {
-            throw new ArithmeticException("You cannot have less that 1 army");
+            return;
+//            throw new ArithmeticException("You cannot have less that 1 army");
         }
 
         this.numArmies -= armies;
@@ -154,5 +155,15 @@ public class Country {
         json.add("points", pointArr);
 
         return json;
+    }
+
+    public boolean isNeighbour(Country country) {
+        for (String s : neighbourNames) {
+            if (s.equals(country.getName())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

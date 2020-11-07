@@ -19,6 +19,11 @@ import java.util.List;
 
 public class GameModel {
 
+
+    public Player getCurrentPlayer() {
+        return players.get(currentPlayer);
+    }
+
     public enum GameStatus { TROOP_PLACEMENT_PHASE, SELECT_ATTACKING_PHASE, SELECT_DEFENDING_PHASE, SELECT_TROOP_MOVING_FROM_PHASE, SELECT_TROOP_MOVING_TO_PHASE, WAITING }
 
     private List<Player> players;
@@ -87,7 +92,7 @@ public class GameModel {
         // TODO make random
         int currentPlayer = 0;
         for (Country c : countries) {
-            c.setPlayer(players.get(0));
+            c.setPlayer(players.get(currentPlayer));
             currentPlayer = (currentPlayer + 1) % players.size();
             c.addArmies(1);
         }
@@ -148,5 +153,51 @@ public class GameModel {
 
     public boolean placeTroops(Country country, int armies) {
         return players.get(currentPlayer).placeArmies(country, armies);
+    }
+
+    public void startGame() {
+        nextTurn();
+        updateGame();
+    }
+
+    public void nextTurn() {
+        currentPlayer = (currentPlayer + 1) % players.size();
+        System.out.println("Start of " + players.get(currentPlayer).getName() + " turn.");
+        gameStatus = GameStatus.TROOP_PLACEMENT_PHASE;
+
+        if (players.get(currentPlayer).hasLost()) {
+            nextTurn();
+        } else {
+            players.get(currentPlayer).startTurn();
+        }
+    }
+
+    public boolean donePlacingArmies() {
+        return players.get(currentPlayer).getPlaceableArmies() <= 0;
+    }
+
+    public void nextPhase() {
+        switch (gameStatus) {
+            case TROOP_PLACEMENT_PHASE:
+                gameStatus = GameStatus.SELECT_ATTACKING_PHASE;
+                break;
+            case SELECT_ATTACKING_PHASE:
+                gameStatus = GameStatus.SELECT_DEFENDING_PHASE;
+                break;
+            case SELECT_DEFENDING_PHASE:
+                gameStatus = GameStatus.SELECT_ATTACKING_PHASE;
+                break;
+            case SELECT_TROOP_MOVING_FROM_PHASE:
+                gameStatus = GameStatus.SELECT_TROOP_MOVING_TO_PHASE;
+                break;
+            case SELECT_TROOP_MOVING_TO_PHASE:
+                nextTurn();
+                break;
+
+        }
+    }
+
+    public void startEndTurn() {
+        gameStatus = GameStatus.SELECT_TROOP_MOVING_FROM_PHASE;
     }
 }
