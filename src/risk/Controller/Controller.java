@@ -99,36 +99,51 @@ public class Controller implements MouseListener, ActionListener {
     }
 
     private void placeTroops(Country country) {
-        try {
-            int troops = Integer.parseInt(
-                    JOptionPane.showInputDialog(
-                            gameView,
-                            "How many troops do you want to move here?",
-                            JOptionPane.INFORMATION_MESSAGE
-                    )
-            );
+        // Make sure that the country is owned by the player
+        if (country.getPlayer() == gameModel.getCurrentPlayer()) {
+            try {
+                String result = JOptionPane.showInputDialog(
+                        gameView,
+                        "How many troops do you want to move here?",
+                        JOptionPane.INFORMATION_MESSAGE
+                );
 
-            if (!gameModel.placeTroops(country, troops)) {
-                System.out.println("That didn't work, you can't do that.");
+                // If it returns null then they closed or cancelled
+                if (result == null) {
+                    return;
+                }
+
+                // Update the armies in the country
+                gameModel.placeArmies(country, Integer.parseInt(result));
+
+                // Check if done placing troops
+                if (gameModel.donePlacingArmies()) {
+                    gameModel.nextPhase();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                showErrorMessage("Error getting number: " + e.getMessage());
             }
-
-            // Check if done placing troops
-            if (gameModel.donePlacingArmies()) {
-                gameModel.nextPhase();
-            }
-
-            gameModel.updateGame();
-        } catch (Exception e) {
-            e.printStackTrace();
         }
+    }
+
+    /**
+     * @param errorMessage to be displayed to user.
+     */
+    private void showErrorMessage(String errorMessage) {
+        JOptionPane.showMessageDialog(gameView, errorMessage, "Error", JOptionPane.INFORMATION_MESSAGE);
     }
 
     @Override
     public void mouseClicked(MouseEvent mouseEvent) {
+        System.out.println("Clicked");
         for (Country country : gameModel.getCountries()) {
             if (country.getPolygon().contains(mouseEvent.getX(), mouseEvent.getY())) {
                 System.out.println(country.getName());
                 clickedInCountry(country);
+
+                // Make sure that only one country is clicked
+                break;
             }
          }
     }

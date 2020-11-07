@@ -60,15 +60,11 @@ public class Player {
         return placeableArmies;
     }
 
-    public boolean placeArmies(Country country, int armies) {
+    public void placeArmies(Country country, int armies) {
         if (placeableArmies >= armies) {
-            if (addArmies(country, armies)) {
-                placeableArmies -= armies;
-                return true;
-            }
+            country.addArmies(armies);
+            placeableArmies -= armies;
         }
-
-        return false;
     }
 
     public boolean ownsCountry(String country) {
