@@ -1,8 +1,9 @@
 package risk.Controller;
 
-import risk.Model.*;
 import risk.Listener.Listeners.GameActionListener;
 import risk.Listener.Listeners.GameModelListener;
+
+import risk.Model.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,12 +12,11 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.*;
-import java.util.List;
 
 public class Controller implements MouseListener, ActionListener {
 
-
     private GameModel gameModel;
+
     private JFrame gameView;
     private Random rand;
 
@@ -27,9 +27,14 @@ public class Controller implements MouseListener, ActionListener {
         this.gameModel = gameModel;
         this.gameView = view;
         this.attackController = new AttackController(gameModel, view);
-        this.movementController = new MovementController(view, gameModel);
+        this.movementController = new MovementController(gameModel, view);
         rand = new Random(System.currentTimeMillis());
     }
+
+    public GameModel getGameModel(){
+        return gameModel;
+    }
+
 
     private void gameOver() {
 //        System.out.println("The game is over, " + players.get(currentPlayerPosition).getName() + " won. Congrats!");
@@ -67,11 +72,15 @@ public class Controller implements MouseListener, ActionListener {
         }
     }
 
-    public List<Continent> getContinents() {
+    public ArrayList<Continent> getContinents() {
         return gameModel.getContinents();
     }
 
-    public List<Country> getCountriesForNeigbhours(String countryName) {
+    public ArrayList<Country> getCountriesForNeighbours(String countryName) {
+        return gameModel.getCountries();
+    }
+
+    public Iterable<Country> getCountriesForNeigbhours(String countryName) {
         return gameModel.getCountries();
     }
 
