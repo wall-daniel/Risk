@@ -1,6 +1,8 @@
 package risk.Controller;
 
 import risk.Model.*;
+import risk.Listener.Listeners.GameActionListener;
+import risk.Listener.Listeners.GameModelListener;
 
 import javax.swing.*;
 import java.awt.*;
@@ -152,4 +154,25 @@ public class Controller implements MouseListener {
     public void startGame() {
         gameModel.startGame();
     }
+
+    public void addAsGameActionListener(GameActionListener gameActionListener) {
+
+
+    }
+
+    public void addAsGameModelListener(GameModelListener gameModelListener) {
+
+
+    }
+
+    public void removeAsGameActionListener(GameActionListener gameActionListener) {
+
+
+    }
+
+    public void removeAsGameModelListener(GameModelListener gameModelListener) {
+
+
+    }
+
 }

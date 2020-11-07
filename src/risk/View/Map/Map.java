@@ -24,6 +24,7 @@ public class Map extends JPanel implements GameActionListener {
 
         setLayout(null);
         setBackground(MapColor.BACKGROUND_COLOR.getColor());
+        this.controller.addAsGameActionListener(this);
     }
 
 

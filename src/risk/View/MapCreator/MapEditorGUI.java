@@ -33,6 +33,7 @@ public class MapEditorGUI extends JFrame implements GameModelListener {
         }
 
         javax.swing.SwingUtilities.invokeLater(() -> createAndShowGUI());
+        this.controller.addAsGameModelListener(this);
     }
 
 
@@ -81,6 +82,7 @@ public class MapEditorGUI extends JFrame implements GameModelListener {
 
 
         quit.addActionListener(e -> {
+            controller.removeAsGameModelListener(this);
             new MainGUI();
             this.dispose();
         });
