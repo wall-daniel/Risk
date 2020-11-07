@@ -15,20 +15,17 @@ public class MainGUI extends JFrame {
         new MainGUI();
     }
 
-    Controller controller;
 
     public MainGUI(){
-        controller = new Controller();
-
         javax.swing.SwingUtilities.invokeLater(() -> createAndShowGUI());
     }
 
     private void createAndShowGUI() {
         addComponentToPane(getContentPane());
         getContentPane().setBackground(MapColor.BACKGROUND_COLOR.getColor());
-        setPreferredSize(Toolkit.getDefaultToolkit().getScreenSize());
+//        setPreferredSize(Toolkit.getDefaultToolkit().getScreenSize());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setResizable(false);
+        setResizable(true);
         setTitle("Risk");
         pack();
         setVisible(true);
@@ -53,7 +50,7 @@ public class MainGUI extends JFrame {
         });
 
         createMap.addActionListener(e -> {
-            new MapEditorGUI(controller);
+            new MapEditorGUI();
             this.setVisible(false);
         });
 
@@ -81,7 +78,7 @@ public class MainGUI extends JFrame {
 
         String mapName = (String)JOptionPane.showInputDialog(
                 this,
-                "Choose map:",
+                "Choose map: (Just placeholder)",
                 "New Game",
                 JOptionPane.PLAIN_MESSAGE,
                 null,
@@ -100,7 +97,7 @@ public class MainGUI extends JFrame {
                         "5")
         );
 
-        MapGUI mapGUI = new MapGUI(controller);
+        MapGUI mapGUI = new MapGUI(numPlayers);
         //TODO the controller setup the man given the map name and the number of players
         //controller.setUpModel(mapName, numPlayers);
         //mapGUI.loadGame(); //loads the gameModel into the map
@@ -124,7 +121,7 @@ public class MainGUI extends JFrame {
                 gameNamesOptions,
                 "EarthGame1");
 
-        MapGUI mapGUI = new MapGUI(controller);
+        MapGUI mapGUI = new MapGUI(6);
         //TODO the controller setup the man given the map name and the number of players
         //controller.setUpModel(gameName);
         //map.loadGame(); //loads the gameModel into the map
@@ -148,7 +145,7 @@ public class MainGUI extends JFrame {
                 mapNamesOptions,
                 "Earth");
 
-        MapEditorGUI mapEditorGUI = new MapEditorGUI(controller);
+        MapEditorGUI mapEditorGUI = new MapEditorGUI();
         //TODO the controller setup the man given the map name and the number of players
         //controller.setUpModel(mapName);
         //mapEditor.loadGame(); //loads the gameModel into the map

@@ -1,0 +1,1 @@
+[{"name":"canda","bonus":5,"countries":[{"name":"canada","neighbours":["canada2"],"points":[{"x":20,"y":20},{"x":25,"y":100},{"x":120,"y":90},{"x":100,"y":60}]},{"name":"canada2","neighbours":["canada"],"points":[{"x":25,"y":100},{"x":120,"y":90},{"x":130,"y":190},{"x":50,"y":215}]}]}]

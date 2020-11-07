@@ -24,7 +24,7 @@ public enum PlayerColor  {
         return values()[random.nextInt(values().length)].getColor();
     }
 
-    public Color getPlayerColor(int num){
+    public static Color getPlayerColor(int num){
         for (PlayerColor playerColor : PlayerColor.values())
             if (playerColor.ordinal() == num - 1)
                 return playerColor.color;

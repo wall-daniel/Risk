@@ -1,12 +1,7 @@
 package risk.Model;
-/*
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.sun.xml.internal.bind.v2.TODO;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
- */
-
 import risk.Players.Player;
 
 import java.awt.*;
@@ -19,19 +14,42 @@ public class Country {
     private Player controlledBy = null;
 
     private ArrayList<String> neighbourNames;
-    private String continentName = "";
+    private Continent continent;
 
     private Polygon polygon;
 
-    public Country(String name) {
+    public Country(String name, Polygon polygon) {
         this.name = name;
+        this.polygon = polygon;
         neighbourNames = new ArrayList<>();
     }
 
-    public Country(String name, ArrayList<String> neighbourNames, String continentName) {
+    public Country(String name, ArrayList<String> neighbourNames, Continent continent) {
         this.name = name;
         this.neighbourNames = (ArrayList<String>) neighbourNames.clone();
-        this.continentName = continentName;
+        this.continent = continent;
+    }
+
+    /**
+     * Contructor from json object.
+     *
+     * @param json, contains info about the name, neighoburs, and the polygon points
+     */
+    public Country(JsonObject json) {
+        this.name = json.get("name").getAsString();
+
+        // Get the neighbours
+        JsonArray arr = json.get("neighbours").getAsJsonArray();
+        this.neighbourNames = new ArrayList<>(arr.size());
+        arr.forEach((item) -> neighbourNames.add(item.getAsString()));
+
+        // Get the points
+        polygon = new Polygon();
+        JsonArray pointArr = json.get("points").getAsJsonArray();
+        for (int i = 0; i < pointArr.size(); i++) {
+            JsonObject point = pointArr.get(i).getAsJsonObject();
+            polygon.addPoint(point.get("x").getAsInt(), point.get("y").getAsInt());
+        }
     }
 
     public Polygon getPolygon(){
@@ -44,26 +62,23 @@ public class Country {
         neighbourNames.add(name);
     }
 
-    public int[] getNeighbours(){
-        if (neighbourNames.isEmpty())
-            return new int[0];
+    public void setContinent(Continent continent){
+        if (this.continent != null) {
+            this.continent.removeCountry(this);
+        }
 
-        int [] neighbourIndicies = new int[neighbourNames.size()];
-        int i = 0;
-        for (String s : neighbourNames)
-            neighbourIndicies[i++] = Countries.getIndexOfCountry(s);
-        return neighbourIndicies;
+        this.continent = continent;
+
+        if (this.continent != null) {
+            this.continent.addCountry(this);
+        }
     }
 
-    public void setContinentName(String name){
-        continentName = name;
+    public Continent getContinent(){
+        return continent;
     }
 
-    public String getContinentName(){
-        return continentName;
-    }
-
-    public ArrayList<String> getNeighbourNames() {
+    public ArrayList<String> getNeighbours() {
         return neighbourNames;
     }
 
@@ -99,15 +114,16 @@ public class Country {
     }
 
     public void removeArmies(int armies) {
-        if (this.numArmies - armies < 1) {
-            throw new ArithmeticException("You cannot have less that 1 army");
+        if (this.numArmies < 1) {
+            return;
+//            throw new ArithmeticException("You cannot have less that 1 army");
         }
 
         this.numArmies -= armies;
     }
 
-    public void setNeighbours(ArrayList<String> neighbourNames) {
-        this.neighbourNames = (ArrayList<String>) neighbourNames.clone();
+    public void setNeighbourNames(ArrayList<String> neighbourNames) {
+        this.neighbourNames = neighbourNames;
     }
 
     public String toString(){
@@ -117,7 +133,6 @@ public class Country {
     /**
      * @return the json representation of the country which has name, neighbours, and the coordinates of points.
      */
-    /*
     public JsonObject toJson() {
         JsonObject json = new JsonObject();
 
@@ -129,28 +144,26 @@ public class Country {
         neighbourNames.forEach(arr::add);
         json.add("neighbours", arr);
 
+        // Add the points
+        JsonArray pointArr = new JsonArray();
+        for (int i = 0; i < polygon.npoints; i++) {
+            JsonObject point = new JsonObject();
+            point.addProperty("x", polygon.xpoints[i]);
+            point.addProperty("y", polygon.ypoints[i]);
+            pointArr.add(point);
+        }
+        json.add("points", pointArr);
+
         return json;
     }
 
-     */
+    public boolean isNeighbour(Country country) {
+        for (String s : neighbourNames) {
+            if (s.equals(country.getName())) {
+                return true;
+            }
+        }
 
-    /**
-     * Contructor from json object.
-     *
-     * @param json, contains info about the name, neighoburs, and the polygon points
-     */
-    /*
-    public Country(JsonObject json) {
-        this.name = json.get("name").getAsString();
-
-        // Get the neighbours
-        JsonArray arr = json.getAsJsonArray();
-        this.neighbourNames = new ArrayList<>(arr.size());
-        arr.forEach((item) -> neighbourNames.add(item.getAsString()));
-
-        // Get the points
-        // TODO
+        return false;
     }
-
-     */
 }
