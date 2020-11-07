@@ -143,7 +143,40 @@ public class GameModel {
         fileWriter.close();
     }
 
-    public  ArrayList<Continent>getContinents() {
+
+    //for placing troops, selecting attacking from, selecting moving from country
+    public ArrayList<String> getPlaceableCountries(){
+        return new ArrayList<>(players.get(currentPlayer).getCountries());
+    }
+
+    //for choosing defendingCountry
+    public ArrayList<String> getAttackableCountries(Country fromCountry){
+        return new ArrayList<>(fromCountry.getNeighbours());
+    }
+
+    //for choosing toCountry
+    public ArrayList<String> getMoveTroopsToCountries(Country fromCountry){
+        HashMap<String, Country> ss = new HashMap<>();
+        ss.put(fromCountry.getName(), fromCountry);
+        return addCountries(fromCountry, ss, fromCountry.getPlayer().getIndex());
+    }
+
+    private ArrayList<String> addCountries(Country currentCountry, HashMap<String, Country> ss, int playerIndex) {
+        for (String countryName : currentCountry.getNeighbours()){
+            Country country = getCountry(countryName);
+            if (country.getPlayer().getIndex() == playerIndex && !ss.containsKey(countryName)){
+                ss.put(countryName, country);
+                addCountries(country, ss, playerIndex);
+            }
+        }
+        return new ArrayList<>(ss.keySet());
+    }
+
+
+
+
+
+    public ArrayList<Continent>getContinents() {
         return new ArrayList<Continent>(continents.values());
     }
 

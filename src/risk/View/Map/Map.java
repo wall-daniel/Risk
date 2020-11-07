@@ -19,14 +19,16 @@ public class Map extends JPanel implements GameActionListener {
 
     OneCountryEvent countryEvent = null;
 
+    boolean initialized;
+
+
     public Map(Controller controller) {
         this.controller = controller;
-
+        this.initialized = false;
         setLayout(null);
         setBackground(MapColor.BACKGROUND_COLOR.getColor());
         this.controller.addAsGameActionListener(this);
 
-        //addEndButton();
     }
 
 
@@ -35,7 +37,8 @@ public class Map extends JPanel implements GameActionListener {
         gameModel.getCountries().forEach(country -> {
             CountryPanel countryPanel = new CountryPanel(country, this.getSize(), controller);
             countryList.put(country.getName(), countryPanel);
-            add(countryPanel);
+            if (!initialized)
+                add(countryPanel);
         });
 
         repaint();

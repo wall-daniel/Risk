@@ -33,18 +33,19 @@ public class MainGUI extends JFrame {
 
     public void addComponentToPane(Container pane)  {
 
-        JPanel p = new JPanel(new GridLayout(4, 1));
+        JPanel p = new JPanel(new GridLayout(1, 1));
         p.setBorder(new EmptyBorder(100, 100, 100, 100));
 
         JButton newGame = new JButton("New Game");
-        JButton loadGame = new JButton("Load Game");
-        JButton createMap = new JButton("Create New Map");
-        JButton editMap = new JButton("Edit Map");
+       // JButton loadGame = new JButton("Load Game");
+       // JButton createMap = new JButton("Create New Map");
+       // JButton editMap = new JButton("Edit Map");
 
         newGame.addActionListener(e -> {
             loadPlayMapOptions();
         });
 
+        /*
         loadGame.addActionListener(e -> {
             loadSaveOptions();
         });
@@ -57,12 +58,12 @@ public class MainGUI extends JFrame {
         editMap.addActionListener(e -> {
             loadMapOptions();
         });
-
+    */
 
         p.add(newGame);
-        p.add(loadGame);
-        p.add(createMap);
-        p.add(editMap);
+        //p.add(loadGame);
+        //p.add(createMap);
+        //p.add(editMap);
 
         pane.add(p, BorderLayout.CENTER);
     }
@@ -76,6 +77,7 @@ public class MainGUI extends JFrame {
         //TODO have the controller getMapNames
         //String mapNamesOptions [] = controller.getMapNames();
 
+        /*
         String mapName = (String)JOptionPane.showInputDialog(
                 this,
                 "Choose map: (Just placeholder)",
@@ -84,6 +86,7 @@ public class MainGUI extends JFrame {
                 null,
                 mapNamesOptions,
                 "Earth");
+        */
 
         String numPlayersOptions[] = {"2" , "3" , "4" , "5", "6"};
         int numPlayers = Integer.parseInt(
@@ -107,6 +110,7 @@ public class MainGUI extends JFrame {
     /**
      * displays saves from file in rows, select one
      */
+    /*
     private void loadSaveOptions() {
         String gameNamesOptions [] = {"EarthGame1", "ItalyGame2", "ChickenGame3"};
         //TODO have the controller get names of all saved games
@@ -128,9 +132,12 @@ public class MainGUI extends JFrame {
         this.dispose();
     }
 
+     */
+
     /**
      * displays maps from file in rows, select one
      */
+    /*
     private void loadMapOptions() {
         String mapNamesOptions [] = {"Earth", "Italy", "Chicken"};
         //TODO have the controller getMapNames
@@ -151,4 +158,6 @@ public class MainGUI extends JFrame {
         //mapEditor.loadGame(); //loads the gameModel into the map
         this.dispose();
     }
+
+     */
 }

@@ -54,11 +54,9 @@ public class Controller implements MouseListener, ActionListener {
         }
     }
 
-
     public void createNewCountry(String name, Polygon polygon) {
         gameModel.addCountry(new Country(name, polygon));
     }
-
 
     public void createNewContinent(String continentName, int continentBonus) {
         gameModel.addContinent(new Continent(continentName, continentBonus));
