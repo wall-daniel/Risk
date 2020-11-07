@@ -2,6 +2,7 @@ package risk.Model;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
+import risk.Controller.Controller;
 import risk.Listener.Events.ContinentEvent;
 import risk.Listener.Events.OneCountryEvent;
 import risk.Listener.Listeners.GameActionListener;
@@ -18,6 +19,8 @@ import java.util.List;
 
 public class GameModel {
 
+    public enum GameStatus { TROOP_PLACEMENT_PHASE, SELECT_ATTACKING_PHASE, SELECT_DEFENDING_PHASE, SELECT_TROOP_MOVING_FROM_PHASE, SELECT_TROOP_MOVING_TO_PHASE, WAITING }
+
     private List<Player> players;
     private List<Continent> continents;
     private List<Country> countries;
@@ -26,6 +29,8 @@ public class GameModel {
 
     private int currentPlayer = 0;
     private boolean isGameOver = false;
+
+    public GameStatus gameStatus = GameStatus.TROOP_PLACEMENT_PHASE;
 
     /**
      * Used for the editor
@@ -139,5 +144,9 @@ public class GameModel {
         country.setNeighbourNames(names);
 
         gameModelListeners.forEach(it -> it.onNewCountry(new OneCountryEvent(this, country)));
+    }
+
+    public boolean placeTroops(Country country, int armies) {
+        return players.get(currentPlayer).placeArmies(country, armies);
     }
 }

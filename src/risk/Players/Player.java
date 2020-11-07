@@ -12,7 +12,7 @@ public class Player {
     private ArrayList<String> countriesOwned;
     private boolean lost = false;
     private PlayerColor playerColor;
-
+    private int placeableArmies = 0;
 
     public Player(String name) {
         this.name = name;
@@ -32,22 +32,6 @@ public class Player {
         return countriesOwned;
     }
 
-    public String getCountriesAsString() {
-        StringBuilder sb = new StringBuilder(countriesOwned.get(0));
-        for (int i = 1; i < countriesOwned.size(); i++) {
-            sb.append(", ").append(countriesOwned.get(i));
-        }
-        return sb.toString();
-    }
-
-    public String getCountriesAsStringWithArmies() {
-        StringBuilder sb = new StringBuilder();
-        for (String s : countriesOwned) {
-            sb.append(s).append(": ").append(Countries.getCountry(s).getArmies()).append('\n');
-        }
-        return sb.toString();
-    }
-
     public void removeCountry(String countryName) {
         countriesOwned.remove(countryName);
     }
@@ -56,25 +40,33 @@ public class Player {
         countriesOwned.add(countryName);
     }
 
-    /**
-     * Number of armies to add at start of turn.
-     * Is equal to countries divided by 3 rounded down.
-     *
-     * @return number of arimes to add
-     */
-    public int newArmiesOnTurn() {
-        return Math.max(3, countriesOwned.size() / 3);
+    private void startTurn() {
+        // Number of armies is equal to countries divided by 3 rounded down, minimum 3.
+        placeableArmies = Math.max(3, countriesOwned.size() / 3);
     }
 
-    public boolean addArmies(String countryName, int numArmies) {
-        Country country = Countries.getCountry(countryName);
+    public boolean addArmies(Country country, int numArmies) {
+        if (country.getPlayer() == this) {
+            country.addArmies(numArmies);
+            return true;
+        }
 
-        if (country.getPlayer() != this)
-            return false;
+        return false;
+    }
 
-        country.addArmies(numArmies);
+    public int getPlaceableArmies() {
+        return placeableArmies;
+    }
 
-        return true;
+    public boolean placeArmies(Country country, int armies) {
+        if (placeableArmies >= armies) {
+            if (addArmies(country, armies)) {
+                placeableArmies -= armies;
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public boolean ownsCountry(String country) {

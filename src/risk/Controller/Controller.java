@@ -2,18 +2,22 @@ package risk.Controller;
 
 import risk.Model.*;
 
+import javax.swing.*;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
 
 public class Controller {
 
+
     private GameModel gameModel;
+    private JFrame gameView;
     private Random rand;
 
 
-    public Controller(GameModel gameModel) {
+    public Controller(GameModel gameModel, JFrame view) {
         this.gameModel = gameModel;
+        this.gameView = view;
         rand = new Random(System.currentTimeMillis());
     }
 
@@ -63,5 +67,41 @@ public class Controller {
 
     public void updateGame() {
         gameModel.updateGame();
+    }
+
+    public void clickedInCountry(Country country) {
+        switch (gameModel.gameStatus) {
+            case WAITING:
+                break;
+            case TROOP_PLACEMENT_PHASE:
+                placeTroops(country);
+                break;
+            case SELECT_ATTACKING_PHASE:
+                break;
+            case SELECT_DEFENDING_PHASE:
+                break;
+            case SELECT_TROOP_MOVING_TO_PHASE:
+                break;
+            case SELECT_TROOP_MOVING_FROM_PHASE:
+                break;
+        }
+    }
+
+    private void placeTroops(Country country) {
+        try {
+            int troops = Integer.parseInt(
+                    JOptionPane.showInputDialog(
+                            gameView,
+                            "How many troops do you want to move here?",
+                            JOptionPane.INFORMATION_MESSAGE
+                    )
+            );
+
+            if (gameModel.placeTroops(country, troops)) {
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

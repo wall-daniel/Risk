@@ -17,7 +17,7 @@ public class MapGUI extends JFrame {
     public MapGUI(int numPlayers){
         try {
             GameModel gameModel = new GameModel(numPlayers);
-            this.controller = new Controller(gameModel);
+            this.controller = new Controller(gameModel, this);
             this.map = new Map(controller);
             gameModel.addActionListener(map);
 

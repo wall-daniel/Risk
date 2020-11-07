@@ -27,7 +27,7 @@ public class MapEditorGUI extends JFrame implements GameModelListener {
         try {
             GameModel gameModel = new GameModel();
             gameModel.addGameModelListener(this);
-            this.controller = new Controller(gameModel);
+            this.controller = new Controller(gameModel, this);
         } catch (Exception e) {
             e.printStackTrace();
         }

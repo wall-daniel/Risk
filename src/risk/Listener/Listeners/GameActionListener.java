@@ -5,7 +5,7 @@ import risk.Listener.Events.TwoCountryEvent;
 import risk.Model.GameModel;
 
 public interface GameActionListener {
-    public void updateMap(GameModel gameModel);
+    void updateMap(GameModel gameModel);
 
     //map updates
     public void onPlaceTroops(OneCountryEvent oce);
