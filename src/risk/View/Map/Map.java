@@ -26,17 +26,9 @@ public class Map extends JPanel implements GameActionListener {
         setBackground(MapColor.BACKGROUND_COLOR.getColor());
         this.controller.addAsGameActionListener(this);
 
-        addEndButton();
+        //addEndButton();
     }
 
-    private JButton endButton;
-
-    private void addEndButton() {
-        endButton = new JButton("End button");
-        endButton.setSize(120, 400);
-        add(endButton);
-        endButton.addActionListener(controller);
-    }
 
     @Override
     public void updateMap(GameModel gameModel) {
@@ -46,25 +38,6 @@ public class Map extends JPanel implements GameActionListener {
             add(countryPanel);
         });
 
-        switch (gameModel.gameStatus) {
-            case TROOP_PLACEMENT_PHASE:
-                endButton.setText("Troops: " + gameModel.getCurrentPlayer().getPlaceableArmies());
-                break;
-            case SELECT_ATTACKING_PHASE:
-                endButton.setText("End attack");
-                break;
-            case SELECT_DEFENDING_PHASE:
-                endButton.setText("Stop attack");
-                break;
-            case SELECT_TROOP_MOVING_FROM_PHASE:
-                endButton.setText("Skip moving, end");
-                break;
-            case SELECT_TROOP_MOVING_TO_PHASE:
-                endButton.setText("Don't move from");
-                break;
-            case WAITING:
-                break;
-        }
         repaint();
     }
 

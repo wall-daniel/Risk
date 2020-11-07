@@ -10,7 +10,7 @@ import java.awt.*;
 public class MapGUI extends JFrame {
 
     Map map;
-    //MapInformation mapInformation;
+    MapInformation mapInformation;
 
     Controller controller;
 
@@ -19,8 +19,9 @@ public class MapGUI extends JFrame {
             GameModel gameModel = new GameModel(numPlayers);
             this.controller = new Controller(gameModel, this);
             this.map = new Map(controller);
+            this.mapInformation = new MapInformation(controller);
             gameModel.addActionListener(map);
-
+            gameModel.addActionListener(mapInformation);
             javax.swing.SwingUtilities.invokeLater(this::createAndShowGUI);
         } catch (Exception e) {
             e.printStackTrace();
@@ -51,7 +52,8 @@ public class MapGUI extends JFrame {
 
     public void addComponentToPane(Container pane)  {
         addJMenuBar();
-        pane.add(map);
+        pane.add(map, BorderLayout.CENTER);
+        pane.add(mapInformation, BorderLayout.EAST);
     }
 
     private void addJMenuBar() {
