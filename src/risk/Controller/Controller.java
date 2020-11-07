@@ -14,6 +14,7 @@ import java.util.*;
 public class Controller implements MouseListener {
 
     private GameModel gameModel;
+    private MovementController movementController;
     private JFrame gameView;
     private Random rand;
 
@@ -92,6 +93,8 @@ public class Controller implements MouseListener {
             case SELECT_DEFENDING_PHASE:
                 break;
             case SELECT_TROOP_MOVING_TO_PHASE:
+                movementController = new MovementController(this);
+                movementController.setFirstCountry(country);
                 break;
             case SELECT_TROOP_MOVING_FROM_PHASE:
                 break;

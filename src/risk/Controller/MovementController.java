@@ -5,12 +5,13 @@ import risk.Model.Country;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class MapController {
+public class MovementController {
 
-    public Country firstCountry, secondCountry;
-    public Controller controller;
+    private  Country firstCountry, secondCountry;
+    private  Controller controller;
+    private HashMap<String, Country> checkedCountries = new HashMap<>();
 
-    public MapController(Controller controller){
+    public MovementController(Controller controller){
         this.controller = controller;
     }
 
@@ -28,8 +29,8 @@ public class MapController {
         if (controller.getGameModel().getCurrentPlayer() != firstCountry.getPlayer().getIndex())
             return false;
 
-        ArrayList<Country> checkedCountries = new ArrayList<Country>();
-        if (!areCountriesConnected(checkedCountries, firstCountry))
+        checkedCountries.clear();
+        if (!areCountriesConnected(firstCountry))
             return false;
 
         return true;
@@ -40,7 +41,8 @@ public class MapController {
         this.secondCountry = secondCountry;
     }
 
-    public boolean areCountriesConnected(ArrayList<Country> checkedCountries, Country currentCountry){
+    //get
+    public boolean areCountriesConnected(Country currentCountry){
         if (currentCountry.getName().equals(secondCountry))
             return true;
 
@@ -48,14 +50,17 @@ public class MapController {
             return false;
 
         for (String countryName : currentCountry.getNeighbours()){
+            Country c = controller.getGameModel().getCountry(countryName);
+            if (c.getPlayer().getIndex() != firstCountry.getPlayer().getIndex())
+                continue;
 
+            if (checkedCountries.containsKey(countryName))
+                continue;
 
-
-           //Country c = controller.getGameModel().getCountry(countryNames);
+            areCountriesConnected(c);
         }
 
-
-        return true;
+        return false;
     }
 
 
