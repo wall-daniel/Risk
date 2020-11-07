@@ -49,12 +49,14 @@ public class CountryCreatorGUI extends JFrame {
 
     private void addJMenuBar() {
         JMenuBar bar = new JMenuBar();
-        JMenu menu = new JMenu("Options");
+        JMenu controlMenu = new JMenu("Shape Options");
 
         JMenuItem clear = new JMenuItem("Clear");
         JMenuItem closeShape = new JMenuItem("Close Shape");
         JMenuItem newShape = new JMenuItem("New Shape");
         JMenuItem finish = new JMenuItem("Finish");
+
+
 
         clear.addActionListener(e -> {
             drawingPad.clear();
@@ -81,12 +83,33 @@ public class CountryCreatorGUI extends JFrame {
         });
 
 
-        menu.add(clear);
-        menu.add(closeShape);
-        menu.add(newShape);
-        menu.add(finish);
 
-        bar.add(menu);
+        JMenu drawingOptionsMenu = new JMenu("Drawing Options");
+
+        JMenuItem setBorderDetail = new JMenuItem("Set Border Detail");
+        JMenuItem setBorderDeviation = new JMenuItem("Set Border Deviation");
+
+        setBorderDetail.addActionListener(e -> {
+            int borderDetail = Integer.parseInt(JOptionPane.showInputDialog("Set Border Detail (4 (highest) - 100 (lowest))"));
+            drawingPad.setBORDER_DETAIL(borderDetail);
+        });
+
+        setBorderDeviation.addActionListener(e -> {
+            double borderDeviation = Double.parseDouble(JOptionPane.showInputDialog("Set Border Detail (0.0 (highest) - 1.0 (lowest))"));
+            drawingPad.setBORDER_DEVIATION(borderDeviation);
+        });
+
+        drawingOptionsMenu.add(setBorderDetail);
+        drawingOptionsMenu.add(setBorderDeviation);
+
+
+        controlMenu.add(clear);
+        controlMenu.add(closeShape);
+        controlMenu.add(newShape);
+        controlMenu.add(finish);
+
+        bar.add( controlMenu);
+        bar.add( drawingOptionsMenu);
 
         setJMenuBar(bar);
     }
