@@ -57,7 +57,7 @@ public class GameModel {
 
         // Add the players
         for (int i = 0; i < numPlayers; i++) {
-            players.add(new Player("Player " + i));
+            players.add(new Player("Player " + i, i));
         }
 
         // Load the map

@@ -2,8 +2,8 @@ package risk.Players;
 
 import risk.Enums.PlayerColor;
 import risk.Model.Country;
-import risk.Model.Countries;
 
+import java.awt.*;
 import java.util.ArrayList;
 
 public class Player {
@@ -11,16 +11,18 @@ public class Player {
     private String name;
     private ArrayList<String> countriesOwned;
     private boolean lost = false;
-    private PlayerColor playerColor;
+    private Color playerColor;
     private int placeableArmies = 0;
+    private int index;
 
-    public Player(String name) {
+    public Player(String name, int index) {
         this.name = name;
+        this.index = index;
         countriesOwned = new ArrayList<>();
-        playerColor = PlayerColor.PLAYER_1_COLOR; //TODO must change so each player gets distinct color
+        playerColor = PlayerColor.getPlayerColor(index); //TODO must change so each player gets distinct color
     }
 
-    public PlayerColor getPlayerColor() {
+    public Color getPlayerColor() {
         return playerColor;
     }
 
@@ -88,4 +90,7 @@ public class Player {
     }
 
 
+    public int getIndex() {
+        return index;
+    }
 }

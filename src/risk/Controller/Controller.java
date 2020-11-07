@@ -4,10 +4,12 @@ import risk.Model.*;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.*;
 import java.util.List;
 
-public class Controller {
+public class Controller implements MouseListener {
 
 
     private GameModel gameModel;
@@ -103,5 +105,34 @@ public class Controller {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent mouseEvent) {
+        for (Country country : gameModel.getCountries()) {
+            if (country.getPolygon().contains(mouseEvent.getX(), mouseEvent.getY())) {
+                System.out.println(country.getName());
+            }
+         }
+    }
+
+    @Override
+    public void mousePressed(MouseEvent mouseEvent) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent mouseEvent) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent mouseEvent) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent mouseEvent) {
+
     }
 }
