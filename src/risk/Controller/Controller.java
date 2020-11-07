@@ -7,20 +7,27 @@ import risk.Model.*;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.*;
 
-public class Controller implements MouseListener {
+public class Controller implements MouseListener, ActionListener {
 
     private GameModel gameModel;
-    private MovementController movementController;
+
     private JFrame gameView;
     private Random rand;
+
+    private AttackController attackController;
+    private MovementController movementController;
 
     public Controller(GameModel gameModel, JFrame view) {
         this.gameModel = gameModel;
         this.gameView = view;
+        this.attackController = new AttackController(gameModel, view);
+        this.movementController = new MovementController(gameModel, view);
         rand = new Random(System.currentTimeMillis());
     }
 
@@ -77,10 +84,6 @@ public class Controller implements MouseListener {
         return gameModel.getCountries();
     }
 
-    public void updateGame() {
-        gameModel.updateGame();
-    }
-
     public void clickedInCountry(Country country) {
         switch (gameModel.gameStatus) {
             case WAITING:
@@ -89,41 +92,67 @@ public class Controller implements MouseListener {
                 placeTroops(country);
                 break;
             case SELECT_ATTACKING_PHASE:
+                attackController.setAttackingCountry(country);
                 break;
             case SELECT_DEFENDING_PHASE:
+                attackController.setDefendingCountry(country);
+                attackController.resetController();
                 break;
             case SELECT_TROOP_MOVING_TO_PHASE:
-                movementController = new MovementController(this);
-                movementController.setFirstCountry(country);
+                movementController.setMovingToCountry(country);
                 break;
             case SELECT_TROOP_MOVING_FROM_PHASE:
+                movementController.setMovingFromCountry(country);
                 break;
         }
     }
 
     private void placeTroops(Country country) {
-        try {
-            int troops = Integer.parseInt(
-                    JOptionPane.showInputDialog(
-                            gameView,
-                            "How many troops do you want to move here?",
-                            JOptionPane.INFORMATION_MESSAGE
-                    )
-            );
+        // Make sure that the country is owned by the player
+        if (country.getPlayer() == gameModel.getCurrentPlayer()) {
+            try {
+                String result = JOptionPane.showInputDialog(
+                        gameView,
+                        "How many troops do you want to move here?",
+                        JOptionPane.INFORMATION_MESSAGE
+                );
 
-            if (gameModel.placeTroops(country, troops)) {
+                // If it returns null then they closed or cancelled
+                if (result == null) {
+                    return;
+                }
 
+                // Update the armies in the country
+                gameModel.placeArmies(country, Integer.parseInt(result));
+
+                // Check if done placing troops
+                if (gameModel.donePlacingArmies()) {
+                    gameModel.nextPhase();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                showErrorMessage("Error getting number: " + e.getMessage());
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
+    }
+
+    /**
+     * @param errorMessage to be displayed to user.
+     */
+    private void showErrorMessage(String errorMessage) {
+        JOptionPane.showMessageDialog(gameView, errorMessage, "Error", JOptionPane.INFORMATION_MESSAGE);
     }
 
     @Override
     public void mouseClicked(MouseEvent mouseEvent) {
+        System.out.println("Clicked");
         for (Country country : gameModel.getCountries()) {
             if (country.getPolygon().contains(mouseEvent.getX(), mouseEvent.getY())) {
                 System.out.println(country.getName());
+                clickedInCountry(country);
+
+                // Make sure that only one country is clicked
+                break;
             }
          }
     }
@@ -148,6 +177,10 @@ public class Controller implements MouseListener {
 
     }
 
+    public void startGame() {
+        gameModel.startGame();
+    }
+
     public void addAsGameActionListener(GameActionListener gameActionListener) {
 
 
@@ -168,6 +201,29 @@ public class Controller implements MouseListener {
 
     }
 
+    @Override
+    public void actionPerformed(ActionEvent actionEvent) {
+        System.out.println("Clicked");
+        switch (gameModel.gameStatus) {
+            case TROOP_PLACEMENT_PHASE:
+                return;
+            case SELECT_ATTACKING_PHASE:
+                gameModel.startEndTurn();
+                break;
+            case SELECT_DEFENDING_PHASE:
+                attackController.resetController();
+                gameModel.nextPhase();
+                break;
+            case SELECT_TROOP_MOVING_FROM_PHASE:
+                gameModel.nextTurn();
+                break;
+            case SELECT_TROOP_MOVING_TO_PHASE:
+                gameModel.gameStatus = GameModel.GameStatus.SELECT_TROOP_MOVING_FROM_PHASE;
+                break;
+            case WAITING:
+                return;
+        }
 
-
+        gameModel.updateGame();
+    }
 }

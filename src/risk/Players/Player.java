@@ -1,5 +1,6 @@
 package risk.Players;
 
+import risk.Enums.MapColor;
 import risk.Enums.PlayerColor;
 import risk.Model.Country;
 
@@ -14,6 +15,7 @@ public class Player {
     private Color playerColor;
     private int placeableArmies = 0;
     private int index;
+    private boolean playingTurn = false;
 
     public Player(String name, int index) {
         this.name = name;
@@ -23,7 +25,11 @@ public class Player {
     }
 
     public Color getPlayerColor() {
-        return playerColor;
+        if (playingTurn) {
+            return Color.WHITE;
+        } else {
+            return playerColor;
+        }
     }
 
     public String getName() {
@@ -42,7 +48,13 @@ public class Player {
         countriesOwned.add(countryName);
     }
 
-    private void startTurn() {
+    public void endTurn() {
+        playingTurn = false;
+    }
+
+    public void startTurn() {
+        playingTurn = true;
+
         // Number of armies is equal to countries divided by 3 rounded down, minimum 3.
         placeableArmies = Math.max(3, countriesOwned.size() / 3);
     }
@@ -60,15 +72,11 @@ public class Player {
         return placeableArmies;
     }
 
-    public boolean placeArmies(Country country, int armies) {
+    public void placeArmies(Country country, int armies) {
         if (placeableArmies >= armies) {
-            if (addArmies(country, armies)) {
-                placeableArmies -= armies;
-                return true;
-            }
+            country.addArmies(armies);
+            placeableArmies -= armies;
         }
-
-        return false;
     }
 
     public boolean ownsCountry(String country) {
