@@ -72,6 +72,8 @@ import risk.Model.Country;
 import risk.Model.GameModel;
 
 import javax.swing.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class MovementController {
 
@@ -100,7 +102,7 @@ public class MovementController {
     }
 
     public void setMovingToCountry(Country country) {
-        if (gameModel.getCurrentPlayer() == country.getPlayer()) {
+        if (gameModel.getCurrentPlayer() == country.getPlayer() && countriesAreConnected()) {
             System.out.println("Moving to " + country);
             toCountry = country;
 
@@ -108,6 +110,27 @@ public class MovementController {
             gameModel.nextPhase();
         }
     }
+
+    private boolean countriesAreConnected() {
+        HashMap<String, Country> ss = new HashMap<>();
+        ss.put(fromCountry.getName(), fromCountry);
+        return checkCountry(fromCountry, ss);
+    }
+
+    private boolean checkCountry(Country currentCountry, HashMap<String, Country> ss) {
+        if (currentCountry.getName().equals(toCountry.getName()))
+            return true;
+
+        for (String countryName : currentCountry.getNeighbours()){
+            Country country = gameModel.getCountry(countryName);
+            if (country.getPlayer().getIndex() == fromCountry.getPlayer().getIndex() && !ss.containsKey(countryName)){
+                ss.put(countryName, country);
+                return checkCountry(country, ss);
+            }
+        }
+        return false;
+    }
+
 
     private void getArmiesToMove() {
         while (true) {

@@ -18,7 +18,7 @@ public class MapInformation extends JPanel implements GameActionListener {
     public MapInformation(Controller controller){
          setUp(controller);
      }
-     
+
     private void setUp(Controller controller) {
          setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
          currentPlayer = new JLabel("CurrentPlayer");
@@ -32,7 +32,6 @@ public class MapInformation extends JPanel implements GameActionListener {
          add(phaseInfo);
          add(endPhase);
     }
-
 
     @Override
     public void updateMap(GameModel gameModel) {
