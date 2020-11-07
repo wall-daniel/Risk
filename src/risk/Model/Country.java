@@ -114,7 +114,7 @@ public class Country {
     }
 
     public void removeArmies(int armies) {
-        if (this.numArmies - armies < 1) {
+        if (this.numArmies < 1) {
             return;
 //            throw new ArithmeticException("You cannot have less that 1 army");
         }
