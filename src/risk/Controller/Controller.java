@@ -108,7 +108,7 @@ public class Controller implements MouseListener, ActionListener {
             try {
                 String result = JOptionPane.showInputDialog(
                         gameView,
-                        "How many troops do you want to move here?",
+                        "How many armies do you want to place in " + country.getName() + "?",
                         JOptionPane.INFORMATION_MESSAGE
                 );
 
@@ -118,7 +118,12 @@ public class Controller implements MouseListener, ActionListener {
                 }
 
                 // Update the armies in the country
-                gameModel.placeArmies(country, Integer.parseInt(result));
+                int armies = Integer.parseInt(result);
+                if (armies < 1) {
+                    showErrorMessage("Have to supply a number greater than 0.");
+                    return;
+                }
+                gameModel.placeArmies(country, armies);
 
                 // Check if done placing troops
                 if (gameModel.donePlacingArmies()) {
