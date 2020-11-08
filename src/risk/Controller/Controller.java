@@ -1,9 +1,7 @@
 package risk.Controller;
 
-import risk.View.Map.CountryLabel;
 import risk.View.Map.CountryPanel;
 import risk.View.MapCreator.EditableCountryPanel;
-import risk.View.MapCreator.MoveableCountryLabel;
 import risk.View.Views.GameActionListener;
 import risk.View.Views.GameModelListener;
 
@@ -15,7 +13,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.lang.reflect.Array;
 import java.util.*;
 
 public class Controller implements MouseListener, ActionListener {
@@ -88,14 +85,13 @@ public class Controller implements MouseListener, ActionListener {
             case WAITING:
                 break;
             case TROOP_PLACEMENT_PHASE:
-                placeTroops(country);
+                placeArmies(country);
                 break;
             case SELECT_ATTACKING_PHASE:
                 attackController.setAttackingCountry(country);
                 break;
             case SELECT_DEFENDING_PHASE:
                 attackController.setDefendingCountry(country);
-                attackController.resetController();
                 break;
             case SELECT_TROOP_MOVING_FROM_PHASE:
                 movementController.setMovingFromCountry(country);
@@ -106,7 +102,7 @@ public class Controller implements MouseListener, ActionListener {
         }
     }
 
-    private void placeTroops(Country country) {
+    private void placeArmies(Country country) {
         // Make sure that the country is owned by the player
         if (country.getPlayer() == gameModel.getCurrentPlayer()) {
             try {
@@ -300,6 +296,23 @@ public class Controller implements MouseListener, ActionListener {
 
         gameModel.updateGame();
     }
+
+
+    public ArrayList<String> getClickableCountries(){
+        switch (gameModel.gameStatus) {
+            case TROOP_PLACEMENT_PHASE:
+            case SELECT_ATTACKING_PHASE:
+            case SELECT_TROOP_MOVING_FROM_PHASE:
+                return gameModel.getPlaceableCountries();
+            case SELECT_DEFENDING_PHASE:
+                return gameModel.getAttackableCountries(attackController.getAttackingCountry());
+            case SELECT_TROOP_MOVING_TO_PHASE:
+                return gameModel.getMoveTroopsToCountries(movementController.getFromCountry());
+            default:
+                return new ArrayList<>();
+        }
+    }
+
 
     public void updateAllComponentLocations() {
         for (Component component : gameView.getLayeredPane().getComponents()){

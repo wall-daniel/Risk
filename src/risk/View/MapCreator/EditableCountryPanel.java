@@ -26,9 +26,6 @@ public class EditableCountryPanel extends CountryPanel implements MouseMotionLis
 
     private boolean pressed = false;;
 
-
-    private Color color;
-
     public EditableCountryPanel(Country country, Dimension size, Controller controller) {
         super(country, size, controller, false);
 
@@ -36,8 +33,6 @@ public class EditableCountryPanel extends CountryPanel implements MouseMotionLis
         //Point labelPoint = country.getLabelPoint();
         // countryLabel.setBounds(labelPoint.x, labelPoint.y, 100, 20);
         countryLabel.setBounds(0, 0, 100, 20);
-        this.color = PlayerColor.getRandomPlayerColor();
-
         add(countryLabel);
         addMouseMotionListener(this);
         addMouseListener(this);

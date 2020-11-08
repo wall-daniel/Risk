@@ -13,6 +13,8 @@ public class CountryPanel extends JPanel {
 
     protected CountryLabel countryLabel;
 
+    protected Color color;
+
 
     public CountryPanel(Country country, Dimension dimension, Controller controller, boolean addLabel) {
         super();
@@ -21,6 +23,10 @@ public class CountryPanel extends JPanel {
         setSize(dimension);
         setOpaque(false);
         setName(country.getName());
+        if (country.getPlayer() == null)
+            color = PlayerColor.getRandomPlayerColor();
+        else
+            color = country.getPlayer().getPlayerColor();
 
         if (addLabel) {
             countryLabel = new CountryLabel(country.getName(), country.getArmies(), controller);
@@ -29,6 +35,12 @@ public class CountryPanel extends JPanel {
             add(countryLabel);
         }
         addMouseListener(controller);
+    }
+
+
+    public void updateCountry(){
+        updateCountryLabel();
+        color = country.getPlayer().getPlayerColor();
     }
 
     public void updateCountryLabel(){
@@ -58,11 +70,12 @@ public class CountryPanel extends JPanel {
         graphics2D.drawPolygon(translatedPolygon);
 
         //fill polygon
-        graphics2D.setColor(country.getPlayer().getPlayerColor());
+        graphics2D.setColor(color);
         graphics2D.fillPolygon(translatedPolygon);
-
     }
 
-
+    public void setColorClickable(){
+        color = MapColor.CLICKABLE_COLOR.getColor();
+    }
 
 }

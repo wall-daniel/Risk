@@ -27,6 +27,8 @@ public class AttackController {
     }
 
     public void resetController() {
+        // Make sure the armies get re-added
+        if (attackingCountry != null && attackingArmies > 0) attackingCountry.addArmies(attackingArmies);
         attackingCountry = null;
         defendingCountry = null;
     }
@@ -94,8 +96,6 @@ public class AttackController {
             attackerWon();
         } else {
             // If it is a tie then move the armies back to where they are supposed to be.
-            attackingCountry.addArmies(attackingArmies);
-
             JOptionPane.showMessageDialog(window, "It's a tie!.");
         }
     }
@@ -110,7 +110,7 @@ public class AttackController {
                 int armies = Integer.parseInt(
                         JOptionPane.showInputDialog(
                                 window,
-                                "How many armies do you want to move?",
+                                "How many armies do you want to move (1-" + attackingArmies + "?",
                                 JOptionPane.INFORMATION_MESSAGE
                         )
                 );
@@ -118,6 +118,7 @@ public class AttackController {
                 // Move armies, has to be at least 1
                 if (attackingArmies >= armies && armies > 0) {
                     defendingCountry.setPlayer(gameModel.getCurrentPlayer(), armies);
+                    attackingArmies -= armies;
                     return;
                 }
             } catch (Exception e) {
@@ -159,6 +160,12 @@ public class AttackController {
             }
         }
     }
+
+
+    public Country getAttackingCountry(){
+        return attackingCountry;
+    }
+
 
     public void setDefendingCountry(Country country) {
         if (gameModel.getCurrentPlayer() != country.getPlayer() && attackingCountry.isNeighbour(country)) {

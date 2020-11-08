@@ -56,6 +56,11 @@ public class MovementController {
         }
     }
 
+
+    public Country getFromCountry(){
+        return fromCountry;
+    }
+
     /*
     private boolean countriesAreConnected() {
         HashMap<String, Country> ss = new HashMap<>();
