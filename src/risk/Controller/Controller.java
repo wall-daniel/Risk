@@ -72,7 +72,7 @@ public class Controller implements MouseListener, ActionListener {
 
     public void saveMap() {
         try {
-            gameModel.saveMap("test.txt");
+            gameModel.saveMap("EarthTest1.txt");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -165,15 +165,23 @@ public class Controller implements MouseListener, ActionListener {
 
             editCountryDetails(editableCountryPanel.getCountry());
         } else if (mouseEvent.getSource() instanceof CountryPanel){
+
+
             int highestLayer = -1;
             Country clickedCountry = null;
 
+
             for (Country country : gameModel.getCountries()) {
-                if (country.getPolygon().contains(mouseEvent.getX(), mouseEvent.getY()) && country.getLayer() > highestLayer) {
+                Polygon translated = new Polygon(country.getPolygon().xpoints, country.getPolygon().ypoints, country.getPolygon().npoints);
+                translated.translate(country.getPolygonPoint().x, country.getPolygonPoint().y);
+
+
+                if (translated.contains(mouseEvent.getX(), mouseEvent.getY()) && country.getLayer() > highestLayer) {
                     highestLayer = country.getLayer();
                     clickedCountry = country;
                 }
             }
+
             clickedInCountry(clickedCountry);
         } else {
 
@@ -270,7 +278,6 @@ public class Controller implements MouseListener, ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
-        System.out.println("Clicked");
         switch (gameModel.gameStatus) {
             case TROOP_PLACEMENT_PHASE:
                 return;

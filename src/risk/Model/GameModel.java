@@ -13,9 +13,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class GameModel {
     public enum GameStatus { TROOP_PLACEMENT_PHASE, SELECT_ATTACKING_PHASE, SELECT_DEFENDING_PHASE, SELECT_TROOP_MOVING_FROM_PHASE, SELECT_TROOP_MOVING_TO_PHASE, WAITING }
@@ -60,7 +58,7 @@ public class GameModel {
         }
 
         // Load the map
-        loadMap(JsonParser.parseReader(new FileReader("map.txt")).getAsJsonArray());
+        loadMap(JsonParser.parseReader(new FileReader("EarthTest1.txt")).getAsJsonArray());
 
         // Setup the map with players
         setupMap();
@@ -78,27 +76,52 @@ public class GameModel {
             // Add the continent and all the countries
             continents.put(continent.getName(), continent);
 
-            for (Country country : continent.getCountries())
+            for (Country country : continent.getCountries()) {
                 countries.put(country.getName(), country);
+            }
         }
     }
 
     private void setupMap() {
-        // Choose player that owns each country
-        // TODO make random
         int currentPlayer = 0;
+        int initArmies = getInitialArmies(players.size());
 
-        for (Country c : countries.values()) {
-            c.setPlayer(players.get(currentPlayer));
+        //Random allocation of countries to each player
+        ArrayList<String> tempCountryNames = getCountriesNames();
+        Random rand = new Random(System.currentTimeMillis());
 
-            currentPlayer = (currentPlayer + 1) % players.size();
-            c.addArmies(1);
+        while (!tempCountryNames.isEmpty()){
+            String countryName = tempCountryNames.remove(rand.nextInt(tempCountryNames.size()));
+            getCountry(countryName).setPlayer(players.get(currentPlayer));
+            currentPlayer= (currentPlayer + 1) % players.size();
         }
 
-        // TODO Setup the armies
+
+        // Choose how many armies are on each country.
+        // Does this by randomly choosing a country and assigning 1
+        // more army, until the player has no more armies left.
         for (Player p : players) {
+            ArrayList<String> countriesOwned = p.getCountries();
+            int currentArmies = initArmies - countriesOwned.size();
 
+            while (currentArmies > 0) {
+                getCountry(countriesOwned.get(rand.nextInt(countriesOwned.size()))).addArmies(1);
+                currentArmies -= 1;
+            }
         }
+
+        this.currentPlayer = 0;
+    }
+
+    private int getInitialArmies(int size) {
+        //TODO magic numbers fix
+        HashMap<Integer, Integer> initialArmySizes = new HashMap<>();
+        initialArmySizes.put(2, 50);
+        initialArmySizes.put(3, 35);
+        initialArmySizes.put(4, 30);
+        initialArmySizes.put(5, 25);
+        initialArmySizes.put(6, 20);
+        return initialArmySizes.get(size);
     }
 
 
@@ -189,6 +212,12 @@ public class GameModel {
         return new ArrayList<Country>(countries.values());
     }
 
+    public ArrayList<Country> getCountriesInLayerOrder(){
+        ArrayList<Country> countriesLayerSort = getCountries();
+        countriesLayerSort.sort(Comparator.comparingInt(Country::getLayer));
+        return countriesLayerSort;
+    }
+
     public ArrayList<String> getCountriesNames(){
         return new ArrayList<String>(countries.keySet());
     }
@@ -209,8 +238,14 @@ public class GameModel {
     }
 
     public void startGame() {
-        nextTurn();
+        initializeGame();
         updateGame();
+    }
+
+    private void initializeGame() {
+        currentPlayer = 0;
+        gameStatus = GameStatus.TROOP_PLACEMENT_PHASE;
+        players.get(currentPlayer).startTurn();
     }
 
     public void nextTurn() {
@@ -248,6 +283,10 @@ public class GameModel {
                 nextTurn();
                 break;
         }
+
+        for (Country country : countries.values())
+            System.out.println(country);
+
 
         updateGame();
     }

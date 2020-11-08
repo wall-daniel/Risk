@@ -23,15 +23,18 @@ public class CountryPanel extends JPanel {
         setName(country.getName());
 
         if (addLabel) {
-            countryLabel = new CountryLabel(country.getName(), controller);
-            //Point labelPoint = country.getLabelPoint();
-            // countryLabel.setBounds(labelPoint.x, labelPoint.y, 100, 20);
-            countryLabel.setBounds((int) (Math.random() * 300), (int) (Math.random() * 300), 100, 20);
-
+            countryLabel = new CountryLabel(country.getName(), country.getArmies(), controller);
+            Point labelPoint = country.getLabelPoint();
+            countryLabel.setBounds(labelPoint.x, labelPoint.y, 200, 30);
             add(countryLabel);
         }
         addMouseListener(controller);
     }
+
+    public void updateCountryLabel(){
+        countryLabel.updateArmies(country.getName(), country.getArmies());
+    }
+
 
 
     public CountryLabel getCountryLabel(){
@@ -42,21 +45,21 @@ public class CountryPanel extends JPanel {
         return country;
     }
 
-
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D graphics2D = (Graphics2D) g.create();
-        Polygon polygon = country.getPolygon();
+        Polygon translatedPolygon = new Polygon(country.getPolygon().xpoints, country.getPolygon().ypoints, country.getPolygon().npoints);
+        translatedPolygon.translate(country.getPolygonPoint().x, country.getPolygonPoint().y);
 
         //draw border polygon
         graphics2D.setColor(MapColor.BORDER_COLOR.getColor());
         graphics2D.setStroke(new BasicStroke(10));
-        graphics2D.drawPolygon(polygon);
+        graphics2D.drawPolygon(translatedPolygon);
 
         //fill polygon
         graphics2D.setColor(country.getPlayer().getPlayerColor());
-        graphics2D.fillPolygon(polygon);
+        graphics2D.fillPolygon(translatedPolygon);
 
     }
 

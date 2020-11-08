@@ -17,7 +17,7 @@ public class MoveableCountryLabel extends CountryLabel implements MouseListener,
     private volatile int myY = 0;
 
     public MoveableCountryLabel(String text, Controller controller){
-        super(text, controller);
+        super(text, 0, controller);
         addMouseMotionListener(this);
         addMouseListener(this);
 

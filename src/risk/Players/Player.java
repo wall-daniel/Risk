@@ -25,13 +25,7 @@ public class Player {
     }
 
     public Color getPlayerColor() {
-
-
-        if (playingTurn) {
-            return Color.WHITE;
-        } else {
-            return playerColor;
-        }
+        return playerColor;
     }
 
     public String getName() {

@@ -71,6 +71,14 @@ public class Country {
             JsonObject point = pointArr.get(i).getAsJsonObject();
             polygon.addPoint(point.get("x").getAsInt(), point.get("y").getAsInt());
         }
+
+        JsonObject polygonPoint = json.get("polygonPoint").getAsJsonObject();
+        this.polygonPoint = new Point(polygonPoint.get("x").getAsInt(), polygonPoint.get("y").getAsInt());
+
+        JsonObject labelPoint = json.get("labelPoint").getAsJsonObject();
+        this.labelPoint = new Point(labelPoint.get("x").getAsInt(), labelPoint.get("y").getAsInt());
+
+        this.layer = json.get("layer").getAsInt();
     }
 
     public Polygon getPolygon(){
@@ -155,9 +163,20 @@ public class Country {
         this.neighbours = neighbourNames;
     }
 
-    public String toString(){
-        return name;
+    @Override
+    public String toString() {
+        return "Country{" +
+                "name='" + name + '\'' +
+                ", numArmies=" + numArmies +
+                ", controlledBy=" + (controlledBy!=null ? controlledBy.getName() : "no one")  +
+                ", neighbours=" + neighbours +
+                ", continent=" + continent +
+                ", labelPoint=" + labelPoint +
+                ", layer=" + layer +
+                ", polygonPoint=" + polygonPoint +
+                '}';
     }
+
 
     /**
      * @return the json representation of the country which has name, neighbours, and the coordinates of points.

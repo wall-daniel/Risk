@@ -1,6 +1,7 @@
 package risk.View.Map;
 
 import risk.Controller.Controller;
+import risk.Enums.PlayerColor;
 import risk.Listener.Events.OneCountryEvent;
 import risk.Listener.Events.TwoCountryEvent;
 import risk.View.Views.GameActionListener;
@@ -35,6 +36,7 @@ public class MapInformation extends JPanel implements GameActionListener {
     @Override
     public void updateMap(GameModel gameModel) {
         currentPlayer.setText(gameModel.getCurrentPlayer().getName());
+        currentPlayer.setForeground(PlayerColor.getPlayerColor(gameModel.getCurrentPlayer().getIndex()));
         currentPhase.setText(gameModel.gameStatus.toString());
 
         switch (gameModel.gameStatus) {

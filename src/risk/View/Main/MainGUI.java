@@ -110,7 +110,7 @@ public class MainGUI extends JFrame {
                         JOptionPane.PLAIN_MESSAGE,
                         null,
                         numPlayersOptions,
-                        "5")
+                        "3")
         );
 
 

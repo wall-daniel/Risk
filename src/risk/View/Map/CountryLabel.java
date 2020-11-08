@@ -8,12 +8,20 @@ import java.awt.*;
 
 public class CountryLabel extends JLabel {
 
-    public CountryLabel(String text, Controller controller){
-        setText(text);
+    public CountryLabel(String text, int numArmies, Controller controller){
+        if (numArmies != 0)
+            setText(text + " : " + numArmies);
+        else
+            setText(text);
         setForeground(MapColor.TEXT_COLOR.getColor());
         setBackground(MapColor.TRANSPARENT_COLOR.getColor());
         setOpaque(false);
-        setFont(new Font("TimesRoman", Font.BOLD, 25));
+        setFont(new Font("TimesRoman", Font.BOLD, 15));
         setVisible(true);
+    }
+
+    public void updateArmies(String text, int armies) {
+        setText(text + " : " + armies);
+        repaint();
     }
 }

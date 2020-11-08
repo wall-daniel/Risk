@@ -17,22 +17,24 @@ public class Map extends JPanel implements GameActionListener {
 
     OneCountryEvent countryEvent = null;
 
-    boolean initialized;
+
 
     public Map(Controller controller) {
         this.controller = controller;
-        this.initialized = false;
         setLayout(null);
         setBackground(MapColor.BACKGROUND_COLOR.getColor());
     }
 
     @Override
     public void updateMap(GameModel gameModel) {
-        gameModel.getCountries().forEach(country -> {
-            CountryPanel countryPanel = new CountryPanel(country, this.getSize(), controller, true);
-            countryList.put(country.getName(), countryPanel);
-            if (!initialized)
+        gameModel.getCountriesInLayerOrder().forEach(country -> {
+            if (countryList.containsKey(country.getName())){
+                countryList.get(country.getName()).updateCountryLabel();
+            } else {
+                CountryPanel countryPanel = new CountryPanel(country, this.getSize(), controller, true);
+                countryList.put(country.getName(), countryPanel);
                 add(countryPanel);
+            }
         });
 
         repaint();
