@@ -95,7 +95,6 @@ public class Controller implements MouseListener, ActionListener {
                 break;
             case SELECT_DEFENDING_PHASE:
                 attackController.setDefendingCountry(country);
-                attackController.resetController();
                 break;
             case SELECT_TROOP_MOVING_FROM_PHASE:
                 movementController.setMovingFromCountry(country);
