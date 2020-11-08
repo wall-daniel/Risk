@@ -5,7 +5,6 @@ import risk.Model.GameModel;
 
 import javax.swing.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class MovementController {
 
@@ -47,7 +46,6 @@ public class MovementController {
             System.out.println("Moving to " + country);
             toCountry = country;
             getArmiesToMove();
-            gameModel.nextPhase();
         } else {
             JOptionPane.showMessageDialog(
                     frame,
@@ -57,7 +55,7 @@ public class MovementController {
     }
 
 
-    public Country getFromCountry(){
+    public Country getFromCountry() {
         return fromCountry;
     }
 
@@ -85,26 +83,31 @@ public class MovementController {
 
 
     private void getArmiesToMove() {
-        while (true) {
-            try {
-                int armies = Integer.parseInt(
-                        JOptionPane.showInputDialog(
-                                frame,
-                                "How many armies do you want to move?",
-                                JOptionPane.INFORMATION_MESSAGE
-                        )
-                );
+        try {
+            String response = JOptionPane.showInputDialog(
+                    frame,
+                    "How many armies do you want to move to " + toCountry.getName() + " from " + fromCountry.getName() + "(0-" + (fromCountry.getArmies() - 1) + ")?",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
 
-                if (armies < fromCountry.getArmies() && armies > 0) {
-                    fromCountry.removeArmies(armies);
-                    toCountry.addArmies(armies);
-                    gameModel.updateGame();
-                    resetController();
-                    return;
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
+            // If they cancel or close this then exit this
+            if (response == null) {
+                return;
             }
+
+            int armies = Integer.parseInt(response);
+
+            if (armies < fromCountry.getArmies() && armies > 0) {
+                fromCountry.removeArmies(armies);
+                toCountry.addArmies(armies);
+                gameModel.updateGame();
+                gameModel.nextPhase();
+                resetController();
+            } else {
+                JOptionPane.showMessageDialog(frame, "You can not move " + armies + ".");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

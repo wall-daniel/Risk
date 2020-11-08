@@ -38,10 +38,6 @@ public class EditableCountryPanel extends CountryPanel implements MouseMotionLis
         addMouseListener(this);
     }
 
-
-
-
-
     @Override
     public void paintComponent(Graphics g) {
         Graphics2D graphics2D = (Graphics2D) g.create();
