@@ -1,12 +1,12 @@
 package risk.View.Map;
 
 import risk.Controller.Controller;
+import risk.Enums.PlayerColor;
 import risk.Listener.Events.OneCountryEvent;
 import risk.Listener.Events.TwoCountryEvent;
-import risk.Listener.Listeners.GameActionListener;
+import risk.View.Views.GameActionListener;
 import risk.Model.GameModel;
 import javax.swing.*;
-import java.awt.*;
 
 public class MapInformation extends JPanel implements GameActionListener {
 
@@ -18,7 +18,7 @@ public class MapInformation extends JPanel implements GameActionListener {
     public MapInformation(Controller controller){
          setUp(controller);
      }
-     
+
     private void setUp(Controller controller) {
          setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
          currentPlayer = new JLabel("CurrentPlayer");
@@ -33,10 +33,10 @@ public class MapInformation extends JPanel implements GameActionListener {
          add(endPhase);
     }
 
-
     @Override
     public void updateMap(GameModel gameModel) {
         currentPlayer.setText(gameModel.getCurrentPlayer().getName());
+        currentPlayer.setForeground(PlayerColor.getPlayerColor(gameModel.getCurrentPlayer().getIndex()));
         currentPhase.setText(gameModel.gameStatus.toString());
 
         switch (gameModel.gameStatus) {

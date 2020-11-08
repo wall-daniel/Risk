@@ -144,7 +144,7 @@ public class AttackController {
                     }
 
                     int armies = Integer.parseInt(response);
-                    if (country.getArmies() > armies && armies > 0) {
+                    if (country.getArmies() > armies && armies > 1) {
                         this.attackingCountry = country;
                         System.out.println("Attacking from " + country);
 

@@ -2,6 +2,7 @@ package risk.View.Main;
 
 import risk.Controller.Controller;
 import risk.Enums.MapColor;
+import risk.Model.GameModel;
 import risk.View.Map.MapGUI;
 import risk.View.MapCreator.MapEditorGUI;
 
@@ -12,11 +13,20 @@ import java.awt.*;
 public class MainGUI extends JFrame {
 
     public static void main(String args[]){
+
+
         new MainGUI();
     }
 
 
+
+
+
     public MainGUI(){
+        super("Risk");
+
+
+
         javax.swing.SwingUtilities.invokeLater(() -> createAndShowGUI());
     }
 
@@ -33,36 +43,40 @@ public class MainGUI extends JFrame {
 
     public void addComponentToPane(Container pane)  {
 
-        JPanel p = new JPanel(new GridLayout(4, 1));
+        JPanel p = new JPanel(new GridLayout(2, 1));
         p.setBorder(new EmptyBorder(100, 100, 100, 100));
 
         JButton newGame = new JButton("New Game");
-        JButton loadGame = new JButton("Load Game");
+       // JButton loadGame = new JButton("Load Game");
         JButton createMap = new JButton("Create New Map");
-        JButton editMap = new JButton("Edit Map");
+       // JButton editMap = new JButton("Edit Map");
 
         newGame.addActionListener(e -> {
             loadPlayMapOptions();
         });
 
+        /*
         loadGame.addActionListener(e -> {
             loadSaveOptions();
         });
-
+*/
         createMap.addActionListener(e -> {
             new MapEditorGUI();
             this.setVisible(false);
         });
 
+        /*
         editMap.addActionListener(e -> {
             loadMapOptions();
         });
 
 
+         */
+
         p.add(newGame);
-        p.add(loadGame);
+        //p.add(loadGame);
         p.add(createMap);
-        p.add(editMap);
+        //p.add(editMap);
 
         pane.add(p, BorderLayout.CENTER);
     }
@@ -76,6 +90,7 @@ public class MainGUI extends JFrame {
         //TODO have the controller getMapNames
         //String mapNamesOptions [] = controller.getMapNames();
 
+        /*
         String mapName = (String)JOptionPane.showInputDialog(
                 this,
                 "Choose map: (Just placeholder)",
@@ -84,6 +99,7 @@ public class MainGUI extends JFrame {
                 null,
                 mapNamesOptions,
                 "Earth");
+        */
 
         String numPlayersOptions[] = {"2" , "3" , "4" , "5", "6"};
         int numPlayers = Integer.parseInt(
@@ -94,8 +110,10 @@ public class MainGUI extends JFrame {
                         JOptionPane.PLAIN_MESSAGE,
                         null,
                         numPlayersOptions,
-                        "5")
+                        "3")
         );
+
+
 
         MapGUI mapGUI = new MapGUI(numPlayers);
         //TODO the controller setup the man given the map name and the number of players
@@ -107,6 +125,7 @@ public class MainGUI extends JFrame {
     /**
      * displays saves from file in rows, select one
      */
+    /*
     private void loadSaveOptions() {
         String gameNamesOptions [] = {"EarthGame1", "ItalyGame2", "ChickenGame3"};
         //TODO have the controller get names of all saved games
@@ -128,9 +147,12 @@ public class MainGUI extends JFrame {
         this.dispose();
     }
 
+     */
+
     /**
      * displays maps from file in rows, select one
      */
+    /*
     private void loadMapOptions() {
         String mapNamesOptions [] = {"Earth", "Italy", "Chicken"};
         //TODO have the controller getMapNames
@@ -151,4 +173,6 @@ public class MainGUI extends JFrame {
         //mapEditor.loadGame(); //loads the gameModel into the map
         this.dispose();
     }
+
+     */
 }

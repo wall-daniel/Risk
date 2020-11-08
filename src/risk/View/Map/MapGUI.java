@@ -22,6 +22,7 @@ public class MapGUI extends JFrame {
             this.mapInformation = new MapInformation(controller);
             gameModel.addActionListener(map);
             gameModel.addActionListener(mapInformation);
+
             javax.swing.SwingUtilities.invokeLater(this::createAndShowGUI);
         } catch (Exception e) {
             e.printStackTrace();

@@ -1,0 +1,1 @@
+[{"name":"squarecont","bonus":14,"countries":[{"name":"square","neighbours":[],"points":[{"x":13,"y":12},{"x":25,"y":101},{"x":113,"y":92},{"x":101,"y":20},{"x":13,"y":12}],"polygonPoint":{"x":389,"y":208},"labelPoint":{"x":414,"y":260},"layer":0}]}]

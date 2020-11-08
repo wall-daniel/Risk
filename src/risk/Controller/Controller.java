@@ -1,7 +1,11 @@
 package risk.Controller;
 
-import risk.Listener.Listeners.GameActionListener;
-import risk.Listener.Listeners.GameModelListener;
+import risk.View.Map.CountryLabel;
+import risk.View.Map.CountryPanel;
+import risk.View.MapCreator.EditableCountryPanel;
+import risk.View.MapCreator.MoveableCountryLabel;
+import risk.View.Views.GameActionListener;
+import risk.View.Views.GameModelListener;
 
 import risk.Model.*;
 
@@ -11,6 +15,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.lang.reflect.Array;
 import java.util.*;
 
 public class Controller implements MouseListener, ActionListener {
@@ -42,6 +47,9 @@ public class Controller implements MouseListener, ActionListener {
     }
 
     public void editCountry(String countryName, ArrayList<Country> neighbours, Continent continent) {
+        System.out.println("Edit: " + countryName + " " + neighbours + " " + continent.getName());
+
+
         // Get the neighbour names
         ArrayList<String> names = new ArrayList<>();
         neighbours.forEach(it -> names.add(it.getName()));
@@ -54,11 +62,9 @@ public class Controller implements MouseListener, ActionListener {
         }
     }
 
-
     public void createNewCountry(String name, Polygon polygon) {
         gameModel.addCountry(new Country(name, polygon));
     }
-
 
     public void createNewContinent(String continentName, int continentBonus) {
         gameModel.addContinent(new Continent(continentName, continentBonus));
@@ -66,7 +72,7 @@ public class Controller implements MouseListener, ActionListener {
 
     public void saveMap() {
         try {
-            gameModel.saveMap("map.txt");
+            gameModel.saveMap("EarthTest1.txt");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -76,13 +82,6 @@ public class Controller implements MouseListener, ActionListener {
         return gameModel.getContinents();
     }
 
-    public ArrayList<Country> getCountriesForNeighbours(String countryName) {
-        return gameModel.getCountries();
-    }
-
-    public Iterable<Country> getCountriesForNeigbhours(String countryName) {
-        return gameModel.getCountries();
-    }
 
     public void clickedInCountry(Country country) {
         switch (gameModel.gameStatus) {
@@ -98,11 +97,11 @@ public class Controller implements MouseListener, ActionListener {
                 attackController.setDefendingCountry(country);
                 attackController.resetController();
                 break;
-            case SELECT_TROOP_MOVING_TO_PHASE:
-                movementController.setMovingToCountry(country);
-                break;
             case SELECT_TROOP_MOVING_FROM_PHASE:
                 movementController.setMovingFromCountry(country);
+                break;
+            case SELECT_TROOP_MOVING_TO_PHASE:
+                movementController.setMovingToCountry(country);
                 break;
         }
     }
@@ -145,16 +144,92 @@ public class Controller implements MouseListener, ActionListener {
 
     @Override
     public void mouseClicked(MouseEvent mouseEvent) {
-        System.out.println("Clicked");
-        for (Country country : gameModel.getCountries()) {
-            if (country.getPolygon().contains(mouseEvent.getX(), mouseEvent.getY())) {
-                System.out.println(country.getName());
-                clickedInCountry(country);
+        if (mouseEvent.getSource() instanceof EditableCountryPanel){
+            int highestLayer = -1;
+            EditableCountryPanel editableCountryPanel = null;
 
-                // Make sure that only one country is clicked
-                break;
+            for (Component component : gameView.getLayeredPane().getComponents()){
+                if (component instanceof  EditableCountryPanel){
+                    EditableCountryPanel ecc = (EditableCountryPanel) component;
+
+                    Polygon translated = new Polygon(ecc.getCountry().getPolygon().xpoints, ecc.getCountry().getPolygon().ypoints, ecc.getCountry().getPolygon().npoints);
+                    translated.translate(ecc.getLocationOnScreen().x, ecc.getLocationOnScreen().y);
+
+                    int layer = gameView.getLayeredPane().getLayer(ecc);
+                    if (layer > highestLayer && translated.contains(mouseEvent.getXOnScreen(), mouseEvent.getYOnScreen())){
+                        highestLayer = layer;
+                        editableCountryPanel = ecc;
+                    }
+                }
             }
-         }
+
+            editCountryDetails(editableCountryPanel.getCountry());
+        } else if (mouseEvent.getSource() instanceof CountryPanel){
+
+
+            int highestLayer = -1;
+            Country clickedCountry = null;
+
+
+            for (Country country : gameModel.getCountries()) {
+                Polygon translated = new Polygon(country.getPolygon().xpoints, country.getPolygon().ypoints, country.getPolygon().npoints);
+                translated.translate(country.getPolygonPoint().x, country.getPolygonPoint().y);
+
+
+                if (translated.contains(mouseEvent.getX(), mouseEvent.getY()) && country.getLayer() > highestLayer) {
+                    highestLayer = country.getLayer();
+                    clickedCountry = country;
+                }
+            }
+
+            clickedInCountry(clickedCountry);
+        } else {
+
+        }
+    }
+
+    private void editCountryDetails(Country clickedCountry) {
+        JPanel countryInfoPanel = new JPanel(new GridLayout(2, 3));
+
+        JLabel countryNameLabel = new JLabel("Country Name");
+        JLabel neighboursLabel = new JLabel("Select Neighbours");
+        JLabel continentLabel = new JLabel("Select Continent");
+
+        JTextField countryNameTextField = new JTextField(clickedCountry.getName());
+
+        DefaultListModel<Country> countryListModel = new DefaultListModel<Country>();
+        gameModel.getCountries().forEach(e -> {
+                    if (!e.getName().equals(clickedCountry.getName()))
+                        countryListModel.addElement(e);
+                });
+
+        JList<Country> neighboursJList = new JList<>(countryListModel);//GameModel.getCountryNamesDefaultListModel(countryName));
+        neighboursJList.setSelectionMode(DefaultListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        neighboursJList.setSelectedIndices(gameModel.getCurrentNeighboursOfCountry(clickedCountry));
+
+        DefaultListModel<Continent> continentListModel = new DefaultListModel<>();
+        gameModel.getContinents().forEach(continentListModel::addElement);
+
+        JList<Continent> continentJList = new JList<Continent>(continentListModel);//GameModel.getContinentNamesDefaultListModel());
+        continentJList.setSelectionMode(DefaultListSelectionModel.SINGLE_SELECTION);
+        if (gameModel.getCountry(clickedCountry.getName()).getContinent()!=null)
+            continentJList.setSelectedValue(clickedCountry.getContinent(), true);
+
+        countryInfoPanel.add(countryNameLabel);
+        countryInfoPanel.add(neighboursLabel);
+        countryInfoPanel.add(continentLabel);
+
+        countryInfoPanel.add(countryNameTextField);
+        countryInfoPanel.add(neighboursJList);
+        countryInfoPanel.add(continentJList);
+
+        JOptionPane.showMessageDialog(gameView, countryInfoPanel);
+
+        String name = countryNameTextField.getText();
+        ArrayList<Country> neighbours = neighboursJList.isSelectionEmpty() ? new ArrayList<>() : (ArrayList<Country>) neighboursJList.getSelectedValuesList();
+        Continent continent = continentJList.getSelectedValue();
+
+        editCountry(name, neighbours, continent);
     }
 
     @Override
@@ -203,7 +278,6 @@ public class Controller implements MouseListener, ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
-        System.out.println("Clicked");
         switch (gameModel.gameStatus) {
             case TROOP_PLACEMENT_PHASE:
                 return;
@@ -225,5 +299,15 @@ public class Controller implements MouseListener, ActionListener {
         }
 
         gameModel.updateGame();
+    }
+
+    public void updateAllComponentLocations() {
+        for (Component component : gameView.getLayeredPane().getComponents()){
+            if (component instanceof EditableCountryPanel) {
+                gameModel.getCountry(component.getName()).setPolygonPoint(component.getLocationOnScreen());
+                gameModel.getCountry(component.getName()).setLayer(gameView.getLayeredPane().getLayer(component));
+                gameModel.getCountry(component.getName()).setLabelPoint(((EditableCountryPanel) component).getCountryLabel().getLocationOnScreen());
+            }
+        }
     }
 }

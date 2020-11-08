@@ -105,7 +105,6 @@ public class CountryDrawPad extends JPanel implements MouseListener {
 
     public void randomFractal(int lX, int lY, int rX, int rY){
 
-
         int midX, midY;
         int delta;
 

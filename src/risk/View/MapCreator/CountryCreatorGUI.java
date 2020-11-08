@@ -56,8 +56,6 @@ public class CountryCreatorGUI extends JFrame {
         JMenuItem newShape = new JMenuItem("New Shape");
         JMenuItem finish = new JMenuItem("Finish");
 
-
-
         clear.addActionListener(e -> {
             drawingPad.clear();
             setDrawingStatus(CountryDrawingEnum.FIRST_POINT);

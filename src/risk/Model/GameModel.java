@@ -2,25 +2,20 @@ package risk.Model;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
-import risk.Controller.Controller;
 import risk.Listener.Events.ContinentEvent;
 import risk.Listener.Events.OneCountryEvent;
-import risk.Listener.Listeners.GameActionListener;
-import risk.Listener.Listeners.GameModelListener;
+import risk.View.Views.GameActionListener;
+import risk.View.Views.GameModelListener;
 import risk.Players.Player;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.lang.reflect.Array;
+import java.util.*;
 
 public class GameModel {
-
-
     public enum GameStatus { TROOP_PLACEMENT_PHASE, SELECT_ATTACKING_PHASE, SELECT_DEFENDING_PHASE, SELECT_TROOP_MOVING_FROM_PHASE, SELECT_TROOP_MOVING_TO_PHASE, WAITING }
 
     private List<Player> players;
@@ -63,7 +58,7 @@ public class GameModel {
         }
 
         // Load the map
-        loadMap(JsonParser.parseReader(new FileReader("map.txt")).getAsJsonArray());
+        loadMap(JsonParser.parseReader(new FileReader("EarthTest1.txt")).getAsJsonArray());
 
         // Setup the map with players
         setupMap();
@@ -81,27 +76,64 @@ public class GameModel {
             // Add the continent and all the countries
             continents.put(continent.getName(), continent);
 
-            for (Country country : continent.getCountries())
+            for (Country country : continent.getCountries()) {
                 countries.put(country.getName(), country);
+            }
         }
     }
 
     private void setupMap() {
-        // Choose player that owns each country
-        // TODO make random
         int currentPlayer = 0;
+        int initArmies = getInitialArmies(players.size());
 
-        for (Country c : countries.values()) {
-            c.setPlayer(players.get(currentPlayer));
+        //Random allocation of countries to each player
+        ArrayList<String> tempCountryNames = getCountriesNames();
+        Random rand = new Random(System.currentTimeMillis());
 
-            currentPlayer = (currentPlayer + 1) % players.size();
-            c.addArmies(1);
+        while (!tempCountryNames.isEmpty()){
+            String countryName = tempCountryNames.remove(rand.nextInt(tempCountryNames.size()));
+            getCountry(countryName).setPlayer(players.get(currentPlayer));
+            currentPlayer= (currentPlayer + 1) % players.size();
         }
 
-        // TODO Setup the armies
+
+        // Choose how many armies are on each country.
+        // Does this by randomly choosing a country and assigning 1
+        // more army, until the player has no more armies left.
         for (Player p : players) {
+            ArrayList<String> countriesOwned = p.getCountries();
+            int currentArmies = initArmies - countriesOwned.size();
 
+            while (currentArmies > 0) {
+                getCountry(countriesOwned.get(rand.nextInt(countriesOwned.size()))).addArmies(1);
+                currentArmies -= 1;
+            }
         }
+
+        this.currentPlayer = 0;
+    }
+
+    private int getInitialArmies(int size) {
+        //TODO magic numbers fix
+        HashMap<Integer, Integer> initialArmySizes = new HashMap<>();
+        initialArmySizes.put(2, 50);
+        initialArmySizes.put(3, 35);
+        initialArmySizes.put(4, 30);
+        initialArmySizes.put(5, 25);
+        initialArmySizes.put(6, 20);
+        return initialArmySizes.get(size);
+    }
+
+
+    public int[] getCurrentNeighboursOfCountry(Country country){
+        int[] arr = new int[country.getNeighbours().size()];
+        int i = 0;
+        ArrayList<String> countryNames = getCountriesNames();
+
+        for (String s: country.getNeighbours())
+            arr[i++] = countryNames.indexOf(s);
+
+        return arr;
     }
 
 
@@ -143,7 +175,36 @@ public class GameModel {
         fileWriter.close();
     }
 
-    public  ArrayList<Continent>getContinents() {
+
+    //for placing troops, selecting attacking from, selecting moving from country
+    public ArrayList<String> getPlaceableCountries(){
+        return new ArrayList<>(players.get(currentPlayer).getCountries());
+    }
+
+    //for choosing defendingCountry
+    public ArrayList<String> getAttackableCountries(Country fromCountry){
+        return new ArrayList<>(fromCountry.getNeighbours());
+    }
+
+    //for choosing toCountry
+    public ArrayList<String> getMoveTroopsToCountries(Country fromCountry){
+        HashMap<String, Country> ss = new HashMap<>();
+        ss.put(fromCountry.getName(), fromCountry);
+        return addCountries(fromCountry, ss, fromCountry.getPlayer().getIndex());
+    }
+
+    private ArrayList<String> addCountries(Country currentCountry, HashMap<String, Country> ss, int playerIndex) {
+        for (String countryName : currentCountry.getNeighbours()){
+            Country country = getCountry(countryName);
+            if (country.getPlayer().getIndex() == playerIndex && !ss.containsKey(countryName)){
+                ss.put(countryName, country);
+                addCountries(country, ss, playerIndex);
+            }
+        }
+        return new ArrayList<>(ss.keySet());
+    }
+
+    public ArrayList<Continent>getContinents() {
         return new ArrayList<Continent>(continents.values());
     }
 
@@ -151,11 +212,20 @@ public class GameModel {
         return new ArrayList<Country>(countries.values());
     }
 
+    public ArrayList<Country> getCountriesInLayerOrder(){
+        ArrayList<Country> countriesLayerSort = getCountries();
+        countriesLayerSort.sort(Comparator.comparingInt(Country::getLayer));
+        return countriesLayerSort;
+    }
+
+    public ArrayList<String> getCountriesNames(){
+        return new ArrayList<String>(countries.keySet());
+    }
+
+
     public void editCountry(Country country, ArrayList<String> names, Continent continent) {
         country.setContinent(continent);
         country.setNeighbourNames(names);
-
-        gameModelListeners.forEach(it -> it.onNewCountry(new OneCountryEvent(this, country)));
     }
 
     public Player getCurrentPlayer() {
@@ -168,8 +238,14 @@ public class GameModel {
     }
 
     public void startGame() {
-        nextTurn();
+        initializeGame();
         updateGame();
+    }
+
+    private void initializeGame() {
+        currentPlayer = 0;
+        gameStatus = GameStatus.TROOP_PLACEMENT_PHASE;
+        players.get(currentPlayer).startTurn();
     }
 
     public void nextTurn() {
@@ -207,6 +283,10 @@ public class GameModel {
                 nextTurn();
                 break;
         }
+
+        for (Country country : countries.values())
+            System.out.println(country);
+
 
         updateGame();
     }
