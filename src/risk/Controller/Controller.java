@@ -300,6 +300,23 @@ public class Controller implements MouseListener, ActionListener {
         gameModel.updateGame();
     }
 
+
+    public ArrayList<String> getClickableCountries(){
+        switch (gameModel.gameStatus) {
+            case TROOP_PLACEMENT_PHASE:
+            case SELECT_ATTACKING_PHASE:
+            case SELECT_TROOP_MOVING_FROM_PHASE:
+                return gameModel.getPlaceableCountries();
+            case SELECT_DEFENDING_PHASE:
+                return gameModel.getAttackableCountries(attackController.getAttackingCountry());
+            case SELECT_TROOP_MOVING_TO_PHASE:
+                return gameModel.getMoveTroopsToCountries(movementController.getFromCountry());
+            default:
+                return new ArrayList<>();
+        }
+    }
+
+
     public void updateAllComponentLocations() {
         for (Component component : gameView.getLayeredPane().getComponents()){
             if (component instanceof EditableCountryPanel) {

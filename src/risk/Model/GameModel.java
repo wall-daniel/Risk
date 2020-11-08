@@ -14,6 +14,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class GameModel {
     public enum GameStatus { TROOP_PLACEMENT_PHASE, SELECT_ATTACKING_PHASE, SELECT_DEFENDING_PHASE, SELECT_TROOP_MOVING_FROM_PHASE, SELECT_TROOP_MOVING_TO_PHASE, WAITING }
@@ -28,6 +29,7 @@ public class GameModel {
     private boolean isGameOver = false;
 
     public GameStatus gameStatus = GameStatus.TROOP_PLACEMENT_PHASE;
+
 
     /**
      * Used for the editor
@@ -176,6 +178,9 @@ public class GameModel {
     }
 
 
+
+
+
     //for placing troops, selecting attacking from, selecting moving from country
     public ArrayList<String> getPlaceableCountries(){
         return new ArrayList<>(players.get(currentPlayer).getCountries());
@@ -183,13 +188,15 @@ public class GameModel {
 
     //for choosing defendingCountry
     public ArrayList<String> getAttackableCountries(Country fromCountry){
-        return new ArrayList<>(fromCountry.getNeighbours());
+        return new ArrayList<>(fromCountry.getNeighbours().stream().filter(e->
+            fromCountry.getPlayer().getIndex()!=countries.get(e).getPlayer().getIndex()
+        ).collect(Collectors.toList()));
     }
 
     //for choosing toCountry
     public ArrayList<String> getMoveTroopsToCountries(Country fromCountry){
         HashMap<String, Country> ss = new HashMap<>();
-        ss.put(fromCountry.getName(), fromCountry);
+        //ss.put(fromCountry.getName(), fromCountry);
         return addCountries(fromCountry, ss, fromCountry.getPlayer().getIndex());
     }
 

@@ -8,6 +8,7 @@ import risk.View.Views.GameActionListener;
 import risk.Model.GameModel;
 
 import javax.swing.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Map extends JPanel implements GameActionListener {
@@ -29,13 +30,18 @@ public class Map extends JPanel implements GameActionListener {
     public void updateMap(GameModel gameModel) {
         gameModel.getCountriesInLayerOrder().forEach(country -> {
             if (countryList.containsKey(country.getName())){
-                countryList.get(country.getName()).updateCountryLabel();
+                countryList.get(country.getName()).updateCountry();
             } else {
                 CountryPanel countryPanel = new CountryPanel(country, this.getSize(), controller, true);
                 countryList.put(country.getName(), countryPanel);
                 add(countryPanel);
             }
         });
+
+        ArrayList<String> clickableCountries = controller.getClickableCountries();
+
+        for (String countryNames: clickableCountries)
+            countryList.get(countryNames).setColorClickable();
 
         repaint();
     }

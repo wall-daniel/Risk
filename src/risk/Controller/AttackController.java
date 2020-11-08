@@ -161,6 +161,12 @@ public class AttackController {
         }
     }
 
+
+    public Country getAttackingCountry(){
+        return attackingCountry;
+    }
+
+
     public void setDefendingCountry(Country country) {
         if (gameModel.getCurrentPlayer() != country.getPlayer() && attackingCountry.isNeighbour(country)) {
             this.defendingCountry = country;
