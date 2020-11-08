@@ -1,9 +1,7 @@
 package risk.Controller;
 
-import risk.View.Map.CountryLabel;
 import risk.View.Map.CountryPanel;
 import risk.View.MapCreator.EditableCountryPanel;
-import risk.View.MapCreator.MoveableCountryLabel;
 import risk.View.Views.GameActionListener;
 import risk.View.Views.GameModelListener;
 
@@ -15,7 +13,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.lang.reflect.Array;
 import java.util.*;
 
 public class Controller implements MouseListener, ActionListener {
@@ -88,7 +85,7 @@ public class Controller implements MouseListener, ActionListener {
             case WAITING:
                 break;
             case TROOP_PLACEMENT_PHASE:
-                placeTroops(country);
+                placeArmies(country);
                 break;
             case SELECT_ATTACKING_PHASE:
                 attackController.setAttackingCountry(country);
@@ -105,7 +102,7 @@ public class Controller implements MouseListener, ActionListener {
         }
     }
 
-    private void placeTroops(Country country) {
+    private void placeArmies(Country country) {
         // Make sure that the country is owned by the player
         if (country.getPlayer() == gameModel.getCurrentPlayer()) {
             try {
