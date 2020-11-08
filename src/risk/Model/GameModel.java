@@ -227,7 +227,7 @@ public class GameModel {
     }
 
     public ArrayList<String> getCountriesNames(){
-        return new ArrayList<String>(countries.keySet());
+        return new ArrayList<>(countries.keySet());
     }
 
     public void editCountry(Country country, ArrayList<String> names, Continent continent) {

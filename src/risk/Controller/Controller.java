@@ -199,7 +199,7 @@ public class Controller implements MouseListener, ActionListener {
      */
     private void editCountryDetails(Country clickedCountry) {
         JPanel countryInfoPanel = new JPanel(new GridLayout(2, 3));
-
+        countryInfoPanel.setPreferredSize(new Dimension(600,500));
         JLabel countryNameLabel = new JLabel("Country Name");
         JLabel neighboursLabel = new JLabel("Select Neighbours");
         JLabel continentLabel = new JLabel("Select Continent");
@@ -215,6 +215,7 @@ public class Controller implements MouseListener, ActionListener {
         JList<Country> neighboursJList = new JList<>(countryListModel);//GameModel.getCountryNamesDefaultListModel(countryName));
         neighboursJList.setSelectionMode(DefaultListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         neighboursJList.setSelectedIndices(gameModel.getCurrentNeighboursOfCountry(clickedCountry));
+        JScrollPane neighboursScrollPane = new JScrollPane(neighboursJList);
 
         DefaultListModel<Continent> continentListModel = new DefaultListModel<>();
         gameModel.getContinents().forEach(continentListModel::addElement);
@@ -223,14 +224,16 @@ public class Controller implements MouseListener, ActionListener {
         continentJList.setSelectionMode(DefaultListSelectionModel.SINGLE_SELECTION);
         if (gameModel.getCountry(clickedCountry.getName()).getContinent()!=null)
             continentJList.setSelectedValue(clickedCountry.getContinent(), true);
+        JScrollPane continentsScrollPane = new JScrollPane(continentJList);
+
 
         countryInfoPanel.add(countryNameLabel);
         countryInfoPanel.add(neighboursLabel);
         countryInfoPanel.add(continentLabel);
 
         countryInfoPanel.add(countryNameTextField);
-        countryInfoPanel.add(neighboursJList);
-        countryInfoPanel.add(continentJList);
+        countryInfoPanel.add(neighboursScrollPane);
+        countryInfoPanel.add(continentsScrollPane);
 
         JOptionPane.showMessageDialog(gameView, countryInfoPanel);
 
