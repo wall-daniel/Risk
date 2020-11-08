@@ -2,25 +2,22 @@ package risk.Model;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
-import risk.Controller.Controller;
 import risk.Listener.Events.ContinentEvent;
 import risk.Listener.Events.OneCountryEvent;
-import risk.Listener.Listeners.GameActionListener;
-import risk.Listener.Listeners.GameModelListener;
+import risk.View.Views.GameActionListener;
+import risk.View.Views.GameModelListener;
 import risk.Players.Player;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
 public class GameModel {
-
-
     public enum GameStatus { TROOP_PLACEMENT_PHASE, SELECT_ATTACKING_PHASE, SELECT_DEFENDING_PHASE, SELECT_TROOP_MOVING_FROM_PHASE, SELECT_TROOP_MOVING_TO_PHASE, WAITING }
 
     private List<Player> players;
@@ -105,6 +102,18 @@ public class GameModel {
     }
 
 
+    public int[] getCurrentNeighboursOfCountry(Country country){
+        int[] arr = new int[country.getNeighbours().size()];
+        int i = 0;
+        ArrayList<String> countryNames = getCountriesNames();
+
+        for (String s: country.getNeighbours())
+            arr[i++] = countryNames.indexOf(s);
+
+        return arr;
+    }
+
+
 
     public void addActionListener(GameActionListener listener) {
         gameActionListeners.add(listener);
@@ -172,10 +181,6 @@ public class GameModel {
         return new ArrayList<>(ss.keySet());
     }
 
-
-
-
-
     public ArrayList<Continent>getContinents() {
         return new ArrayList<Continent>(continents.values());
     }
@@ -184,11 +189,14 @@ public class GameModel {
         return new ArrayList<Country>(countries.values());
     }
 
+    public ArrayList<String> getCountriesNames(){
+        return new ArrayList<String>(countries.keySet());
+    }
+
+
     public void editCountry(Country country, ArrayList<String> names, Continent continent) {
         country.setContinent(continent);
         country.setNeighbourNames(names);
-
-        gameModelListeners.forEach(it -> it.onNewCountry(new OneCountryEvent(this, country)));
     }
 
     public Player getCurrentPlayer() {

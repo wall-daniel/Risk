@@ -9,16 +9,37 @@ import javax.swing.*;
 import java.awt.*;
 
 public class CountryPanel extends JPanel {
-    private Country country;
+    protected Country country;
 
-    //public boolean twicePainted = false;
+    protected CountryLabel countryLabel;
 
-    public CountryPanel(Country country, Dimension dimension, Controller controller) {
+
+    public CountryPanel(Country country, Dimension dimension, Controller controller, boolean addLabel) {
         super();
         this.country = country;
+        setLayout(null);
         setSize(dimension);
         setOpaque(false);
+        setName(country.getName());
+
+        if (addLabel) {
+            countryLabel = new CountryLabel(country.getName(), controller);
+            //Point labelPoint = country.getLabelPoint();
+            // countryLabel.setBounds(labelPoint.x, labelPoint.y, 100, 20);
+            countryLabel.setBounds((int) (Math.random() * 300), (int) (Math.random() * 300), 100, 20);
+
+            add(countryLabel);
+        }
         addMouseListener(controller);
+    }
+
+
+    public CountryLabel getCountryLabel(){
+        return countryLabel;
+    }
+
+    public Country getCountry(){
+        return country;
     }
 
 
@@ -28,7 +49,6 @@ public class CountryPanel extends JPanel {
         Graphics2D graphics2D = (Graphics2D) g.create();
         Polygon polygon = country.getPolygon();
 
-        System.out.println("draw polygon: " + country.getName());
         //draw border polygon
         graphics2D.setColor(MapColor.BORDER_COLOR.getColor());
         graphics2D.setStroke(new BasicStroke(10));
@@ -38,13 +58,8 @@ public class CountryPanel extends JPanel {
         graphics2D.setColor(country.getPlayer().getPlayerColor());
         graphics2D.fillPolygon(polygon);
 
-        System.out.println("draw label: " + country.getName());
-        graphics2D.setColor(MapColor.TEXT_COLOR.getColor());
-        graphics2D.setFont(new Font("TimesRoman", Font.BOLD, 25));
-        graphics2D.drawString(
-                country.getName() + ": " + country.getArmies(),
-                (int) (polygon.getBounds().getWidth() / 2 + polygon.getBounds().getX()),
-                (int) (polygon.getBounds().getHeight() / 2 + polygon.getBounds().getY())
-        );
     }
+
+
+
 }

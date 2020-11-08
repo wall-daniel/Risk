@@ -4,12 +4,10 @@ import risk.Controller.Controller;
 import risk.Enums.MapColor;
 import risk.Listener.Events.OneCountryEvent;
 import risk.Listener.Events.TwoCountryEvent;
-import risk.Listener.Listeners.GameActionListener;
-import risk.Model.Country;
+import risk.View.Views.GameActionListener;
 import risk.Model.GameModel;
 
 import javax.swing.*;
-import java.awt.*;
 import java.util.HashMap;
 
 public class Map extends JPanel implements GameActionListener {
@@ -21,21 +19,17 @@ public class Map extends JPanel implements GameActionListener {
 
     boolean initialized;
 
-
     public Map(Controller controller) {
         this.controller = controller;
         this.initialized = false;
         setLayout(null);
         setBackground(MapColor.BACKGROUND_COLOR.getColor());
-        this.controller.addAsGameActionListener(this);
-
     }
-
 
     @Override
     public void updateMap(GameModel gameModel) {
         gameModel.getCountries().forEach(country -> {
-            CountryPanel countryPanel = new CountryPanel(country, this.getSize(), controller);
+            CountryPanel countryPanel = new CountryPanel(country, this.getSize(), controller, true);
             countryList.put(country.getName(), countryPanel);
             if (!initialized)
                 add(countryPanel);

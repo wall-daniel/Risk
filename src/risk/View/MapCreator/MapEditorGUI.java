@@ -4,12 +4,14 @@ import risk.Controller.Controller;
 import risk.Enums.DrawingEnum;
 import risk.Enums.MapColor;
 import risk.Listener.Events.ContinentEvent;
-import risk.Listener.Listeners.GameModelListener;
+import risk.View.Views.GameModelListener;
 import risk.Listener.Events.OneCountryEvent;
 import risk.Model.*;
 import risk.View.Main.MainGUI;
 
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import javax.swing.*;
 
@@ -20,6 +22,10 @@ public class MapEditorGUI extends JFrame implements GameModelListener {
 
     Controller controller;
     String mapName;
+
+    boolean drawingMode;
+
+
 
     public MapEditorGUI(){
         countryCounter = 0;
@@ -33,7 +39,6 @@ public class MapEditorGUI extends JFrame implements GameModelListener {
         }
 
         javax.swing.SwingUtilities.invokeLater(() -> createAndShowGUI());
-        this.controller.addAsGameModelListener(this);
     }
 
 
@@ -60,6 +65,8 @@ public class MapEditorGUI extends JFrame implements GameModelListener {
     private void addJMenuBar() {
         JMenuBar bar = new JMenuBar();
         JMenu menu = new JMenu("Add");
+
+
 
         JMenuItem addCountry = new JMenuItem("Add Country");
         JMenuItem addContinent = new JMenuItem("Add Continent");
@@ -97,6 +104,10 @@ public class MapEditorGUI extends JFrame implements GameModelListener {
         setJMenuBar(bar);
     }
 
+    private void setDrawingMode(boolean drawingMode) {
+        this.drawingMode = drawingMode;
+    }
+
     private void addNewContinent() {
         String continentName = JOptionPane.showInputDialog("Enter Continent Name");
         int continentBonus = Integer.parseInt(JOptionPane.showInputDialog("Enter Continent Bonus"));
@@ -111,6 +122,7 @@ public class MapEditorGUI extends JFrame implements GameModelListener {
     }
 
     private void saveMap() {
+        controller.updateAllComponentLocations();
         controller.saveMap();
     }
 
@@ -127,24 +139,21 @@ public class MapEditorGUI extends JFrame implements GameModelListener {
     }
 
 
-    public void editCountry(String countryName, ArrayList<Country> neighbourNames, Continent continent) {
-        controller.editCountry(countryName, neighbourNames, continent);
-    }
-
     public void addNewCountry(String name, Polygon polygon){
         controller.createNewCountry(name, polygon);
     }
 
     @Override
     public void onNewCountry(OneCountryEvent oce) {
-        EditableCustomCountry cc = new EditableCustomCountry(this, oce.getFirstCountry().getName(), oce.getFirstCountry().getPolygon());
-        Insets insets = layeredPane.getInsets();
-        cc.setBounds(insets.left, insets.top, cc.getCountryPolygon().getBounds().width + 30, cc.getCountryPolygon().getBounds().height + 30);
+        EditableCountryPanel cc = new EditableCountryPanel(oce.getFirstCountry(), this.getSize(), controller);
 
+        Insets insets = layeredPane.getInsets();
+        cc.setBounds(insets.left, insets.top, cc.getCountry().getPolygon().getBounds().width + 30, cc.getCountry().getPolygon().getBounds().height + 30);
         cc.setBorder(BorderFactory.createLineBorder(Color.black)); //TODO will remove
 
         layeredPane.add(cc, Integer.valueOf(countryCounter));
         countryCounter++;
+
     }
 
     @Override
@@ -154,4 +163,8 @@ public class MapEditorGUI extends JFrame implements GameModelListener {
 
 
     }
+
+
+
+
 }

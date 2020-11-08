@@ -2,6 +2,7 @@ package risk.View.Main;
 
 import risk.Controller.Controller;
 import risk.Enums.MapColor;
+import risk.Model.GameModel;
 import risk.View.Map.MapGUI;
 import risk.View.MapCreator.MapEditorGUI;
 
@@ -12,11 +13,20 @@ import java.awt.*;
 public class MainGUI extends JFrame {
 
     public static void main(String args[]){
+
+
         new MainGUI();
     }
 
 
+
+
+
     public MainGUI(){
+        super("Risk");
+
+
+
         javax.swing.SwingUtilities.invokeLater(() -> createAndShowGUI());
     }
 
@@ -33,12 +43,12 @@ public class MainGUI extends JFrame {
 
     public void addComponentToPane(Container pane)  {
 
-        JPanel p = new JPanel(new GridLayout(1, 1));
+        JPanel p = new JPanel(new GridLayout(2, 1));
         p.setBorder(new EmptyBorder(100, 100, 100, 100));
 
         JButton newGame = new JButton("New Game");
        // JButton loadGame = new JButton("Load Game");
-       // JButton createMap = new JButton("Create New Map");
+        JButton createMap = new JButton("Create New Map");
        // JButton editMap = new JButton("Edit Map");
 
         newGame.addActionListener(e -> {
@@ -49,20 +59,23 @@ public class MainGUI extends JFrame {
         loadGame.addActionListener(e -> {
             loadSaveOptions();
         });
-
+*/
         createMap.addActionListener(e -> {
             new MapEditorGUI();
             this.setVisible(false);
         });
 
+        /*
         editMap.addActionListener(e -> {
             loadMapOptions();
         });
-    */
+
+
+         */
 
         p.add(newGame);
         //p.add(loadGame);
-        //p.add(createMap);
+        p.add(createMap);
         //p.add(editMap);
 
         pane.add(p, BorderLayout.CENTER);
@@ -99,6 +112,8 @@ public class MainGUI extends JFrame {
                         numPlayersOptions,
                         "5")
         );
+
+
 
         MapGUI mapGUI = new MapGUI(numPlayers);
         //TODO the controller setup the man given the map name and the number of players

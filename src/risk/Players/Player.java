@@ -21,10 +21,12 @@ public class Player {
         this.name = name;
         this.index = index;
         countriesOwned = new ArrayList<>();
-        playerColor = PlayerColor.getPlayerColor(index); //TODO must change so each player gets distinct color
+        playerColor = PlayerColor.getPlayerColor(index);
     }
 
     public Color getPlayerColor() {
+
+
         if (playingTurn) {
             return Color.WHITE;
         } else {

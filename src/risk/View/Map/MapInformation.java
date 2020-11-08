@@ -3,10 +3,9 @@ package risk.View.Map;
 import risk.Controller.Controller;
 import risk.Listener.Events.OneCountryEvent;
 import risk.Listener.Events.TwoCountryEvent;
-import risk.Listener.Listeners.GameActionListener;
+import risk.View.Views.GameActionListener;
 import risk.Model.GameModel;
 import javax.swing.*;
-import java.awt.*;
 
 public class MapInformation extends JPanel implements GameActionListener {
 
