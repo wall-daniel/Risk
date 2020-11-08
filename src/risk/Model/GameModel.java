@@ -60,7 +60,7 @@ public class GameModel {
         }
 
         // Load the map
-        loadMap(JsonParser.parseReader(new FileReader("EarthTest1.txt")).getAsJsonArray());
+        loadMap(JsonParser.parseReader(new FileReader("RiskMap.txt")).getAsJsonArray());
 
         // Setup the map with players
         setupMap();
@@ -212,23 +212,23 @@ public class GameModel {
     }
 
     public ArrayList<Continent>getContinents() {
-        return new ArrayList<Continent>(continents.values());
+        return new ArrayList<>(continents.values());
     }
 
     public ArrayList<Country> getCountries() {
-        return new ArrayList<Country>(countries.values());
+        return new ArrayList<>(countries.values());
     }
 
     public ArrayList<Country> getCountriesInLayerOrder(){
         ArrayList<Country> countriesLayerSort = getCountries();
         countriesLayerSort.sort(Comparator.comparingInt(Country::getLayer));
+        Collections.reverse(countriesLayerSort);
         return countriesLayerSort;
     }
 
     public ArrayList<String> getCountriesNames(){
         return new ArrayList<String>(countries.keySet());
     }
-
 
     public void editCountry(Country country, ArrayList<String> names, Continent continent) {
         country.setContinent(continent);

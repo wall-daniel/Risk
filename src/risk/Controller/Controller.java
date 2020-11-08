@@ -72,7 +72,7 @@ public class Controller implements MouseListener, ActionListener {
 
     public void saveMap() {
         try {
-            gameModel.saveMap("EarthTest1.txt");
+            gameModel.saveMap("RiskMap.txt");
         } catch (Exception e) {
             e.printStackTrace();
         }
