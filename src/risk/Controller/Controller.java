@@ -143,8 +143,14 @@ public class Controller implements MouseListener, ActionListener {
         JOptionPane.showMessageDialog(gameView, errorMessage, "Error", JOptionPane.INFORMATION_MESSAGE);
     }
 
+    /**
+     * Finds highest layered country and sends a click of that country to determine what action is to be done.
+     *
+     * @param mouseEvent
+     */
     @Override
     public void mouseClicked(MouseEvent mouseEvent) {
+        // Find the thing clicked on that has the highest layer (e.g. one on top)
         if (mouseEvent.getSource() instanceof EditableCountryPanel){
             int highestLayer = -1;
             EditableCountryPanel editableCountryPanel = null;
@@ -166,8 +172,6 @@ public class Controller implements MouseListener, ActionListener {
 
             editCountryDetails(editableCountryPanel.getCountry());
         } else if (mouseEvent.getSource() instanceof CountryPanel){
-
-
             int highestLayer = -1;
             Country clickedCountry = null;
 
@@ -183,12 +187,16 @@ public class Controller implements MouseListener, ActionListener {
                 }
             }
 
+            // Make sure that a country was clicked
             if (clickedCountry != null) clickedInCountry(clickedCountry);
-        } else {
-
         }
     }
 
+    /**
+     * Edit the country's name, neighbours, and continent.
+     *
+     * @param clickedCountry, country clicked on
+     */
     private void editCountryDetails(Country clickedCountry) {
         JPanel countryInfoPanel = new JPanel(new GridLayout(2, 3));
 
