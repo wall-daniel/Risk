@@ -81,8 +81,6 @@ public class MapEditorGUI extends JFrame implements GameModelListener {
         JMenuBar bar = new JMenuBar();
         JMenu menu = new JMenu("Add");
 
-
-
         JMenuItem addCountry = new JMenuItem("Add Country");
         JMenuItem addContinent = new JMenuItem("Add Continent");
         JMenuItem saveMap = new JMenuItem("Save Map");
@@ -169,12 +167,16 @@ public class MapEditorGUI extends JFrame implements GameModelListener {
             cc.setLocation(oce.getFirstCountry().getLabelPoint());
         }
         Insets insets = layeredPane.getInsets();
-        cc.setBounds(insets.left, insets.top, cc.getCountry().getPolygon().getBounds().width + 30, cc.getCountry().getPolygon().getBounds().height + 30);
+        Insets frameInset = getInsets();
+        cc.setBounds(oce.getFirstCountry().getPolygonPoint().x - insets.left, oce.getFirstCountry().getPolygonPoint().y - insets.top - frameInset.top, cc.getCountry().getPolygon().getBounds().width + 30, cc.getCountry().getPolygon().getBounds().height + 30);
         cc.setBorder(BorderFactory.createLineBorder(Color.black)); //TODO will remove
 
-        layeredPane.add(cc, Integer.valueOf(countryCounter));
-        countryCounter++;
+        int layer = oce.getFirstCountry().getLayer();
+        if (layer == -1)
+            layer = countryCounter;
 
+        layeredPane.add(cc, Integer.valueOf(layer));
+        countryCounter++;
     }
 
     @Override

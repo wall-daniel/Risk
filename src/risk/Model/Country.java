@@ -29,7 +29,7 @@ public class Country {
         neighbours = new ArrayList<>();
         labelPoint = new Point();
         polygonPoint = new Point();
-        layer = 0;
+        layer = -1;
 
     }
 
