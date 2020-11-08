@@ -48,9 +48,6 @@ public class Country {
         this.continent = continent;
     }
 
-
-
-
     /**
      * Contructor from json object.
      *

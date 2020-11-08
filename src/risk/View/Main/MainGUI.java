@@ -43,13 +43,13 @@ public class MainGUI extends JFrame {
 
     public void addComponentToPane(Container pane)  {
 
-        JPanel p = new JPanel(new GridLayout(2, 1));
+        JPanel p = new JPanel(new GridLayout(3, 1));
         p.setBorder(new EmptyBorder(100, 100, 100, 100));
 
         JButton newGame = new JButton("New Game");
        // JButton loadGame = new JButton("Load Game");
         JButton createMap = new JButton("Create New Map");
-       // JButton editMap = new JButton("Edit Map");
+        JButton editMap = new JButton("Edit Map");
 
         newGame.addActionListener(e -> {
             loadPlayMapOptions();
@@ -65,18 +65,15 @@ public class MainGUI extends JFrame {
             this.setVisible(false);
         });
 
-        /*
         editMap.addActionListener(e -> {
             loadMapOptions();
         });
 
 
-         */
-
         p.add(newGame);
         //p.add(loadGame);
         p.add(createMap);
-        //p.add(editMap);
+        p.add(editMap);
 
         pane.add(p, BorderLayout.CENTER);
     }
@@ -152,27 +149,15 @@ public class MainGUI extends JFrame {
     /**
      * displays maps from file in rows, select one
      */
-    /*
     private void loadMapOptions() {
-        String mapNamesOptions [] = {"Earth", "Italy", "Chicken"};
-        //TODO have the controller getMapNames
-        //String mapNamesOptions [] = controller.getMapNames();
 
-        String mapName = (String)JOptionPane.showInputDialog(
+        String filename = JOptionPane.showInputDialog(
                 this,
-                "Choose map:",
-                "New Game",
-                JOptionPane.PLAIN_MESSAGE,
-                null,
-                mapNamesOptions,
-                "Earth");
+                "Enter map filename:",
+                JOptionPane.PLAIN_MESSAGE
+        );
 
-        MapEditorGUI mapEditorGUI = new MapEditorGUI();
-        //TODO the controller setup the man given the map name and the number of players
-        //controller.setUpModel(mapName);
-        //mapEditor.loadGame(); //loads the gameModel into the map
+        MapEditorGUI mapEditorGUI = new MapEditorGUI(filename);
         this.dispose();
     }
-
-     */
 }
