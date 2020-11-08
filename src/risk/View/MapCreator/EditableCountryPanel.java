@@ -26,12 +26,14 @@ public class EditableCountryPanel extends CountryPanel implements MouseMotionLis
 
     private boolean pressed = false;;
 
-    public EditableCountryPanel(Country country, Dimension size, Controller controller) {
+    public EditableCountryPanel(Country country, Dimension size, Controller controller, Point polygonPoint) {
         super(country, size, controller, false);
         countryLabel = new MoveableCountryLabel(country.getName(), controller);
         Point labelPoint = country.getLabelPoint();
-        countryLabel.setBounds(labelPoint.x, labelPoint.y, 100, 20);
+        countryLabel.setBounds(labelPoint.x - polygonPoint.x, labelPoint.y - polygonPoint.y, 100, 20);
         add(countryLabel);
+
+
         addMouseMotionListener(this);
         addMouseListener(this);
     }

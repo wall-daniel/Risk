@@ -20,7 +20,6 @@ public class MoveableCountryLabel extends CountryLabel implements MouseListener,
         super(text, 0, controller);
         addMouseMotionListener(this);
         addMouseListener(this);
-
     }
 
     @Override

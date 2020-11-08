@@ -158,14 +158,8 @@ public class MapEditorGUI extends JFrame implements GameModelListener {
 
     @Override
     public void onNewCountry(OneCountryEvent oce) {
-        EditableCountryPanel cc = new EditableCountryPanel(oce.getFirstCountry(), this.getSize(), controller);
+        EditableCountryPanel cc = new EditableCountryPanel(oce.getFirstCountry(), this.getSize(), controller, oce.getFirstCountry().getPolygonPoint());
 
-        if (oce.getFirstCountry().getLabelPoint() != null) {
-            cc.getCountryLabel().setLocation(oce.getFirstCountry().getLabelPoint());
-        }
-        if (oce.getFirstCountry().getPolygonPoint() != null) {
-            cc.setLocation(oce.getFirstCountry().getLabelPoint());
-        }
         Insets insets = layeredPane.getInsets();
         Insets frameInset = getInsets();
         cc.setBounds(oce.getFirstCountry().getPolygonPoint().x - insets.left, oce.getFirstCountry().getPolygonPoint().y - insets.top - frameInset.top, cc.getCountry().getPolygon().getBounds().width + 30, cc.getCountry().getPolygon().getBounds().height + 30);
