@@ -1,8 +1,8 @@
 package risk.Players;
 
-import risk.Enums.MapColor;
 import risk.Enums.PlayerColor;
 import risk.Model.Country;
+import risk.Model.GameModel;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -48,11 +48,11 @@ public class Player {
         playingTurn = false;
     }
 
-    public void startTurn() {
+    public void startTurn(int continentBonus) {
         playingTurn = true;
 
         // Number of armies is equal to countries divided by 3 rounded down, minimum 3.
-        placeableArmies = Math.max(3, countriesOwned.size() / 3);
+        placeableArmies = Math.max(3, countriesOwned.size() / 3) + continentBonus;
     }
 
     public boolean addArmies(Country country, int numArmies) {

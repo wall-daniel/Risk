@@ -2,6 +2,7 @@ package risk.Model;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import risk.Players.Player;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -11,21 +12,22 @@ import java.util.Set;
 // Not useful right now, but later for bonuses and gui will be.
 public class Continent {
 
-    private String name;
-    private int bonus = 0;
+    private String continentName;
+    private int continentBonus = 0;
     private Set<Country> countries;
+    private Player controlledBy;
 
     public Continent(String name, int bonus) {
-        this.name = name;
-        this.bonus = bonus;
+        this.continentName = name;
+        this.continentBonus = bonus;
 
         this.countries = new HashSet<>();
     }
 
     public Continent(JsonObject json) {
         // Get name
-        this.name = json.get("name").getAsString();
-        this.bonus = json.get("bonus").getAsInt();
+        this.continentName = json.get("name").getAsString();
+        this.continentBonus = json.get("bonus").getAsInt();
 
         // Get countries
         this.countries = new HashSet<>();
@@ -38,7 +40,7 @@ public class Continent {
     }
 
     public String getName() {
-        return this.name;
+        return this.continentName;
     }
 
     public Set<Country> getCountries() {
@@ -49,8 +51,8 @@ public class Continent {
         JsonObject json = new JsonObject();
 
         // Set continent values
-        json.addProperty("name", name);
-        json.addProperty("bonus", bonus);
+        json.addProperty("name", continentName);
+        json.addProperty("bonus", continentBonus);
 
         // Add the countries
         JsonArray countryArr = new JsonArray();
@@ -62,7 +64,7 @@ public class Continent {
 
     @Override
     public String toString() {
-        return name;
+        return continentName;
     }
 
     public void addCountry(Country country) {
@@ -72,4 +74,14 @@ public class Continent {
     public void removeCountry(Country country) {
         countries.remove(country);
     }
+
+    public int getBonus() {
+        return continentBonus;
+    }
+
+    public void setCountries(Set<Country> c){
+        countries = c;
+    }
+
+    public Player getControlledBy(){ return controlledBy;}
 }

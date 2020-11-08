@@ -1,9 +1,7 @@
 package risk.Controller;
 
-import risk.View.Map.CountryLabel;
 import risk.View.Map.CountryPanel;
 import risk.View.MapCreator.EditableCountryPanel;
-import risk.View.MapCreator.MoveableCountryLabel;
 import risk.View.Views.GameActionListener;
 import risk.View.Views.GameModelListener;
 
@@ -15,7 +13,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.lang.reflect.Array;
 import java.util.*;
 
 public class Controller implements MouseListener, ActionListener {
@@ -88,7 +85,7 @@ public class Controller implements MouseListener, ActionListener {
             case WAITING:
                 break;
             case TROOP_PLACEMENT_PHASE:
-                placeTroops(country);
+                placeArmies(country);
                 break;
             case SELECT_ATTACKING_PHASE:
                 attackController.setAttackingCountry(country);
@@ -105,13 +102,13 @@ public class Controller implements MouseListener, ActionListener {
         }
     }
 
-    private void placeTroops(Country country) {
+    private void placeArmies(Country country) {
         // Make sure that the country is owned by the player
         if (country.getPlayer() == gameModel.getCurrentPlayer()) {
             try {
                 String result = JOptionPane.showInputDialog(
                         gameView,
-                        "How many troops do you want to move here?",
+                        "How many armies do you want to place in " + country.getName() + "?",
                         JOptionPane.INFORMATION_MESSAGE
                 );
 
@@ -121,7 +118,12 @@ public class Controller implements MouseListener, ActionListener {
                 }
 
                 // Update the armies in the country
-                gameModel.placeArmies(country, Integer.parseInt(result));
+                int armies = Integer.parseInt(result);
+                if (armies < 1) {
+                    showErrorMessage("Have to supply a number greater than 0.");
+                    return;
+                }
+                gameModel.placeArmies(country, armies);
 
                 // Check if done placing troops
                 if (gameModel.donePlacingArmies()) {
@@ -141,8 +143,14 @@ public class Controller implements MouseListener, ActionListener {
         JOptionPane.showMessageDialog(gameView, errorMessage, "Error", JOptionPane.INFORMATION_MESSAGE);
     }
 
+    /**
+     * Finds highest layered country and sends a click of that country to determine what action is to be done.
+     *
+     * @param mouseEvent
+     */
     @Override
     public void mouseClicked(MouseEvent mouseEvent) {
+        // Find the thing clicked on that has the highest layer (e.g. one on top)
         if (mouseEvent.getSource() instanceof EditableCountryPanel){
             int highestLayer = -1;
             EditableCountryPanel editableCountryPanel = null;
@@ -164,8 +172,6 @@ public class Controller implements MouseListener, ActionListener {
 
             editCountryDetails(editableCountryPanel.getCountry());
         } else if (mouseEvent.getSource() instanceof CountryPanel){
-
-
             int highestLayer = -1;
             Country clickedCountry = null;
 
@@ -181,12 +187,16 @@ public class Controller implements MouseListener, ActionListener {
                 }
             }
 
-            clickedInCountry(clickedCountry);
-        } else {
-
+            // Make sure that a country was clicked
+            if (clickedCountry != null) clickedInCountry(clickedCountry);
         }
     }
 
+    /**
+     * Edit the country's name, neighbours, and continent.
+     *
+     * @param clickedCountry, country clicked on
+     */
     private void editCountryDetails(Country clickedCountry) {
         JPanel countryInfoPanel = new JPanel(new GridLayout(2, 3));
 

@@ -102,20 +102,20 @@ public class MainGUI extends JFrame {
         */
 
         String numPlayersOptions[] = {"2" , "3" , "4" , "5", "6"};
-        int numPlayers = Integer.parseInt(
-                (String)JOptionPane.showInputDialog(
-                        this,
-                        "Number of Players:",
-                        "New Game",
-                        JOptionPane.PLAIN_MESSAGE,
-                        null,
-                        numPlayersOptions,
-                        "3")
-        );
 
+        String numPlayers = (String)JOptionPane.showInputDialog(
+                this,
+                "Number of Players:",
+                "New Game",
+                JOptionPane.PLAIN_MESSAGE,
+                null,
+                numPlayersOptions,
+                "3");
 
+        // If the response is null then return
+        if (numPlayers == null) return;
 
-        MapGUI mapGUI = new MapGUI(numPlayers);
+        MapGUI mapGUI = new MapGUI(Integer.parseInt(numPlayers));
         //TODO the controller setup the man given the map name and the number of players
         //controller.setUpModel(mapName, numPlayers);
         //mapGUI.loadGame(); //loads the gameModel into the map
