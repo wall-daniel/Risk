@@ -72,4 +72,8 @@ public class Continent {
     public void removeCountry(Country country) {
         countries.remove(country);
     }
+
+    public int getBonus() {
+        return bonus;
+    }
 }

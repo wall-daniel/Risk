@@ -245,7 +245,7 @@ public class GameModel {
     private void initializeGame() {
         currentPlayer = 0;
         gameStatus = GameStatus.TROOP_PLACEMENT_PHASE;
-        players.get(currentPlayer).startTurn();
+        players.get(currentPlayer).startTurn(getContinentBonuses(players.get(currentPlayer)));
     }
 
     public void nextTurn() {
@@ -257,7 +257,7 @@ public class GameModel {
         if (players.get(currentPlayer).hasLost()) {
             nextTurn();
         } else {
-            players.get(currentPlayer).startTurn();
+            players.get(currentPlayer).startTurn(getContinentBonuses(players.get(currentPlayer)));
         }
     }
 
@@ -289,6 +289,31 @@ public class GameModel {
 
 
         updateGame();
+    }
+
+    /**
+     * Get the continent bonus for the player at the start of the turn.
+     *
+     * @param p is player you want to check
+     * @return the bonus gotten
+     */
+    private int getContinentBonuses(Player p) {
+        int bonus = 0;
+        for (Continent continent : continents.values()) {
+            boolean allCountries = true;
+            for (Country country : continent.getCountries()) {
+                if (country.getPlayer() != p) {
+                    allCountries = false;
+                    break;
+                }
+            }
+
+            if (allCountries) {
+                bonus += continent.getBonus();
+            }
+        }
+
+        return bonus;
     }
 
     public void startEndTurn() {
