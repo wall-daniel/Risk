@@ -38,7 +38,19 @@ public class MapEditorGUI extends JFrame implements GameModelListener {
             e.printStackTrace();
         }
 
-        javax.swing.SwingUtilities.invokeLater(() -> createAndShowGUI());
+        javax.swing.SwingUtilities.invokeLater(() -> createAndShowGUI(true));
+    }
+
+    public MapEditorGUI(String filename) {
+        try {
+            GameModel gameModel = new GameModel(filename);
+            gameModel.addGameModelListener(this);
+            this.controller = new Controller(gameModel, this);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        javax.swing.SwingUtilities.invokeLater(() -> createAndShowGUI(false));
     }
 
 
@@ -46,8 +58,9 @@ public class MapEditorGUI extends JFrame implements GameModelListener {
         return layeredPane;
     }
 
-    private void createAndShowGUI() {
-        mapName = JOptionPane.showInputDialog("Enter New Map Name");
+    private void createAndShowGUI(boolean newMap) {
+        if (newMap)
+            mapName = JOptionPane.showInputDialog("Enter New Map Name");
 
         addComponentToPane(getContentPane());
 
@@ -60,6 +73,8 @@ public class MapEditorGUI extends JFrame implements GameModelListener {
         setTitle("Custom Map Creator");
         pack();
         setVisible(true);
+
+        controller.updateEditor();
     }
 
     private void addJMenuBar() {
@@ -147,6 +162,12 @@ public class MapEditorGUI extends JFrame implements GameModelListener {
     public void onNewCountry(OneCountryEvent oce) {
         EditableCountryPanel cc = new EditableCountryPanel(oce.getFirstCountry(), this.getSize(), controller);
 
+        if (oce.getFirstCountry().getLabelPoint() != null) {
+            cc.getCountryLabel().setLocation(oce.getFirstCountry().getLabelPoint());
+        }
+        if (oce.getFirstCountry().getPolygonPoint() != null) {
+            cc.setLocation(oce.getFirstCountry().getLabelPoint());
+        }
         Insets insets = layeredPane.getInsets();
         cc.setBounds(insets.left, insets.top, cc.getCountry().getPolygon().getBounds().width + 30, cc.getCountry().getPolygon().getBounds().height + 30);
         cc.setBorder(BorderFactory.createLineBorder(Color.black)); //TODO will remove

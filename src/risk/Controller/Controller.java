@@ -2,6 +2,7 @@ package risk.Controller;
 
 import risk.View.Map.CountryPanel;
 import risk.View.MapCreator.EditableCountryPanel;
+import risk.View.MapCreator.MapEditorGUI;
 import risk.View.Views.GameActionListener;
 import risk.View.Views.GameModelListener;
 
@@ -335,5 +336,9 @@ public class Controller implements MouseListener, ActionListener {
                 gameModel.getCountry(component.getName()).setLabelPoint(((EditableCountryPanel) component).getCountryLabel().getLocationOnScreen());
             }
         }
+    }
+
+    public void updateEditor() {
+        gameModel.updateEditor();
     }
 }
