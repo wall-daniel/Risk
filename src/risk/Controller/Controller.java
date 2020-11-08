@@ -183,7 +183,7 @@ public class Controller implements MouseListener, ActionListener {
                 }
             }
 
-            clickedInCountry(clickedCountry);
+            if (clickedCountry != null) clickedInCountry(clickedCountry);
         } else {
 
         }
