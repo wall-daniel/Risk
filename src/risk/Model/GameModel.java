@@ -292,11 +292,31 @@ public class GameModel {
         return getCurrentPlayer().getPlaceableArmies() <= 0;
     }
 
-    public void nextPhase() {
+
+
+
+    public void resetPhase(){
+        switch (gameStatus) {
+            case TROOP_PLACEMENT_PHASE:
+                break;
+            case SELECT_ATTACKING_PHASE:
+            case SELECT_DEFENDING_PHASE:
+                gameStatus = GameStatus.SELECT_ATTACKING_PHASE;
+                break;
+            case SELECT_TROOP_MOVING_FROM_PHASE:
+            case SELECT_TROOP_MOVING_TO_PHASE:
+                gameStatus = GameStatus.SELECT_TROOP_MOVING_FROM_PHASE;
+                break;
+        }
+        updateGame();
+    }
+
+
+    public void continuePhase(){
         switch (gameStatus) {
             case TROOP_PLACEMENT_PHASE:
             case SELECT_DEFENDING_PHASE:
-                gameStatus = GameStatus.SELECT_ATTACKING_PHASE;
+            case SELECT_TROOP_MOVING_TO_PHASE:
                 break;
             case SELECT_ATTACKING_PHASE:
                 gameStatus = GameStatus.SELECT_DEFENDING_PHASE;
@@ -304,17 +324,28 @@ public class GameModel {
             case SELECT_TROOP_MOVING_FROM_PHASE:
                 gameStatus = GameStatus.SELECT_TROOP_MOVING_TO_PHASE;
                 break;
+        }
+        updateGame();
+    }
+
+
+    public void nextPhase() {
+        switch (gameStatus) {
+            case TROOP_PLACEMENT_PHASE:
+                gameStatus = GameStatus.SELECT_ATTACKING_PHASE;
+                break;
+            case SELECT_ATTACKING_PHASE:
+            case SELECT_DEFENDING_PHASE:
+                gameStatus = GameStatus.SELECT_TROOP_MOVING_FROM_PHASE;
+                break;
+            case SELECT_TROOP_MOVING_FROM_PHASE:
             case SELECT_TROOP_MOVING_TO_PHASE:
                 nextTurn();
                 break;
         }
-
-        for (Country country : countries.values())
-            System.out.println(country);
-
-
         updateGame();
     }
+
 
     /**
      * Get the continent bonus for the player at the start of the turn.

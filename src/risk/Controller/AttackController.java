@@ -162,7 +162,7 @@ public class AttackController {
 
                         attackingCountry.removeArmies(armies);
                         attackingArmies = armies;
-                        gameModel.nextPhase();
+                        gameModel.continuePhase();
                         return;
                     }
                 } catch (Exception e) {
@@ -184,7 +184,7 @@ public class AttackController {
             // Attack country
             attack();
             resetController();
-            gameModel.nextPhase();
+            gameModel.resetPhase();
         }
     }
 }

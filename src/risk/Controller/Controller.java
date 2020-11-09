@@ -268,44 +268,41 @@ public class Controller implements MouseListener, ActionListener {
         gameModel.startGame();
     }
 
-    public void addAsGameActionListener(GameActionListener gameActionListener) {
-
-
-    }
-
-    public void addAsGameModelListener(GameModelListener gameModelListener) {
-
-
-    }
-
-    public void removeAsGameActionListener(GameActionListener gameActionListener) {
-
-
-    }
-
-    public void removeAsGameModelListener(GameModelListener gameModelListener) {
-
-
-    }
-
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
-        switch (gameModel.gameStatus) {
-            case TROOP_PLACEMENT_PHASE:
-                return;
-            case SELECT_ATTACKING_PHASE:
-                gameModel.startEndTurn();
-                break;
-            case SELECT_DEFENDING_PHASE:
-                attackController.resetController();
-                gameModel.nextPhase();
-                break;
-            case SELECT_TROOP_MOVING_FROM_PHASE:
-                gameModel.nextTurn();
-                break;
-            case SELECT_TROOP_MOVING_TO_PHASE:
-                gameModel.gameStatus = GameModel.GameStatus.SELECT_TROOP_MOVING_FROM_PHASE;
-                break;
+        if (actionEvent.getActionCommand().equals("Back")){
+            switch (gameModel.gameStatus) {
+                case TROOP_PLACEMENT_PHASE:
+                case SELECT_ATTACKING_PHASE:
+                    break;
+                case SELECT_DEFENDING_PHASE:
+                    attackController.resetController();
+                    gameModel.resetPhase();
+                    break;
+                case SELECT_TROOP_MOVING_FROM_PHASE:
+                    break;
+                case SELECT_TROOP_MOVING_TO_PHASE:
+                    movementController.resetController();
+                    gameModel.resetPhase();
+                    break;
+            }
+        } else {
+            switch (gameModel.gameStatus) {
+                case TROOP_PLACEMENT_PHASE:
+                    break;
+                case SELECT_ATTACKING_PHASE:
+                case SELECT_TROOP_MOVING_FROM_PHASE:
+                    gameModel.nextPhase();
+                    break;
+                case SELECT_DEFENDING_PHASE:
+                    attackController.resetController();
+                    gameModel.nextPhase();
+                    break;
+                case SELECT_TROOP_MOVING_TO_PHASE:
+                    movementController.resetController();
+                    gameModel.nextPhase();
+                    break;
+            }
         }
 
         gameModel.updateGame();
