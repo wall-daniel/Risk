@@ -5,11 +5,13 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import risk.Model.*;
+import risk.Players.Player;
 
 import java.awt.*;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import static org.junit.Assert.*;
 
@@ -69,23 +71,7 @@ public class GameModelTest {
     }
 
     @Test
-    public void getPlaceableCountries() {
-    }
-
-    @Test
-    public void getAttackableCountries() {
-    }
-
-    @Test
     public void getMoveTroopsToCountries() {
-    }
-
-    @Test
-    public void getContinents() {
-    }
-
-    @Test
-    public void getCountries() {
     }
 
     @Test
@@ -94,34 +80,72 @@ public class GameModelTest {
 
     @Test
     public void getCountriesNames() {
+        gm.addCountry(testCountry1);
+        ArrayList<String> a = gm.getCountriesNames();
+        assertTrue(a.contains(testCountry1.getName()));
     }
 
     @Test
     public void editCountry() {
-    }
-
-    @Test
-    public void getCurrentPlayer() {
+        ArrayList<String> neighbours = new ArrayList<String>();
+        neighbours.add("Brasil");
+        neighbours.add("North Africa");
+        gm.editCountry(testCountry1, neighbours, testContinent1);
+        assertEquals(testCountry1.getNeighbours(), neighbours);
+        assertEquals(testCountry1.getContinent(), testContinent1);
     }
 
     @Test
     public void placeArmies() {
+        Player p = gm.getCurrentPlayer();
+        p.startTurn(10);
+        gm.placeArmies(testCountry1, 5);
+        assertEquals(6,testCountry1.getArmies());
+
     }
 
     @Test
     public void startGame() {
+        gm.startGame();
+        assertEquals(0, gm.getCurrentPlayer().getIndex());
+        assertEquals(GameModel.GameStatus.TROOP_PLACEMENT_PHASE, gm.gameStatus);
+        assertTrue(gm.getCurrentPlayer().getPlaceableArmies() > 0);
     }
 
     @Test
     public void nextTurn() {
+        //TODO add a case where a player has lost and their turn is skipped
+        Player p = gm.getCurrentPlayer();
+        int initialPlayer = p.getIndex();
+        int nextPlayerIndex = (initialPlayer + 1) % gm.getPlayers().size();
+        gm.nextTurn();
+        Player nextPlayer = gm.getCurrentPlayer();
+        assertTrue(nextPlayerIndex == nextPlayer.getIndex());
+        assertEquals(GameModel.GameStatus.TROOP_PLACEMENT_PHASE, gm.gameStatus);
+        assertTrue(nextPlayer.getPlaceableArmies() == Math.max(3, nextPlayer.getCountries().size() / 3) + gm.getContinentBonuses(nextPlayer));
     }
 
     @Test
     public void donePlacingArmies() {
+        Player p = gm.getCurrentPlayer();
+        p.startTurn(10);
+        System.out.println(p.getPlaceableArmies());
+        assertFalse(gm.donePlacingArmies());
+        gm.placeArmies(testCountry1, 13);
+        assertTrue(gm.donePlacingArmies());
     }
 
     @Test
     public void nextPhase() {
+        GameModel.GameStatus gs = gm.gameStatus;
+        assertEquals(gs, GameModel.GameStatus.TROOP_PLACEMENT_PHASE);
+        gm.nextPhase();
+        gs = gm.gameStatus;
+        assertEquals(gs, GameModel.GameStatus.SELECT_ATTACKING_PHASE);
+        gm.nextPhase();
+        gs = gm.gameStatus;
+        assertEquals(gs, GameModel.GameStatus.SELECT_DEFENDING_PHASE);
+        //TODO
     }
 
     @Test

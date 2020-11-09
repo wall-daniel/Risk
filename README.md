@@ -18,14 +18,13 @@ Deliverables:
 4. Save iteration: Add saving/loading, and 
 
 Changes/Additions:
-- Added player classes
-- Added ability to create map
-- Text-based playable version of the game.
-- Commands for players to use to play game
-- Attack country ability
+- Added GUI, both the map and info panel
+- Added loading of map from JSON
+- Made the game follow MVC pattern (so added view and game model)
+- Added a movement controller to separate functionality from main controller
+- Created map in json using the incomplete map editor (can be tested/used)
 
 Roadmap:
-- Add gui for interacting
-- Add unit tests model
 - Add ai player
-- Add saving and loading maps
+- Make moving armies more complete
+- Add more polished map editing
