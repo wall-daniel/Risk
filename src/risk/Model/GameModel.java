@@ -157,7 +157,9 @@ public class GameModel {
         return arr;
     }
 
-
+    public List<Player> getPlayers() {
+        return players;
+    }
 
     public void addActionListener(GameActionListener listener) {
         gameActionListeners.add(listener);
@@ -327,7 +329,7 @@ public class GameModel {
      * @param p is player you want to check
      * @return the bonus gotten
      */
-    private int getContinentBonuses(Player p) {
+    public int getContinentBonuses(Player p) {
         int bonus = 0;
         for (Continent continent : continents.values()) {
             boolean allCountries = true;
