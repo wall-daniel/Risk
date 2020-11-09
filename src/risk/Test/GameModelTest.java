@@ -19,12 +19,16 @@ public class GameModelTest {
 
     private GameModel gm;
     private Country testCountry1;
+    private Country testCountry2;
+    private Country testCountry3;
     private Continent testContinent1;
 
     @Before
     public void setUp() throws Exception {
         this.gm = new GameModel(4);
         testCountry1 = new Country("TestCountry", new Polygon(new int[] {0, 5, 28}, new int[] {0, 0, 56}, 3), new Point(3, 23), 1);
+        testCountry2 = new Country("TestCountry2", new Polygon(new int[] {50, 5, 28}, new int[] {0, 25, 56}, 3), new Point(3, 23), 2);
+        testCountry3 = new Country("TestCountry3", new Polygon(new int[] {0, 5, 68}, new int[] {100, 0, 56}, 3), new Point(3, 23), 3);
         testContinent1 = new Continent("TestContinent", 5);
     }
 
@@ -34,11 +38,17 @@ public class GameModelTest {
 
     @Test
     public void getCurrentNeighboursOfCountry() {
+        gm.addCountry(testCountry1);
+        gm.addCountry(testCountry2);
+        gm.addCountry(testCountry3);
+        testCountry1.addNeighbour("TestCountry2");
+        testCountry1.addNeighbour("TestCountry3");
+        int[] neighbours = gm.getCurrentNeighboursOfCountry(testCountry1);
+        Country c1 = gm.getCountries().get(neighbours[0]);
+        Country c2 = gm.getCountries().get(neighbours[1]);
+        assertTrue(testCountry1.getNeighbours().contains(c1.getName()) && testCountry1.getNeighbours().contains(c2.getName()));
     }
 
-    @Test
-    public void updateGame() {
-    }
 
     @Test
     public void addCountry() {
@@ -68,14 +78,6 @@ public class GameModelTest {
         assertNotNull(file);
         file.delete();
 
-    }
-
-    @Test
-    public void getMoveTroopsToCountries() {
-    }
-
-    @Test
-    public void getCountriesInLayerOrder() {
     }
 
     @Test
@@ -145,10 +147,13 @@ public class GameModelTest {
         gm.nextPhase();
         gs = gm.gameStatus;
         assertEquals(gs, GameModel.GameStatus.SELECT_DEFENDING_PHASE);
-        //TODO
+        gs = GameModel.GameStatus.SELECT_TROOP_MOVING_FROM_PHASE;
+        assertEquals(gs, GameModel.GameStatus.SELECT_TROOP_MOVING_FROM_PHASE);
     }
 
     @Test
     public void startEndTurn() {
+        gm.startEndTurn();
+        assertEquals(gm.gameStatus, GameModel.GameStatus.SELECT_TROOP_MOVING_FROM_PHASE);
     }
 }
