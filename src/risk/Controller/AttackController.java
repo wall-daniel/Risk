@@ -119,19 +119,12 @@ public class AttackController {
                 if (attackingArmies >= armies && armies > 0) {
                     defendingCountry.setPlayer(gameModel.getCurrentPlayer(), armies);
                     attackingArmies -= armies;
-
-                    // Check if defending player lost last country
-                    checkDefendingPlayerLost();
                     return;
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-    }
-
-    private void checkDefendingPlayerLost() {
-
     }
 
     public void setAttackingCountry(Country country) {
