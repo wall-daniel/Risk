@@ -14,6 +14,9 @@ Authors:
   - (Dropping the course)
 - Rahel Gunaratne
 - Francois Argent
+  - Baseline for map editor with polygons
+  - JUnit tests for GameModel
+  - Player elimination detection
 
 Deliverables:
 1. Current iteration

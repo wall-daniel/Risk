@@ -21,7 +21,7 @@ public class MovementController {
         this.moveableToCountries = new ArrayList<>();
     }
 
-    private void resetController() {
+    public void resetController() {
         fromCountry = null;
         toCountry = null;
         moveableToCountries.clear();
@@ -32,7 +32,7 @@ public class MovementController {
             System.out.println("Moving from " + country);
             fromCountry = country;
             moveableToCountries = gameModel.getMoveTroopsToCountries(fromCountry);
-            gameModel.nextPhase();
+            gameModel.continuePhase();
         } else {
             JOptionPane.showMessageDialog(
                     frame,

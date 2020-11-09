@@ -6,31 +6,47 @@ import risk.Model.GameModel;
 import risk.View.Views.GameActionListener;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class MapInformation extends JPanel implements GameActionListener {
 
+    private JButton backButton;
     private JLabel currentPlayer;
     private JLabel currentPhase;
     private JLabel phaseInfo;
-    private JButton endPhase;
+    private JButton nextButton;
 
     public MapInformation(Controller controller) {
         setUp(controller);
     }
 
     private void setUp(Controller controller) {
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        JToolBar toolBar = new JToolBar("Controls & Info");
+        addButtons(toolBar, controller);
+        add(toolBar);
+    }
+
+    protected void addButtons(JToolBar toolBar, Controller controller) {
+        backButton = new JButton("Back");
+        backButton.addActionListener(controller);
+        backButton.setActionCommand("Back");
+        toolBar.add(backButton);
+
+        JPanel info = new JPanel(new GridLayout(3, 1));
         currentPlayer = new JLabel("CurrentPlayer");
         currentPhase = new JLabel("CurrentPhase");
         phaseInfo = new JLabel("PhaseInfo");
-        endPhase = new JButton("End Phase");
-        endPhase.addActionListener(controller);
+        info.add(currentPlayer);
+        info.add(currentPhase);
+        info.add(phaseInfo);
+        toolBar.add(info);
 
-        add(currentPlayer);
-        add(currentPhase);
-        add(phaseInfo);
-        add(endPhase);
+        nextButton = new JButton("Next");
+        nextButton.addActionListener(controller);
+        nextButton.setActionCommand("Next");
+        toolBar.add(nextButton);
     }
+
 
     @Override
     public void updateMap(GameModel gameModel) {
@@ -41,23 +57,28 @@ public class MapInformation extends JPanel implements GameActionListener {
         switch (gameModel.gameStatus) {
             case TROOP_PLACEMENT_PHASE:
                 phaseInfo.setText(" " + gameModel.getCurrentPlayer().getPlaceableArmies());
-                endPhase.setEnabled(false);
+                backButton.setEnabled(false);
+                nextButton.setEnabled(false);
                 break;
             case SELECT_ATTACKING_PHASE:
                 phaseInfo.setText("Select country to attack from");
-                endPhase.setEnabled(true);
+                backButton.setEnabled(false);
+                nextButton.setEnabled(true);
                 break;
             case SELECT_DEFENDING_PHASE:
                 phaseInfo.setText("Select country to attack");
-                endPhase.setEnabled(true);
+                backButton.setEnabled(true);
+                nextButton.setEnabled(true);
                 break;
             case SELECT_TROOP_MOVING_FROM_PHASE:
                 phaseInfo.setText("Select country to move troops from");
-                endPhase.setEnabled(true);
+                backButton.setEnabled(false);
+                nextButton.setEnabled(true);
                 break;
             case SELECT_TROOP_MOVING_TO_PHASE:
                 phaseInfo.setText("Select country to move troops to");
-                endPhase.setEnabled(true);
+                backButton.setEnabled(true);
+                nextButton.setEnabled(true);
                 break;
         }
         repaint();
