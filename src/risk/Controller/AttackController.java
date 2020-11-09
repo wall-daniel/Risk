@@ -3,6 +3,7 @@ package risk.Controller;
 //import jdk.nashorn.internal.scripts.JO;
 import risk.Model.Country;
 import risk.Model.GameModel;
+import risk.Players.Player;
 
 import javax.swing.*;
 import java.util.Arrays;
@@ -83,6 +84,7 @@ public class AttackController {
 
             if (retreat != JOptionPane.YES_OPTION) break;
 
+
             gameModel.updateGame();
         }
 
@@ -94,6 +96,15 @@ public class AttackController {
         } else if (defendingCountry.getArmies() <= 0) {
             JOptionPane.showMessageDialog(window, "The attacker won.");
             attackerWon();
+            Player p = defendingCountry.getPlayer();
+            for (String c : p.getCountries()){
+                if (gameModel.getCountry(c).getArmies() > 0){
+                    continue;
+                } else {
+                    p.setLost();
+                    JOptionPane.showMessageDialog(window, "Player " + p.getName() + " has no more countries.");
+                }
+            }
         } else {
             // If it is a tie then move the armies back to where they are supposed to be.
             JOptionPane.showMessageDialog(window, "It's a tie!.");
