@@ -32,7 +32,7 @@ public class Map extends JPanel implements GameActionListener {
             if (countryList.containsKey(country.getName())){
                 countryList.get(country.getName()).updateCountry();
             } else {
-                CountryPanel countryPanel = new CountryPanel(country, this.getSize(), controller, true);
+                CountryPanel countryPanel = new CountryPanel(country, this.getSize(), controller);
                 countryList.put(country.getName(), countryPanel);
                 add(countryPanel);
             }

@@ -16,7 +16,7 @@ public class CountryPanel extends JPanel {
     protected Color color;
 
 
-    public CountryPanel(Country country, Dimension dimension, Controller controller, boolean addLabel) {
+    public CountryPanel(Country country, Dimension dimension, Controller controller) {
         super();
         this.country = country;
         setLayout(null);
@@ -28,13 +28,17 @@ public class CountryPanel extends JPanel {
         else
             color = country.getPlayer().getPlayerColor();
 
-        if (addLabel) {
-            countryLabel = new CountryLabel(country.getName(), country.getArmies(), controller);
-            Point labelPoint = country.getLabelPoint();
-            countryLabel.setBounds(labelPoint.x, labelPoint.y, 200, 30);
-            add(countryLabel);
-        }
+
+        addLabel(controller);
+
         addMouseListener(controller);
+    }
+
+    protected void addLabel(Controller controller) {
+        countryLabel = new CountryLabel(country.getName(), country.getArmies(), controller);
+        Point labelPoint = country.getLabelPoint();
+        countryLabel.setBounds(labelPoint.x, labelPoint.y, 200, 30);
+        add(countryLabel);
     }
 
 
