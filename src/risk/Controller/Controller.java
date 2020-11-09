@@ -69,7 +69,7 @@ public class Controller implements MouseListener, ActionListener {
 
     public void saveMap() {
         try {
-            gameModel.saveMap("EarthTest1.txt");
+            gameModel.saveMap("RiskMap.txt");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -108,7 +108,7 @@ public class Controller implements MouseListener, ActionListener {
             try {
                 String result = JOptionPane.showInputDialog(
                         gameView,
-                        "How many troops do you want to move here?",
+                        "How many armies do you want to place in " + country.getName() + "?",
                         JOptionPane.INFORMATION_MESSAGE
                 );
 
@@ -118,7 +118,12 @@ public class Controller implements MouseListener, ActionListener {
                 }
 
                 // Update the armies in the country
-                gameModel.placeArmies(country, Integer.parseInt(result));
+                int armies = Integer.parseInt(result);
+                if (armies < 1) {
+                    showErrorMessage("Have to supply a number greater than 0.");
+                    return;
+                }
+                gameModel.placeArmies(country, armies);
 
                 // Check if done placing troops
                 if (gameModel.donePlacingArmies()) {
@@ -138,8 +143,14 @@ public class Controller implements MouseListener, ActionListener {
         JOptionPane.showMessageDialog(gameView, errorMessage, "Error", JOptionPane.INFORMATION_MESSAGE);
     }
 
+    /**
+     * Finds highest layered country and sends a click of that country to determine what action is to be done.
+     *
+     * @param mouseEvent
+     */
     @Override
     public void mouseClicked(MouseEvent mouseEvent) {
+        // Find the thing clicked on that has the highest layer (e.g. one on top)
         if (mouseEvent.getSource() instanceof EditableCountryPanel){
             int highestLayer = -1;
             EditableCountryPanel editableCountryPanel = null;
@@ -161,8 +172,6 @@ public class Controller implements MouseListener, ActionListener {
 
             editCountryDetails(editableCountryPanel.getCountry());
         } else if (mouseEvent.getSource() instanceof CountryPanel){
-
-
             int highestLayer = -1;
             Country clickedCountry = null;
 
@@ -178,15 +187,19 @@ public class Controller implements MouseListener, ActionListener {
                 }
             }
 
-            clickedInCountry(clickedCountry);
-        } else {
-
+            // Make sure that a country was clicked
+            if (clickedCountry != null) clickedInCountry(clickedCountry);
         }
     }
 
+    /**
+     * Edit the country's name, neighbours, and continent.
+     *
+     * @param clickedCountry, country clicked on
+     */
     private void editCountryDetails(Country clickedCountry) {
         JPanel countryInfoPanel = new JPanel(new GridLayout(2, 3));
-
+        countryInfoPanel.setPreferredSize(new Dimension(600,500));
         JLabel countryNameLabel = new JLabel("Country Name");
         JLabel neighboursLabel = new JLabel("Select Neighbours");
         JLabel continentLabel = new JLabel("Select Continent");
@@ -202,6 +215,7 @@ public class Controller implements MouseListener, ActionListener {
         JList<Country> neighboursJList = new JList<>(countryListModel);//GameModel.getCountryNamesDefaultListModel(countryName));
         neighboursJList.setSelectionMode(DefaultListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         neighboursJList.setSelectedIndices(gameModel.getCurrentNeighboursOfCountry(clickedCountry));
+        JScrollPane neighboursScrollPane = new JScrollPane(neighboursJList);
 
         DefaultListModel<Continent> continentListModel = new DefaultListModel<>();
         gameModel.getContinents().forEach(continentListModel::addElement);
@@ -210,14 +224,16 @@ public class Controller implements MouseListener, ActionListener {
         continentJList.setSelectionMode(DefaultListSelectionModel.SINGLE_SELECTION);
         if (gameModel.getCountry(clickedCountry.getName()).getContinent()!=null)
             continentJList.setSelectedValue(clickedCountry.getContinent(), true);
+        JScrollPane continentsScrollPane = new JScrollPane(continentJList);
+
 
         countryInfoPanel.add(countryNameLabel);
         countryInfoPanel.add(neighboursLabel);
         countryInfoPanel.add(continentLabel);
 
         countryInfoPanel.add(countryNameTextField);
-        countryInfoPanel.add(neighboursJList);
-        countryInfoPanel.add(continentJList);
+        countryInfoPanel.add(neighboursScrollPane);
+        countryInfoPanel.add(continentsScrollPane);
 
         JOptionPane.showMessageDialog(gameView, countryInfoPanel);
 

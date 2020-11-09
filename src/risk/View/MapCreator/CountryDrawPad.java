@@ -17,7 +17,7 @@ public class CountryDrawPad extends JPanel implements MouseListener {
 
     private int oldX = -1, oldY = -1, startX, startY;
 
-    int BORDER_DETAIL = 4;
+    int BORDER_DETAIL = 100000;
     double BORDER_DEVIATION = 0.5;
 
     public CountryDrawPad(){

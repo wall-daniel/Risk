@@ -28,7 +28,6 @@ public class EditableCountryPanel extends CountryPanel implements MouseMotionLis
 
     public EditableCountryPanel(Country country, Dimension size, Controller controller) {
         super(country, size, controller, false);
-
         countryLabel = new MoveableCountryLabel(country.getName(), controller);
         //Point labelPoint = country.getLabelPoint();
         // countryLabel.setBounds(labelPoint.x, labelPoint.y, 100, 20);
@@ -37,10 +36,6 @@ public class EditableCountryPanel extends CountryPanel implements MouseMotionLis
         addMouseMotionListener(this);
         addMouseListener(this);
     }
-
-
-
-
 
     @Override
     public void paintComponent(Graphics g) {
@@ -56,8 +51,6 @@ public class EditableCountryPanel extends CountryPanel implements MouseMotionLis
         graphics2D.setColor(color);
         graphics2D.fillPolygon(polygon);
     }
-
-
 
     @Override
     public void mousePressed(MouseEvent e) {
