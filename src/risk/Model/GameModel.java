@@ -211,6 +211,10 @@ public class GameModel {
         return new ArrayList<>(ss.keySet());
     }
 
+    public Continent getContinent(String name){
+        return continents.get(name);
+    }
+
     public ArrayList<Continent>getContinents() {
         return new ArrayList<Continent>(continents.values());
     }
