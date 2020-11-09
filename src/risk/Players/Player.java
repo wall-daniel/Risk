@@ -2,17 +2,16 @@ package risk.Players;
 
 import risk.Enums.PlayerColor;
 import risk.Model.Country;
-import risk.Model.GameModel;
 
 import java.awt.*;
 import java.util.ArrayList;
 
 public class Player {
 
-    private String name;
+    private final String name;
     private ArrayList<String> countriesOwned;
     private boolean lost = false;
-    private Color playerColor;
+    private final Color playerColor;
     private int placeableArmies = 0;
     private int index;
     private boolean playingTurn = false;
@@ -48,6 +47,10 @@ public class Player {
         playingTurn = false;
     }
 
+    /**
+     * Starts the players turn by adding placeable armies
+     * @param continentBonus, bonus from owning all of a continent
+     */
     public void startTurn(int continentBonus) {
         playingTurn = true;
 
@@ -68,15 +71,17 @@ public class Player {
         return placeableArmies;
     }
 
+    /**
+     * Place armies on country during army placement at start of turn.
+     *
+     * @param country, country for armies to be placed on.
+     * @param armies, number armies, cannot be larger than current placeable armies
+     */
     public void placeArmies(Country country, int armies) {
         if (placeableArmies >= armies) {
             country.addArmies(armies);
             placeableArmies -= armies;
         }
-    }
-
-    public boolean ownsCountry(String country) {
-        return countriesOwned.contains(country);
     }
 
     /**

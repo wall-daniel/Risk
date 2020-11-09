@@ -54,33 +54,9 @@ public class MovementController {
         }
     }
 
-
     public Country getFromCountry() {
         return fromCountry;
     }
-
-    /*
-    private boolean countriesAreConnected() {
-        HashMap<String, Country> ss = new HashMap<>();
-        ss.put(fromCountry.getName(), fromCountry);
-        return checkCountry(fromCountry, ss);
-    }
-
-    private boolean checkCountry(Country currentCountry, HashMap<String, Country> ss) {
-        if (currentCountry.getName().equals(toCountry.getName()))
-            return true;
-
-        for (String countryName : currentCountry.getNeighbours()){
-            Country country = gameModel.getCountry(countryName);
-            if (country.getPlayer().getIndex() == fromCountry.getPlayer().getIndex() && !ss.containsKey(countryName)){
-                ss.put(countryName, country);
-                return checkCountry(country, ss);
-            }
-        }
-        return false;
-    }
-     */
-
 
     private void getArmiesToMove() {
         try {
