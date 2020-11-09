@@ -3,20 +3,13 @@ package risk.View.MapCreator;
 
 import risk.Controller.Controller;
 import risk.Enums.MapColor;
-import risk.Enums.PlayerColor;
-import risk.Listener.Events.ContinentEvent;
-import risk.Listener.Events.OneCountryEvent;
 import risk.View.Map.CountryPanel;
-import risk.View.Views.GameModelListener;
-import risk.Model.Continent;
 import risk.Model.Country;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.util.ArrayList;
 
 public class EditableCountryPanel extends CountryPanel implements MouseMotionListener, MouseListener {
     private volatile int screenX = 0;

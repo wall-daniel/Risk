@@ -5,10 +5,10 @@ import risk.Model.Country;
 import java.awt.*;
 import java.util.EventObject;
 
-public class OneCountryEvent extends EventObject {
-    private Country country;
+public class CountryEvent extends EventObject {
+    private final Country country;
 
-    public OneCountryEvent(Object source, Country country){
+    public CountryEvent(Object source, Country country){
         super(source);
         this.country = country;
     }

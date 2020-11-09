@@ -1,10 +1,10 @@
 package risk.View.Views;
 
 import risk.Listener.Events.ContinentEvent;
-import risk.Listener.Events.OneCountryEvent;
+import risk.Listener.Events.CountryEvent;
 
 public interface GameModelListener {
-    public void onNewCountry(OneCountryEvent oce);
+    public void onNewCountry(CountryEvent oce);
 
     public void onNewContinent(ContinentEvent cce);
 

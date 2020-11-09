@@ -2,35 +2,34 @@ package risk.View.Map;
 
 import risk.Controller.Controller;
 import risk.Enums.PlayerColor;
-import risk.Listener.Events.OneCountryEvent;
-import risk.Listener.Events.TwoCountryEvent;
-import risk.View.Views.GameActionListener;
 import risk.Model.GameModel;
+import risk.View.Views.GameActionListener;
+
 import javax.swing.*;
 
 public class MapInformation extends JPanel implements GameActionListener {
 
-    JLabel currentPlayer;
-    JLabel currentPhase;
-    JLabel phaseInfo;
-    JButton endPhase;
+    private JLabel currentPlayer;
+    private JLabel currentPhase;
+    private JLabel phaseInfo;
+    private JButton endPhase;
 
-    public MapInformation(Controller controller){
-         setUp(controller);
-     }
+    public MapInformation(Controller controller) {
+        setUp(controller);
+    }
 
     private void setUp(Controller controller) {
-         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-         currentPlayer = new JLabel("CurrentPlayer");
-         currentPhase = new JLabel("CurrentPhase");
-         phaseInfo = new JLabel("PhaseInfo");
-         endPhase = new JButton("End Phase");
-         endPhase.addActionListener(controller);
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        currentPlayer = new JLabel("CurrentPlayer");
+        currentPhase = new JLabel("CurrentPhase");
+        phaseInfo = new JLabel("PhaseInfo");
+        endPhase = new JButton("End Phase");
+        endPhase.addActionListener(controller);
 
-         add(currentPlayer);
-         add(currentPhase);
-         add(phaseInfo);
-         add(endPhase);
+        add(currentPlayer);
+        add(currentPhase);
+        add(phaseInfo);
+        add(endPhase);
     }
 
     @Override
@@ -64,20 +63,5 @@ public class MapInformation extends JPanel implements GameActionListener {
                 break;
         }
         repaint();
-    }
-
-    @Override
-    public void onPlaceTroops(OneCountryEvent oce) {
-
-    }
-
-    @Override
-    public void onAttack(TwoCountryEvent tce) {
-
-    }
-
-    @Override
-    public void onTroopMovement(TwoCountryEvent tce) {
-
     }
 }

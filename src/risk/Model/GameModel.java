@@ -3,7 +3,7 @@ package risk.Model;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
 import risk.Listener.Events.ContinentEvent;
-import risk.Listener.Events.OneCountryEvent;
+import risk.Listener.Events.CountryEvent;
 import risk.View.Views.GameActionListener;
 import risk.View.Views.GameModelListener;
 import risk.Players.Player;
@@ -12,14 +12,13 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class GameModel {
     public void updateEditor() {
         gameModelListeners.forEach(it -> {
-            countries.values().forEach(country -> it.onNewCountry(new OneCountryEvent(this, country)));
+            countries.values().forEach(country -> it.onNewCountry(new CountryEvent(this, country)));
             continents.values().forEach(continent -> it.onNewContinent(new ContinentEvent(this, continent)));
         });
     }
@@ -173,7 +172,7 @@ public class GameModel {
 
     public void addCountry(Country country) {
         this.countries.put(country.getName(), country);
-        gameModelListeners.forEach(it -> it.onNewCountry(new OneCountryEvent(this, country)));
+        gameModelListeners.forEach(it -> it.onNewCountry(new CountryEvent(this, country)));
     }
 
     public Country getCountry(String countryName){

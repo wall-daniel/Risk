@@ -5,14 +5,11 @@ import risk.Enums.DrawingEnum;
 import risk.Enums.MapColor;
 import risk.Listener.Events.ContinentEvent;
 import risk.View.Views.GameModelListener;
-import risk.Listener.Events.OneCountryEvent;
+import risk.Listener.Events.CountryEvent;
 import risk.Model.*;
 import risk.View.Main.MainGUI;
 
 import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.util.ArrayList;
 import javax.swing.*;
 
 public class MapEditorGUI extends JFrame implements GameModelListener {
@@ -24,8 +21,6 @@ public class MapEditorGUI extends JFrame implements GameModelListener {
     String mapName;
 
     boolean drawingMode;
-
-
 
     public MapEditorGUI(){
         countryCounter = 0;
@@ -157,7 +152,7 @@ public class MapEditorGUI extends JFrame implements GameModelListener {
     }
 
     @Override
-    public void onNewCountry(OneCountryEvent oce) {
+    public void onNewCountry(CountryEvent oce) {
         EditableCountryPanel cc = new EditableCountryPanel(oce.getFirstCountry(), this.getSize(), controller, oce.getFirstCountry().getPolygonPoint());
 
         Insets insets = layeredPane.getInsets();
