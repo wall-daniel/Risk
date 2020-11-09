@@ -22,11 +22,7 @@ public class MapInformation extends JPanel implements GameActionListener {
 
     private void setUp(Controller controller) {
         JToolBar toolBar = new JToolBar("Controls & Info");
-
         addButtons(toolBar, controller);
-
-        nextButton.addActionListener(controller);
-
         add(toolBar);
     }
 

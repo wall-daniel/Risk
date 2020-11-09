@@ -64,7 +64,6 @@ public class MapGUI extends JFrame {
         JMenuItem quit = new JMenuItem("Quit");
 
         quit.addActionListener(e -> {
-           controller.removeAsGameActionListener(map);
            new MainGUI();
            this.dispose();
         });

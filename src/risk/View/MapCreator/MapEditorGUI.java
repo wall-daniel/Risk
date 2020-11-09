@@ -96,7 +96,6 @@ public class MapEditorGUI extends JFrame implements GameModelListener {
 
 
         quit.addActionListener(e -> {
-            controller.removeAsGameModelListener(this);
             new MainGUI();
             this.dispose();
         });
