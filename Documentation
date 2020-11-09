@@ -4,29 +4,26 @@ DOCUMENTATION
 
 User Manual:
 Start of game:
-- Choose how many players are playing. Between 2 and 6.
-- Creates map randomly and assigns countries to them
+- Choose new game and select number of players
+- The info section is on the right, and you can skip/return from certain phases there.
+- Note that the middle east is gone, that is okay there just isn't anything there.
 Game phase:
-- First place armies on countries
-- Each player gets country number divided by 3, with a minimum of 3 armies per turn
-- Can type list to see current countries and how many armies on each.
-Playing phase:
-- Can attack by typing attack. Explains what to do to attack another country.
-- Help command prints out commands
-- Info command prints out the status of the map by continents
-- Can type pass to pass current turn
+- First place armies on countries. The countries you can place are white, and the number of armies is in the info section.
+- Can then attack. Choose the country you want to attack from and then number of armies, and then country you want to attack. The countries you can select are in white.
+- For the final phase of your turn you can move armies from one to the next.
 End of game
 - Player loses game when they have no more countries left
 - When there is only one player left then that player wins the game.
 
 Decisions made:
-Created enums as mapping to each object used by model gameBoard class
-Controller (Controller class)  looks at Model (gameBoard class) and notifies the user through view (Console) to make actions.
+- We decided to make the map editor now because creating the map using hard coded values would have taken a while, so the time required becomes less.
+- Have multiple controllers for different phases to try and not make the main controller to bloated.
+- We used the polygon class for drawing countries because it came with a built in drawing method in JPanel and a built in contains point method for determining if user clicked in country.
 
-Descriptions of Data Structures:
-CountryEnum - enumeration that have neighbours mapped to other countries
-ContinentEnum - enumeration that has continent names and countries within
-Players - arraylist of players
-Countries - hashmap of countryenums as keys to country objects which state which player owns the country and how many armies exist.
-Continents - hashmap of continentenums as keys to continent objects.
-
+Descriptions of Data Structures/Interfaces:
+- Game model
+  - Players is an arraylist, and then the current player is an int. This works well for choosing the next player.
+  - Continents and countries are a hashmap because of the ease of getting the object when all you have is the name of the country, which happens when loading from json often.
+- Observables
+  - GameAcitonListener: Used for adding countries/continents on the editor. Will explain in correct milestone.
+  - GameModelListener: Has update function which is called whenever the game model is updated. Having just the one method makes it easier to code and there are no visible performance bottlenecks.
