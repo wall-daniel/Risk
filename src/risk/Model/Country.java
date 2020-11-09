@@ -29,7 +29,6 @@ public class Country {
         labelPoint = new Point();
         polygonPoint = new Point();
         layer = -1;
-
     }
 
     public Country(String name, Polygon polygon, Point labelPoint, int layer) {
@@ -38,13 +37,6 @@ public class Country {
         neighbours = new ArrayList<>();
         this.labelPoint = labelPoint;
         this.layer = layer;
-    }
-
-
-    public Country(String name, ArrayList<String> neighbourNames, Continent continent) {
-        this.name = name;
-        this.neighbours = (ArrayList<String>) neighbourNames.clone();
-        this.continent = continent;
     }
 
     /**

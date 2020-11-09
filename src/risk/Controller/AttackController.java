@@ -11,10 +11,10 @@ import java.util.Random;
 
 public class AttackController {
 
-    private Random random;
+    private final Random random;
 
-    private GameModel gameModel;
-    private JFrame window;
+    private final GameModel gameModel;
+    private final JFrame window;
 
     private Country attackingCountry;
     private Country defendingCountry;

@@ -59,8 +59,6 @@ public class MapInformation extends JPanel implements GameActionListener {
                 phaseInfo.setText("Select country to move troops to");
                 endPhase.setEnabled(true);
                 break;
-            case WAITING:
-                break;
         }
         repaint();
     }

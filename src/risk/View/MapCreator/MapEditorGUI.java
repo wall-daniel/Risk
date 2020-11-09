@@ -1,16 +1,15 @@
 package risk.View.MapCreator;
 
 import risk.Controller.Controller;
-import risk.Enums.DrawingEnum;
 import risk.Enums.MapColor;
 import risk.Listener.Events.ContinentEvent;
-import risk.View.Views.GameModelListener;
 import risk.Listener.Events.CountryEvent;
-import risk.Model.*;
+import risk.Model.GameModel;
 import risk.View.Main.MainGUI;
+import risk.View.Views.GameModelListener;
 
-import java.awt.*;
 import javax.swing.*;
+import java.awt.*;
 
 public class MapEditorGUI extends JFrame implements GameModelListener {
     JLabel status;
@@ -83,7 +82,7 @@ public class MapEditorGUI extends JFrame implements GameModelListener {
 
         addCountry.addActionListener(e -> {
             new CountryCreatorGUI(this);
-            status.setText(DrawingEnum.COUNTRIES.getText());
+            status.setText("Draw the countries");
         });
 
         addContinent.addActionListener(e -> {
@@ -140,7 +139,7 @@ public class MapEditorGUI extends JFrame implements GameModelListener {
         layeredPane = new JLayeredPane();
         layeredPane.setLayout(null);
 
-        status = new JLabel(DrawingEnum.COUNTRIES.getText(), SwingConstants.CENTER);
+        status = new JLabel("Draw the countries", SwingConstants.CENTER);
 
         pane.add(status, BorderLayout.NORTH);
         pane.add(layeredPane, BorderLayout.CENTER);

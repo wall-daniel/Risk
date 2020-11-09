@@ -8,8 +8,8 @@ import java.util.ArrayList;
 
 public class MovementController {
 
-    private JFrame frame;
-    private GameModel gameModel;
+    private final JFrame frame;
+    private final GameModel gameModel;
 
     private Country fromCountry;
     private Country toCountry;

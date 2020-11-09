@@ -83,8 +83,6 @@ public class Controller implements MouseListener, ActionListener {
 
     public void clickedInCountry(Country country) {
         switch (gameModel.gameStatus) {
-            case WAITING:
-                break;
             case TROOP_PLACEMENT_PHASE:
                 placeArmies(country);
                 break;
@@ -307,13 +305,10 @@ public class Controller implements MouseListener, ActionListener {
             case SELECT_TROOP_MOVING_TO_PHASE:
                 gameModel.gameStatus = GameModel.GameStatus.SELECT_TROOP_MOVING_FROM_PHASE;
                 break;
-            case WAITING:
-                return;
         }
 
         gameModel.updateGame();
     }
-
 
     public ArrayList<String> getClickableCountries(){
         switch (gameModel.gameStatus) {
@@ -329,7 +324,6 @@ public class Controller implements MouseListener, ActionListener {
                 return new ArrayList<>();
         }
     }
-
 
     public void updateAllComponentLocations() {
         for (Component component : gameView.getLayeredPane().getComponents()){

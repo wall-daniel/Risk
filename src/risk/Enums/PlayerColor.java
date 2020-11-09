@@ -1,6 +1,5 @@
 package risk.Enums;
 
-
 import java.awt.*;
 import java.util.Random;
 
@@ -32,10 +31,8 @@ public enum PlayerColor  {
         return PlayerColor.PLAYER_1_COLOR.color;
     }
 
-
     public Color getColor(){
         return color;
     }
-
 
 }
