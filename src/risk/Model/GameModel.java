@@ -3,40 +3,38 @@ package risk.Model;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
 import risk.Listener.Events.ContinentEvent;
-import risk.Listener.Events.OneCountryEvent;
+import risk.Listener.Events.CountryEvent;
+import risk.Players.Player;
 import risk.View.Views.GameActionListener;
 import risk.View.Views.GameModelListener;
-import risk.Players.Player;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class GameModel {
-    public void updateEditor() {
-        gameModelListeners.forEach(it -> {
-            countries.values().forEach(country -> it.onNewCountry(new OneCountryEvent(this, country)));
-            continents.values().forEach(continent -> it.onNewContinent(new ContinentEvent(this, continent)));
-        });
+
+    public enum GameStatus {
+        TROOP_PLACEMENT_PHASE,
+        SELECT_ATTACKING_PHASE,
+        SELECT_DEFENDING_PHASE,
+        SELECT_TROOP_MOVING_FROM_PHASE,
+        SELECT_TROOP_MOVING_TO_PHASE
     }
 
-    public enum GameStatus { TROOP_PLACEMENT_PHASE, SELECT_ATTACKING_PHASE, SELECT_DEFENDING_PHASE, SELECT_TROOP_MOVING_FROM_PHASE, SELECT_TROOP_MOVING_TO_PHASE, WAITING }
-
     private List<Player> players;
-    private HashMap<String, Continent> continents;
-    private HashMap<String, Country> countries;
-    private List<GameActionListener> gameActionListeners;
-    private List<GameModelListener> gameModelListeners;
+    private final HashMap<String, Continent> continents;
+    private final HashMap<String, Country> countries;
+    private final List<GameActionListener> gameActionListeners;
+    private final List<GameModelListener> gameModelListeners;
 
     private int currentPlayer = 0;
     private boolean isGameOver = false;
 
     public GameStatus gameStatus = GameStatus.TROOP_PLACEMENT_PHASE;
-
 
     /**
      * Used for the editor
@@ -63,8 +61,8 @@ public class GameModel {
     /**
      * Used for the game.
      *
-     * @param numPlayers
-     * @throws FileNotFoundException
+     * @param numPlayers number of players that are playing the game
+     * @throws FileNotFoundException when file is not found
      */
     public GameModel(int numPlayers) throws FileNotFoundException {
         players = new ArrayList<>(numPlayers);
@@ -111,10 +109,10 @@ public class GameModel {
         ArrayList<String> tempCountryNames = getCountriesNames();
         Random rand = new Random(System.currentTimeMillis());
 
-        while (!tempCountryNames.isEmpty()){
+        while (!tempCountryNames.isEmpty()) {
             String countryName = tempCountryNames.remove(rand.nextInt(tempCountryNames.size()));
-            getCountry(countryName).setPlayer(players.get(currentPlayer));
-            currentPlayer= (currentPlayer + 1) % players.size();
+            getCountry(countryName).setPlayer(players.get(currentPlayer), 1);
+            currentPlayer = (currentPlayer + 1) % players.size();
         }
 
 
@@ -146,12 +144,12 @@ public class GameModel {
     }
 
 
-    public int[] getCurrentNeighboursOfCountry(Country country){
+    public int[] getCurrentNeighboursOfCountry(Country country) {
         int[] arr = new int[country.getNeighbours().size()];
         int i = 0;
         ArrayList<String> countryNames = getCountriesNames();
 
-        for (String s: country.getNeighbours())
+        for (String s : country.getNeighbours())
             arr[i++] = countryNames.indexOf(s);
 
         return arr;
@@ -175,10 +173,10 @@ public class GameModel {
 
     public void addCountry(Country country) {
         this.countries.put(country.getName(), country);
-        gameModelListeners.forEach(it -> it.onNewCountry(new OneCountryEvent(this, country)));
+        gameModelListeners.forEach(it -> it.onNewCountry(new CountryEvent(this, country)));
     }
 
-    public Country getCountry(String countryName){
+    public Country getCountry(String countryName) {
         return countries.get(countryName);
     }
 
@@ -199,32 +197,29 @@ public class GameModel {
     }
 
 
-
-
-
     //for placing troops, selecting attacking from, selecting moving from country
-    public ArrayList<String> getPlaceableCountries(){
+    public ArrayList<String> getPlaceableCountries() {
         return new ArrayList<>(players.get(currentPlayer).getCountries());
     }
 
     //for choosing defendingCountry
-    public ArrayList<String> getAttackableCountries(Country fromCountry){
-        return new ArrayList<>(fromCountry.getNeighbours().stream().filter(e->
-            fromCountry.getPlayer().getIndex()!=countries.get(e).getPlayer().getIndex()
-        ).collect(Collectors.toList()));
+    public ArrayList<String> getAttackableCountries(Country fromCountry) {
+        return fromCountry.getNeighbours().stream().filter(e ->
+                fromCountry.getPlayer().getIndex() != countries.get(e).getPlayer().getIndex()
+        ).collect(Collectors.toCollection(ArrayList::new));
     }
 
     //for choosing toCountry
-    public ArrayList<String> getMoveTroopsToCountries(Country fromCountry){
+    public ArrayList<String> getMoveTroopsToCountries(Country fromCountry) {
         HashMap<String, Country> ss = new HashMap<>();
         //ss.put(fromCountry.getName(), fromCountry);
         return addCountries(fromCountry, ss, fromCountry.getPlayer().getIndex());
     }
 
     private ArrayList<String> addCountries(Country currentCountry, HashMap<String, Country> ss, int playerIndex) {
-        for (String countryName : currentCountry.getNeighbours()){
+        for (String countryName : currentCountry.getNeighbours()) {
             Country country = getCountry(countryName);
-            if (country.getPlayer().getIndex() == playerIndex && !ss.containsKey(countryName)){
+            if (country.getPlayer().getIndex() == playerIndex && !ss.containsKey(countryName)) {
                 ss.put(countryName, country);
                 addCountries(country, ss, playerIndex);
             }
@@ -232,11 +227,11 @@ public class GameModel {
         return new ArrayList<>(ss.keySet());
     }
 
-    public Continent getContinent(String name){
+    public Continent getContinent(String name) {
         return continents.get(name);
     }
 
-    public ArrayList<Continent>getContinents() {
+    public ArrayList<Continent> getContinents() {
         return new ArrayList<>(continents.values());
     }
 
@@ -244,14 +239,14 @@ public class GameModel {
         return new ArrayList<>(countries.values());
     }
 
-    public ArrayList<Country> getCountriesInLayerOrder(){
+    public ArrayList<Country> getCountriesInLayerOrder() {
         ArrayList<Country> countriesLayerSort = getCountries();
         countriesLayerSort.sort(Comparator.comparingInt(Country::getLayer));
         Collections.reverse(countriesLayerSort);
         return countriesLayerSort;
     }
 
-    public ArrayList<String> getCountriesNames(){
+    public ArrayList<String> getCountriesNames() {
         return new ArrayList<>(countries.keySet());
     }
 
@@ -300,13 +295,11 @@ public class GameModel {
     public void nextPhase() {
         switch (gameStatus) {
             case TROOP_PLACEMENT_PHASE:
+            case SELECT_DEFENDING_PHASE:
                 gameStatus = GameStatus.SELECT_ATTACKING_PHASE;
                 break;
             case SELECT_ATTACKING_PHASE:
                 gameStatus = GameStatus.SELECT_DEFENDING_PHASE;
-                break;
-            case SELECT_DEFENDING_PHASE:
-                gameStatus = GameStatus.SELECT_ATTACKING_PHASE;
                 break;
             case SELECT_TROOP_MOVING_FROM_PHASE:
                 gameStatus = GameStatus.SELECT_TROOP_MOVING_TO_PHASE;
@@ -346,6 +339,13 @@ public class GameModel {
         }
 
         return bonus;
+    }
+
+    public void updateEditor() {
+        gameModelListeners.forEach(it -> {
+            countries.values().forEach(country -> it.onNewCountry(new CountryEvent(this, country)));
+            continents.values().forEach(continent -> it.onNewContinent(new ContinentEvent(this, continent)));
+        });
     }
 
     public void startEndTurn() {

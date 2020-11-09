@@ -14,6 +14,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.geom.Area;
 import java.util.*;
 
 public class Controller implements MouseListener, ActionListener {
@@ -83,8 +84,6 @@ public class Controller implements MouseListener, ActionListener {
 
     public void clickedInCountry(Country country) {
         switch (gameModel.gameStatus) {
-            case WAITING:
-                break;
             case TROOP_PLACEMENT_PHASE:
                 placeArmies(country);
                 break;
@@ -307,13 +306,10 @@ public class Controller implements MouseListener, ActionListener {
             case SELECT_TROOP_MOVING_TO_PHASE:
                 gameModel.gameStatus = GameModel.GameStatus.SELECT_TROOP_MOVING_FROM_PHASE;
                 break;
-            case WAITING:
-                return;
         }
 
         gameModel.updateGame();
     }
-
 
     public ArrayList<String> getClickableCountries(){
         switch (gameModel.gameStatus) {
@@ -330,18 +326,47 @@ public class Controller implements MouseListener, ActionListener {
         }
     }
 
-
     public void updateAllComponentLocations() {
         for (Component component : gameView.getLayeredPane().getComponents()){
             if (component instanceof EditableCountryPanel) {
-                gameModel.getCountry(component.getName()).setPolygonPoint(component.getLocationOnScreen());
+                gameModel.getCountry(component.getName()).setPolygonPoint(new Point(component.getLocationOnScreen().x, component.getLocationOnScreen().y));
                 gameModel.getCountry(component.getName()).setLayer(gameView.getLayeredPane().getLayer(component));
-                gameModel.getCountry(component.getName()).setLabelPoint(((EditableCountryPanel) component).getCountryLabel().getLocationOnScreen());
+                Point labelPoint = new Point(((EditableCountryPanel) component).getCountryLabel().getLocationOnScreen().x,  ((EditableCountryPanel) component).getCountryLabel().getLocationOnScreen().y);
+                gameModel.getCountry(component.getName()).setLabelPoint(labelPoint);
             }
         }
     }
 
     public void updateEditor() {
         gameModel.updateEditor();
+    }
+
+    public void updateNeighbours() {
+        Component[] components = gameView.getLayeredPane().getComponents();
+        for (int i = 0; i < components.length; i++){
+            if (components[i] instanceof EditableCountryPanel){
+                Country c1 = gameModel.getCountry(components[i].getName());
+                Polygon translatedPolygon1 = new Polygon(c1.getPolygon().xpoints, c1.getPolygon().ypoints, c1.getPolygon().npoints);
+                translatedPolygon1.translate(c1.getPolygonPoint().x, c1.getPolygonPoint().y);
+                Area area1 = new Area(translatedPolygon1);
+
+                for (int j = i+1; j < components.length; j++){
+                    if (components[j] instanceof EditableCountryPanel){
+                        Country c2 = gameModel.getCountry(components[j].getName());
+                        Polygon translatedPolygon2 = new Polygon(c2.getPolygon().xpoints, c2.getPolygon().ypoints, c2.getPolygon().npoints);
+                        translatedPolygon2.translate(c2.getPolygonPoint().x, c2.getPolygonPoint().y);
+                        Area area2 = new Area(translatedPolygon2);
+
+                        area2.intersect(area1);
+                        if (!area2.isEmpty()){
+                            c1.addNeighbour(c2.getName());
+                            c2.addNeighbour(c1.getName());
+                        }
+                    }
+                }
+            }
+
+        }
+
     }
 }

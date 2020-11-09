@@ -4,7 +4,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import risk.Players.Player;
 
-import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
@@ -30,7 +29,6 @@ public class Country {
         labelPoint = new Point();
         polygonPoint = new Point();
         layer = -1;
-
     }
 
     public Country(String name, Polygon polygon, Point labelPoint, int layer) {
@@ -39,13 +37,6 @@ public class Country {
         neighbours = new ArrayList<>();
         this.labelPoint = labelPoint;
         this.layer = layer;
-    }
-
-
-    public Country(String name, ArrayList<String> neighbourNames, Continent continent) {
-        this.name = name;
-        this.neighbours = (ArrayList<String>) neighbourNames.clone();
-        this.continent = continent;
     }
 
     /**
@@ -69,6 +60,7 @@ public class Country {
             polygon.addPoint(point.get("x").getAsInt(), point.get("y").getAsInt());
         }
 
+        // Get where it is in on the screen, the label position, and the layer
         JsonObject polygonPoint = json.get("polygonPoint").getAsJsonObject();
         this.polygonPoint = new Point(polygonPoint.get("x").getAsInt(), polygonPoint.get("y").getAsInt());
 
@@ -78,25 +70,29 @@ public class Country {
         this.layer = json.get("layer").getAsInt();
     }
 
-    public Polygon getPolygon(){
+    public Polygon getPolygon() {
         return polygon;
     }
 
-    public int getLayer(){
-        return layer;
-    }
-
-
-    public Point getLabelPoint(){
+    public Point getLabelPoint() {
         return labelPoint;
     }
 
-    public Point getPolygonPoint(){
+    public Point getPolygonPoint() {
         return polygonPoint;
     }
 
+    public int getLayer() {
+        return layer;
+    }
 
-    public void setContinent(Continent continent){
+    /**
+     * Adds the coutnry the new continent and removos from old continent if it was previously set.
+     *
+     * @param continent - new continent to be added to, can be null
+     */
+    public void setContinent(Continent continent) {
+        // Remove from old continent if it has one
         if (this.continent != null) {
             this.continent.removeCountry(this);
         }
@@ -108,7 +104,7 @@ public class Country {
         }
     }
 
-    public Continent getContinent(){
+    public Continent getContinent() {
         return continent;
     }
 
@@ -122,10 +118,6 @@ public class Country {
 
     public String getName() {
         return name;
-    }
-
-    public void setPlayer(Player p) {
-        setPlayer(p, 1);
     }
 
     public void setPlayer(Player p, int numArmies) {
@@ -150,7 +142,6 @@ public class Country {
     public void removeArmies(int armies) {
         if (this.numArmies < 1) {
             return;
-//            throw new ArithmeticException("You cannot have less that 1 army");
         }
 
         this.numArmies -= armies;
@@ -162,16 +153,8 @@ public class Country {
 
     @Override
     public String toString() {
-        return "Country{" +
-                "name='" + name + '\'' +
-                ", numArmies=" + numArmies +
-                ", controlledBy=" + (controlledBy!=null ? controlledBy.getName() : "no one")  +
-                ", neighbours=" + neighbours +
-                ", continent=" + continent +
-                ", labelPoint=" + labelPoint +
-                ", layer=" + layer +
-                ", polygonPoint=" + polygonPoint +
-                '}';
+        return name;
+
     }
 
 
@@ -232,8 +215,12 @@ public class Country {
         labelPoint = locationOnScreen;
     }
 
-    public void setLayer(int layer){
+    public void setLayer(int layer) {
         this.layer = layer;
     }
 
+    public void addNeighbour(String countryName) {
+        if (!neighbours.contains(countryName))
+            neighbours.add(countryName);
+    }
 }

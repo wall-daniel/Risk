@@ -12,10 +12,10 @@ import java.util.Random;
 
 public class AttackController {
 
-    private Random random;
+    private final Random random;
 
-    private GameModel gameModel;
-    private JFrame window;
+    private final GameModel gameModel;
+    private final JFrame window;
 
     private Country attackingCountry;
     private Country defendingCountry;
@@ -156,7 +156,7 @@ public class AttackController {
                     }
 
                     int armies = Integer.parseInt(response);
-                    if (country.getArmies() > armies && armies > 1) {
+                    if (country.getArmies() > armies && armies > 0) {
                         this.attackingCountry = country;
                         System.out.println("Attacking from " + country);
 
@@ -172,11 +172,9 @@ public class AttackController {
         }
     }
 
-
     public Country getAttackingCountry(){
         return attackingCountry;
     }
-
 
     public void setDefendingCountry(Country country) {
         if (gameModel.getCurrentPlayer() != country.getPlayer() && attackingCountry.isNeighbour(country)) {

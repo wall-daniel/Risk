@@ -3,20 +3,14 @@ package risk.View.MapCreator;
 
 import risk.Controller.Controller;
 import risk.Enums.MapColor;
-import risk.Enums.PlayerColor;
-import risk.Listener.Events.ContinentEvent;
-import risk.Listener.Events.OneCountryEvent;
+
 import risk.View.Map.CountryPanel;
-import risk.View.Views.GameModelListener;
-import risk.Model.Continent;
 import risk.Model.Country;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.util.ArrayList;
 
 public class EditableCountryPanel extends CountryPanel implements MouseMotionListener, MouseListener {
     private volatile int screenX = 0;
@@ -26,16 +20,19 @@ public class EditableCountryPanel extends CountryPanel implements MouseMotionLis
 
     private boolean pressed = false;;
 
-    public EditableCountryPanel(Country country, Dimension size, Controller controller, Point polygonPoint) {
-        super(country, size, controller, false);
-        countryLabel = new MoveableCountryLabel(country.getName(), controller);
-        Point labelPoint = country.getLabelPoint();
-        countryLabel.setBounds(labelPoint.x - polygonPoint.x, labelPoint.y - polygonPoint.y, 100, 20);
-        add(countryLabel);
-
-
+    public EditableCountryPanel(Country country, Dimension size, Controller controller) {
+        super(country, size, controller);
         addMouseMotionListener(this);
         addMouseListener(this);
+    }
+
+    @Override
+    protected void addLabel(Controller controller) {
+        countryLabel = new MoveableCountryLabel(country.getName(), controller);
+        Point labelPoint = country.getLabelPoint();
+        Point polygonPoint = country.getPolygonPoint();
+        countryLabel.setBounds(labelPoint.x - polygonPoint.x, labelPoint.y - polygonPoint.y, 100, 20);
+        add(countryLabel);
     }
 
     @Override

@@ -2,20 +2,17 @@ package risk.Model;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import risk.Players.Player;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 // Not useful right now, but later for bonuses and gui will be.
 public class Continent {
 
-    private String continentName;
-    private int continentBonus = 0;
+    private final String continentName;
+    private final int continentBonus;
     private Set<Country> countries;
-    private Player controlledBy;
 
     public Continent(String name, int bonus) {
         this.continentName = name;
@@ -54,7 +51,7 @@ public class Continent {
         json.addProperty("name", continentName);
         json.addProperty("bonus", continentBonus);
 
-        // Add the countries
+        // Add the countries using their own initialization
         JsonArray countryArr = new JsonArray();
         countries.forEach(it -> countryArr.add(it.toJson()));
         json.add("countries", countryArr);
@@ -79,9 +76,8 @@ public class Continent {
         return continentBonus;
     }
 
-    public void setCountries(Set<Country> c){
-        countries = c;
+    public void setCountries(Collection<Country> c) {
+        countries = new HashSet<>(c);
     }
 
-    public Player getControlledBy(){ return controlledBy;}
 }

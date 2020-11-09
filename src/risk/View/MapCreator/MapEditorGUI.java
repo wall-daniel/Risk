@@ -1,19 +1,15 @@
 package risk.View.MapCreator;
 
 import risk.Controller.Controller;
-import risk.Enums.DrawingEnum;
 import risk.Enums.MapColor;
 import risk.Listener.Events.ContinentEvent;
-import risk.View.Views.GameModelListener;
-import risk.Listener.Events.OneCountryEvent;
-import risk.Model.*;
+import risk.Listener.Events.CountryEvent;
+import risk.Model.GameModel;
 import risk.View.Main.MainGUI;
+import risk.View.Views.GameModelListener;
 
-import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.util.ArrayList;
 import javax.swing.*;
+import java.awt.*;
 
 public class MapEditorGUI extends JFrame implements GameModelListener {
     JLabel status;
@@ -24,8 +20,6 @@ public class MapEditorGUI extends JFrame implements GameModelListener {
     String mapName;
 
     boolean drawingMode;
-
-
 
     public MapEditorGUI(){
         countryCounter = 0;
@@ -88,7 +82,7 @@ public class MapEditorGUI extends JFrame implements GameModelListener {
 
         addCountry.addActionListener(e -> {
             new CountryCreatorGUI(this);
-            status.setText(DrawingEnum.COUNTRIES.getText());
+            status.setText("Draw the countries");
         });
 
         addContinent.addActionListener(e -> {
@@ -135,6 +129,7 @@ public class MapEditorGUI extends JFrame implements GameModelListener {
     }
 
     private void saveMap() {
+        controller.updateNeighbours();
         controller.updateAllComponentLocations();
         controller.saveMap();
     }
@@ -145,7 +140,7 @@ public class MapEditorGUI extends JFrame implements GameModelListener {
         layeredPane = new JLayeredPane();
         layeredPane.setLayout(null);
 
-        status = new JLabel(DrawingEnum.COUNTRIES.getText(), SwingConstants.CENTER);
+        status = new JLabel("Draw the countries", SwingConstants.CENTER);
 
         pane.add(status, BorderLayout.NORTH);
         pane.add(layeredPane, BorderLayout.CENTER);
@@ -157,12 +152,16 @@ public class MapEditorGUI extends JFrame implements GameModelListener {
     }
 
     @Override
-    public void onNewCountry(OneCountryEvent oce) {
-        EditableCountryPanel cc = new EditableCountryPanel(oce.getFirstCountry(), this.getSize(), controller, oce.getFirstCountry().getPolygonPoint());
+
+    public void onNewCountry(CountryEvent oce) {
+        EditableCountryPanel cc = new EditableCountryPanel(oce.getFirstCountry(), this.getSize(), controller);
 
         Insets insets = layeredPane.getInsets();
         Insets frameInset = getInsets();
-        cc.setBounds(oce.getFirstCountry().getPolygonPoint().x - insets.left, oce.getFirstCountry().getPolygonPoint().y - insets.top - frameInset.top, cc.getCountry().getPolygon().getBounds().width + 30, cc.getCountry().getPolygon().getBounds().height + 30);
+
+        System.out.println("INSETS: " + insets.top + " " + frameInset.top + " " +  getJMenuBar().getHeight());
+
+        cc.setBounds(oce.getFirstCountry().getPolygonPoint().x - insets.left, oce.getFirstCountry().getPolygonPoint().y - insets.top - frameInset.top - getJMenuBar().getHeight(), cc.getCountry().getPolygon().getBounds().width + 30, cc.getCountry().getPolygon().getBounds().height + 30);
         cc.setBorder(BorderFactory.createLineBorder(Color.black)); //TODO will remove
 
         int layer = oce.getFirstCountry().getLayer();

@@ -16,7 +16,7 @@ public class CountryLabel extends JLabel {
         setForeground(MapColor.TEXT_COLOR.getColor());
         setBackground(MapColor.TRANSPARENT_COLOR.getColor());
         setOpaque(false);
-        setFont(new Font("TimesRoman", Font.BOLD, 15));
+        setFont(new Font("TimesRoman", Font.BOLD, 11));
         setVisible(true);
     }
 
