@@ -290,22 +290,41 @@ public class Controller implements MouseListener, ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
-        switch (gameModel.gameStatus) {
-            case TROOP_PLACEMENT_PHASE:
-                return;
-            case SELECT_ATTACKING_PHASE:
-                gameModel.startEndTurn();
-                break;
-            case SELECT_DEFENDING_PHASE:
-                attackController.resetController();
-                gameModel.nextPhase();
-                break;
-            case SELECT_TROOP_MOVING_FROM_PHASE:
-                gameModel.nextTurn();
-                break;
-            case SELECT_TROOP_MOVING_TO_PHASE:
-                gameModel.gameStatus = GameModel.GameStatus.SELECT_TROOP_MOVING_FROM_PHASE;
-                break;
+        if (actionEvent.getActionCommand().equals("Back")){
+            switch (gameModel.gameStatus) {
+                case TROOP_PLACEMENT_PHASE:
+                case SELECT_ATTACKING_PHASE:
+                    break;
+                case SELECT_DEFENDING_PHASE:
+                    attackController.resetController();
+                    gameModel.gameStatus = GameModel.GameStatus.SELECT_ATTACKING_PHASE;
+                    break;
+                case SELECT_TROOP_MOVING_FROM_PHASE:
+                    break;
+                case SELECT_TROOP_MOVING_TO_PHASE:
+                    movementController.resetController();
+                    gameModel.gameStatus = GameModel.GameStatus.SELECT_TROOP_MOVING_FROM_PHASE;
+                    break;
+            }
+        } else {
+            switch (gameModel.gameStatus) {
+                case TROOP_PLACEMENT_PHASE:
+                    return;
+                case SELECT_ATTACKING_PHASE:
+                    gameModel.gameStatus = GameModel.GameStatus.SELECT_TROOP_MOVING_FROM_PHASE;
+                    break;
+                case SELECT_DEFENDING_PHASE:
+                    attackController.resetController();
+                    gameModel.gameStatus = GameModel.GameStatus.SELECT_TROOP_MOVING_FROM_PHASE;
+                    break;
+                case SELECT_TROOP_MOVING_FROM_PHASE:
+                    gameModel.nextTurn();
+                    break;
+                case SELECT_TROOP_MOVING_TO_PHASE:
+                    movementController.resetController();
+                    gameModel.nextTurn();
+                    break;
+            }
         }
 
         gameModel.updateGame();

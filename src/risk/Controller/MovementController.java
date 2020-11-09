@@ -21,7 +21,7 @@ public class MovementController {
         this.moveableToCountries = new ArrayList<>();
     }
 
-    private void resetController() {
+    public void resetController() {
         fromCountry = null;
         toCountry = null;
         moveableToCountries.clear();

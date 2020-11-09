@@ -134,8 +134,6 @@ public class MapEditorGUI extends JFrame implements GameModelListener {
         controller.saveMap();
     }
 
-
-
     public void addComponentToPane(Container pane)  {
         layeredPane = new JLayeredPane();
         layeredPane.setLayout(null);
@@ -152,14 +150,11 @@ public class MapEditorGUI extends JFrame implements GameModelListener {
     }
 
     @Override
-
     public void onNewCountry(CountryEvent oce) {
         EditableCountryPanel cc = new EditableCountryPanel(oce.getFirstCountry(), this.getSize(), controller);
 
         Insets insets = layeredPane.getInsets();
         Insets frameInset = getInsets();
-
-        System.out.println("INSETS: " + insets.top + " " + frameInset.top + " " +  getJMenuBar().getHeight());
 
         cc.setBounds(oce.getFirstCountry().getPolygonPoint().x - insets.left, oce.getFirstCountry().getPolygonPoint().y - insets.top - frameInset.top - getJMenuBar().getHeight(), cc.getCountry().getPolygon().getBounds().width + 30, cc.getCountry().getPolygon().getBounds().height + 30);
         cc.setBorder(BorderFactory.createLineBorder(Color.black)); //TODO will remove
@@ -179,8 +174,4 @@ public class MapEditorGUI extends JFrame implements GameModelListener {
 
 
     }
-
-
-
-
 }

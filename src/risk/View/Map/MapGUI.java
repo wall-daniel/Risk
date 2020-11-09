@@ -54,7 +54,7 @@ public class MapGUI extends JFrame {
     public void addComponentToPane(Container pane)  {
         addJMenuBar();
         pane.add(map, BorderLayout.CENTER);
-        pane.add(mapInformation, BorderLayout.EAST);
+        pane.add(mapInformation, BorderLayout.SOUTH);
     }
 
     private void addJMenuBar() {
