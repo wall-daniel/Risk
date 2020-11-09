@@ -112,7 +112,7 @@ public class GameModel {
 
         while (!tempCountryNames.isEmpty()){
             String countryName = tempCountryNames.remove(rand.nextInt(tempCountryNames.size()));
-            getCountry(countryName).setPlayer(players.get(currentPlayer));
+            getCountry(countryName).setPlayer(players.get(currentPlayer), 1);
             currentPlayer= (currentPlayer + 1) % players.size();
         }
 
