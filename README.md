@@ -7,7 +7,11 @@ README
 
 Authors:
 - Daniel Wall
+  - Attack and Movement controllers
+  - Game model
+  - JSON saving/loading
 - Khalid Kana’an
+  - (Dropping the course)
 - Rahel Gunaratne
 - Francois Argent
 
@@ -28,3 +32,6 @@ Roadmap:
 - Add ai player
 - Make moving armies more complete
 - Add more polished map editing
+
+Issues:
+- Can move armies from a country to the same country, there should be a check if the player selected the same country.

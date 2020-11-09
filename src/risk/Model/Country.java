@@ -153,16 +153,8 @@ public class Country {
 
     @Override
     public String toString() {
-        return "Country{" +
-                "name='" + name + '\'' +
-                ", numArmies=" + numArmies +
-                ", controlledBy=" + (controlledBy != null ? controlledBy.getName() : "no one") +
-                ", neighbours=" + neighbours +
-                ", continent=" + continent +
-                ", labelPoint=" + labelPoint +
-                ", layer=" + layer +
-                ", polygonPoint=" + polygonPoint +
-                '}';
+        return name;
+
     }
 
 
@@ -227,4 +219,8 @@ public class Country {
         this.layer = layer;
     }
 
+    public void addNeighbour(String countryName) {
+        if (!neighbours.contains(countryName))
+            neighbours.add(countryName);
+    }
 }
