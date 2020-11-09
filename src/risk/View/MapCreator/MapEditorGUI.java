@@ -38,7 +38,19 @@ public class MapEditorGUI extends JFrame implements GameModelListener {
             e.printStackTrace();
         }
 
-        javax.swing.SwingUtilities.invokeLater(() -> createAndShowGUI());
+        javax.swing.SwingUtilities.invokeLater(() -> createAndShowGUI(true));
+    }
+
+    public MapEditorGUI(String filename) {
+        try {
+            GameModel gameModel = new GameModel(filename);
+            gameModel.addGameModelListener(this);
+            this.controller = new Controller(gameModel, this);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        javax.swing.SwingUtilities.invokeLater(() -> createAndShowGUI(false));
     }
 
 
@@ -46,8 +58,9 @@ public class MapEditorGUI extends JFrame implements GameModelListener {
         return layeredPane;
     }
 
-    private void createAndShowGUI() {
-        mapName = JOptionPane.showInputDialog("Enter New Map Name");
+    private void createAndShowGUI(boolean newMap) {
+        if (newMap)
+            mapName = JOptionPane.showInputDialog("Enter New Map Name");
 
         addComponentToPane(getContentPane());
 
@@ -60,13 +73,13 @@ public class MapEditorGUI extends JFrame implements GameModelListener {
         setTitle("Custom Map Creator");
         pack();
         setVisible(true);
+
+        controller.updateEditor();
     }
 
     private void addJMenuBar() {
         JMenuBar bar = new JMenuBar();
         JMenu menu = new JMenu("Add");
-
-
 
         JMenuItem addCountry = new JMenuItem("Add Country");
         JMenuItem addContinent = new JMenuItem("Add Continent");
@@ -145,15 +158,19 @@ public class MapEditorGUI extends JFrame implements GameModelListener {
 
     @Override
     public void onNewCountry(OneCountryEvent oce) {
-        EditableCountryPanel cc = new EditableCountryPanel(oce.getFirstCountry(), this.getSize(), controller);
+        EditableCountryPanel cc = new EditableCountryPanel(oce.getFirstCountry(), this.getSize(), controller, oce.getFirstCountry().getPolygonPoint());
 
         Insets insets = layeredPane.getInsets();
-        cc.setBounds(insets.left, insets.top, cc.getCountry().getPolygon().getBounds().width + 30, cc.getCountry().getPolygon().getBounds().height + 30);
+        Insets frameInset = getInsets();
+        cc.setBounds(oce.getFirstCountry().getPolygonPoint().x - insets.left, oce.getFirstCountry().getPolygonPoint().y - insets.top - frameInset.top, cc.getCountry().getPolygon().getBounds().width + 30, cc.getCountry().getPolygon().getBounds().height + 30);
         cc.setBorder(BorderFactory.createLineBorder(Color.black)); //TODO will remove
 
-        layeredPane.add(cc, Integer.valueOf(countryCounter));
-        countryCounter++;
+        int layer = oce.getFirstCountry().getLayer();
+        if (layer == -1)
+            layer = countryCounter;
 
+        layeredPane.add(cc, Integer.valueOf(layer));
+        countryCounter++;
     }
 
     @Override

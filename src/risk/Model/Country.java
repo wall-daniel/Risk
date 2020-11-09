@@ -29,7 +29,7 @@ public class Country {
         neighbours = new ArrayList<>();
         labelPoint = new Point();
         polygonPoint = new Point();
-        layer = 0;
+        layer = -1;
 
     }
 
@@ -47,9 +47,6 @@ public class Country {
         this.neighbours = (ArrayList<String>) neighbourNames.clone();
         this.continent = continent;
     }
-
-
-
 
     /**
      * Contructor from json object.

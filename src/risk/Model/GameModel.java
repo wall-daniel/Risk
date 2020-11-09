@@ -17,6 +17,13 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class GameModel {
+    public void updateEditor() {
+        gameModelListeners.forEach(it -> {
+            countries.values().forEach(country -> it.onNewCountry(new OneCountryEvent(this, country)));
+            continents.values().forEach(continent -> it.onNewContinent(new ContinentEvent(this, continent)));
+        });
+    }
+
     public enum GameStatus { TROOP_PLACEMENT_PHASE, SELECT_ATTACKING_PHASE, SELECT_DEFENDING_PHASE, SELECT_TROOP_MOVING_FROM_PHASE, SELECT_TROOP_MOVING_TO_PHASE, WAITING }
 
     private List<Player> players;
@@ -39,6 +46,18 @@ public class GameModel {
         countries = new HashMap<>();
         gameActionListeners = new ArrayList<>();
         gameModelListeners = new ArrayList<>();
+    }
+
+    /**
+     * Used for the editor
+     */
+    public GameModel(String filename) throws FileNotFoundException {
+        continents = new HashMap<>();
+        countries = new HashMap<>();
+        gameActionListeners = new ArrayList<>();
+        gameModelListeners = new ArrayList<>();
+
+        loadMap(JsonParser.parseReader(new FileReader(filename)).getAsJsonArray());
     }
 
     /**
