@@ -42,6 +42,7 @@ public class MovementController {
     }
 
     public void setMovingToCountry(Country country) {
+
         if (gameModel.getCurrentPlayer() == country.getPlayer() && moveableToCountries.contains(country.getName())) {
             System.out.println("Moving to " + country);
             toCountry = country;

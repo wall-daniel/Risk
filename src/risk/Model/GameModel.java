@@ -212,16 +212,7 @@ public class GameModel {
         gameModelListeners.forEach(it -> it.onNewCountry(new CountryEvent(this, country)));
     }
 
-    private ArrayList<String> addCountries(Country currentCountry, HashMap<String, Country> ss, int playerIndex) {
-        for (String countryName : currentCountry.getNeighbours()) {
-            Country country = getCountry(countryName);
-            if (country.getPlayer().getIndex() == playerIndex && !ss.containsKey(countryName)) {
-                ss.put(countryName, country);
-                addCountries(country, ss, playerIndex);
-            }
-        }
-        return new ArrayList<>(ss.keySet());
-    }
+
 
 
 
@@ -353,8 +344,22 @@ public class GameModel {
     //for choosing toCountry
     public ArrayList<String> getMoveTroopsToCountries(Country fromCountry) {
         HashMap<String, Country> ss = new HashMap<>();
-        //ss.put(fromCountry.getName(), fromCountry);
-        return addCountries(fromCountry, ss, fromCountry.getPlayer().getIndex());
+        ss.put(fromCountry.getName(), fromCountry);
+        ArrayList<String> list = addCountries(fromCountry, ss, fromCountry.getPlayer().getIndex());
+        list.remove(fromCountry.getName());
+        return list;
+    }
+
+    private ArrayList<String> addCountries(Country currentCountry, HashMap<String, Country> ss, int playerIndex) {
+        for (String countryName : currentCountry.getNeighbours()) {
+            Country country = getCountry(countryName);
+            if (country.getPlayer().getIndex() == playerIndex && !ss.containsKey(countryName)) {
+                ss.put(countryName, country);
+                addCountries(country, ss, playerIndex);
+            }
+        }
+
+        return new ArrayList<>(ss.keySet());
     }
 
 
