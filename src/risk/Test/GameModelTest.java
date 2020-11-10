@@ -151,9 +151,5 @@ public class GameModelTest {
         assertEquals(gs, GameModel.GameStatus.SELECT_TROOP_MOVING_FROM_PHASE);
     }
 
-    @Test
-    public void startEndTurn() {
-        gm.startEndTurn();
-        assertEquals(gm.gameStatus, GameModel.GameStatus.SELECT_TROOP_MOVING_FROM_PHASE);
-    }
+
 }

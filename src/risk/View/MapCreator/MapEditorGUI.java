@@ -12,14 +12,13 @@ import javax.swing.*;
 import java.awt.*;
 
 public class MapEditorGUI extends JFrame implements GameModelListener {
-    JLabel status;
-    JLayeredPane layeredPane;
-    int countryCounter;
+    private JLabel status;
+    private JLayeredPane layeredPane;
+    private int countryCounter;
 
-    Controller controller;
-    String mapName;
+    private Controller controller;
+    private String mapName;
 
-    boolean drawingMode;
 
     public MapEditorGUI(){
         countryCounter = 0;
@@ -108,10 +107,6 @@ public class MapEditorGUI extends JFrame implements GameModelListener {
         bar.add(menu);
 
         setJMenuBar(bar);
-    }
-
-    private void setDrawingMode(boolean drawingMode) {
-        this.drawingMode = drawingMode;
     }
 
     private void addNewContinent() {

@@ -101,6 +101,20 @@ public class GameModel {
         }
     }
 
+
+
+    public void saveMap(String filename) throws IOException {
+        JsonArray json = new JsonArray();
+
+        this.continents.values().forEach(continent -> json.add(continent.toJson()));
+
+        FileWriter fileWriter = new FileWriter(filename);
+        fileWriter.write(json.toString());
+        fileWriter.flush();
+        fileWriter.close();
+    }
+
+
     private void setupMap() {
         int currentPlayer = 0;
         int initArmies = getInitialArmies(players.size());
@@ -132,137 +146,29 @@ public class GameModel {
         this.currentPlayer = 0;
     }
 
-    private int getInitialArmies(int size) {
-        //TODO magic numbers fix
-        HashMap<Integer, Integer> initialArmySizes = new HashMap<>();
-        initialArmySizes.put(2, 50);
-        initialArmySizes.put(3, 35);
-        initialArmySizes.put(4, 30);
-        initialArmySizes.put(5, 25);
-        initialArmySizes.put(6, 20);
-        return initialArmySizes.get(size);
-    }
 
+    private int getInitialArmies(int numPlayers) {
+        int INITIAL_ARMY_6_PLAYERS = 50;
+        int INITIAL_ARMY_5_PLAYERS = 35;
+        int INITIAL_ARMY_4_PLAYERS = 30;
+        int INITIAL_ARMY_3_PLAYERS = 25;
+        int INITIAL_ARMY_2_PLAYERS = 20;
 
-    public int[] getCurrentNeighboursOfCountry(Country country) {
-        int[] arr = new int[country.getNeighbours().size()];
-        int i = 0;
-        ArrayList<String> countryNames = getCountriesNames();
+        switch(numPlayers){
+            case 6:
+                return INITIAL_ARMY_6_PLAYERS;
+            case 5:
+                return INITIAL_ARMY_5_PLAYERS;
+            case 4:
+                return INITIAL_ARMY_4_PLAYERS;
+            case 3:
+                return INITIAL_ARMY_3_PLAYERS;
+            default:
+                return INITIAL_ARMY_2_PLAYERS;
 
-        for (String s : country.getNeighbours())
-            arr[i++] = countryNames.indexOf(s);
-
-        return arr;
-    }
-
-    public List<Player> getPlayers() {
-        return players;
-    }
-
-    public void addActionListener(GameActionListener listener) {
-        gameActionListeners.add(listener);
-    }
-
-    public void addGameModelListener(GameModelListener listener) {
-        gameModelListeners.add(listener);
-    }
-
-    public void updateGame() {
-        gameActionListeners.forEach(it -> it.updateMap(this));
-    }
-
-    public void addCountry(Country country) {
-        this.countries.put(country.getName(), country);
-        gameModelListeners.forEach(it -> it.onNewCountry(new CountryEvent(this, country)));
-    }
-
-    public Country getCountry(String countryName) {
-        return countries.get(countryName);
-    }
-
-    public void addContinent(Continent continent) {
-        this.continents.put(continent.getName(), continent);
-        gameModelListeners.forEach(it -> it.onNewContinent(new ContinentEvent(this, continent)));
-    }
-
-    public void saveMap(String filename) throws IOException {
-        JsonArray json = new JsonArray();
-
-        this.continents.values().forEach(continent -> json.add(continent.toJson()));
-
-        FileWriter fileWriter = new FileWriter(filename);
-        fileWriter.write(json.toString());
-        fileWriter.flush();
-        fileWriter.close();
-    }
-
-
-    //for placing troops, selecting attacking from, selecting moving from country
-    public ArrayList<String> getPlaceableCountries() {
-        return new ArrayList<>(players.get(currentPlayer).getCountries());
-    }
-
-    //for choosing defendingCountry
-    public ArrayList<String> getAttackableCountries(Country fromCountry) {
-        return fromCountry.getNeighbours().stream().filter(e ->
-                fromCountry.getPlayer().getIndex() != countries.get(e).getPlayer().getIndex()
-        ).collect(Collectors.toCollection(ArrayList::new));
-    }
-
-    //for choosing toCountry
-    public ArrayList<String> getMoveTroopsToCountries(Country fromCountry) {
-        HashMap<String, Country> ss = new HashMap<>();
-        //ss.put(fromCountry.getName(), fromCountry);
-        return addCountries(fromCountry, ss, fromCountry.getPlayer().getIndex());
-    }
-
-    private ArrayList<String> addCountries(Country currentCountry, HashMap<String, Country> ss, int playerIndex) {
-        for (String countryName : currentCountry.getNeighbours()) {
-            Country country = getCountry(countryName);
-            if (country.getPlayer().getIndex() == playerIndex && !ss.containsKey(countryName)) {
-                ss.put(countryName, country);
-                addCountries(country, ss, playerIndex);
-            }
         }
-        return new ArrayList<>(ss.keySet());
     }
 
-    public Continent getContinent(String name) {
-        return continents.get(name);
-    }
-
-    public ArrayList<Continent> getContinents() {
-        return new ArrayList<>(continents.values());
-    }
-
-    public ArrayList<Country> getCountries() {
-        return new ArrayList<>(countries.values());
-    }
-
-    public ArrayList<Country> getCountriesInLayerOrder() {
-        ArrayList<Country> countriesLayerSort = getCountries();
-        countriesLayerSort.sort(Comparator.comparingInt(Country::getLayer));
-        Collections.reverse(countriesLayerSort);
-        return countriesLayerSort;
-    }
-
-    public ArrayList<String> getCountriesNames() {
-        return new ArrayList<>(countries.keySet());
-    }
-
-    public void editCountry(Country country, ArrayList<String> names, Continent continent) {
-        country.setContinent(continent);
-        country.setNeighbourNames(names);
-    }
-
-    public Player getCurrentPlayer() {
-        return players.get(currentPlayer);
-    }
-
-    public void placeArmies(Country country, int armies) {
-        getCurrentPlayer().placeArmies(country, armies);
-        updateGame();
-    }
 
     public void startGame() {
         initializeGame();
@@ -288,6 +194,11 @@ public class GameModel {
         }
     }
 
+    public void placeArmies(Country country, int armies) {
+        getCurrentPlayer().placeArmies(country, armies);
+        updateGame();
+    }
+
     public boolean donePlacingArmies() {
         return getCurrentPlayer().getPlaceableArmies() <= 0;
     }
@@ -295,57 +206,84 @@ public class GameModel {
 
 
 
-    public void resetPhase(){
-        switch (gameStatus) {
-            case TROOP_PLACEMENT_PHASE:
-                break;
-            case SELECT_ATTACKING_PHASE:
-            case SELECT_DEFENDING_PHASE:
-                gameStatus = GameStatus.SELECT_ATTACKING_PHASE;
-                break;
-            case SELECT_TROOP_MOVING_FROM_PHASE:
-            case SELECT_TROOP_MOVING_TO_PHASE:
-                gameStatus = GameStatus.SELECT_TROOP_MOVING_FROM_PHASE;
-                break;
+
+    public void addCountry(Country country) {
+        this.countries.put(country.getName(), country);
+        gameModelListeners.forEach(it -> it.onNewCountry(new CountryEvent(this, country)));
+    }
+
+    private ArrayList<String> addCountries(Country currentCountry, HashMap<String, Country> ss, int playerIndex) {
+        for (String countryName : currentCountry.getNeighbours()) {
+            Country country = getCountry(countryName);
+            if (country.getPlayer().getIndex() == playerIndex && !ss.containsKey(countryName)) {
+                ss.put(countryName, country);
+                addCountries(country, ss, playerIndex);
+            }
         }
-        updateGame();
+        return new ArrayList<>(ss.keySet());
     }
 
 
-    public void continuePhase(){
-        switch (gameStatus) {
-            case TROOP_PLACEMENT_PHASE:
-            case SELECT_DEFENDING_PHASE:
-            case SELECT_TROOP_MOVING_TO_PHASE:
-                break;
-            case SELECT_ATTACKING_PHASE:
-                gameStatus = GameStatus.SELECT_DEFENDING_PHASE;
-                break;
-            case SELECT_TROOP_MOVING_FROM_PHASE:
-                gameStatus = GameStatus.SELECT_TROOP_MOVING_TO_PHASE;
-                break;
-        }
-        updateGame();
+
+    public void editCountry(Country country, ArrayList<String> names, Continent continent) {
+        country.setContinent(continent);
+        country.setNeighbourNames(names);
     }
 
 
-    public void nextPhase() {
-        switch (gameStatus) {
-            case TROOP_PLACEMENT_PHASE:
-                gameStatus = GameStatus.SELECT_ATTACKING_PHASE;
-                break;
-            case SELECT_ATTACKING_PHASE:
-            case SELECT_DEFENDING_PHASE:
-                gameStatus = GameStatus.SELECT_TROOP_MOVING_FROM_PHASE;
-                break;
-            case SELECT_TROOP_MOVING_FROM_PHASE:
-            case SELECT_TROOP_MOVING_TO_PHASE:
-                nextTurn();
-                break;
-        }
-        updateGame();
+    public Country getCountry(String countryName) {
+        return countries.get(countryName);
     }
 
+    public int[] getCurrentNeighboursOfCountry(Country country) {
+        int[] arr = new int[country.getNeighbours().size()];
+        int i = 0;
+        ArrayList<String> countryNames = getCountriesNames();
+
+        for (String s : country.getNeighbours())
+            arr[i++] = countryNames.indexOf(s);
+
+        return arr;
+    }
+
+    public ArrayList<Country> getCountries() {
+        return new ArrayList<>(countries.values());
+    }
+
+    public ArrayList<Country> getCountriesInLayerOrder() {
+        ArrayList<Country> countriesLayerSort = getCountries();
+        countriesLayerSort.sort(Comparator.comparingInt(Country::getLayer));
+        Collections.reverse(countriesLayerSort);
+        return countriesLayerSort;
+    }
+
+    public ArrayList<String> getCountriesNames() {
+        return new ArrayList<>(countries.keySet());
+    }
+
+
+    public List<Player> getPlayers() {
+        return players;
+    }
+
+    public Player getCurrentPlayer() {
+        return players.get(currentPlayer);
+    }
+
+
+
+    public void addContinent(Continent continent) {
+        this.continents.put(continent.getName(), continent);
+        gameModelListeners.forEach(it -> it.onNewContinent(new ContinentEvent(this, continent)));
+    }
+
+    public Continent getContinent(String name) {
+        return continents.get(name);
+    }
+
+    public ArrayList<Continent> getContinents() {
+        return new ArrayList<>(continents.values());
+    }
 
     /**
      * Get the continent bonus for the player at the start of the turn.
@@ -372,6 +310,22 @@ public class GameModel {
         return bonus;
     }
 
+
+
+
+
+    public void addActionListener(GameActionListener listener) {
+        gameActionListeners.add(listener);
+    }
+
+    public void updateGame() {
+        gameActionListeners.forEach(it -> it.updateMap(this));
+    }
+
+    public void addGameModelListener(GameModelListener listener) {
+        gameModelListeners.add(listener);
+    }
+
     public void updateEditor() {
         gameModelListeners.forEach(it -> {
             countries.values().forEach(country -> it.onNewCountry(new CountryEvent(this, country)));
@@ -379,7 +333,86 @@ public class GameModel {
         });
     }
 
-    public void startEndTurn() {
-        gameStatus = GameStatus.SELECT_TROOP_MOVING_FROM_PHASE;
+
+
+
+
+
+    //for placing troops, selecting attacking from, selecting moving from country
+    public ArrayList<String> getPlaceableCountries() {
+        return new ArrayList<>(players.get(currentPlayer).getCountries());
+    }
+
+    //for choosing defendingCountry
+    public ArrayList<String> getAttackableCountries(Country fromCountry) {
+        return fromCountry.getNeighbours().stream().filter(e ->
+                fromCountry.getPlayer().getIndex() != countries.get(e).getPlayer().getIndex()
+        ).collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    //for choosing toCountry
+    public ArrayList<String> getMoveTroopsToCountries(Country fromCountry) {
+        HashMap<String, Country> ss = new HashMap<>();
+        //ss.put(fromCountry.getName(), fromCountry);
+        return addCountries(fromCountry, ss, fromCountry.getPlayer().getIndex());
+    }
+
+
+    /**
+     * the logic when back-button is clicked when in 2nd part of two part phases. It resets to the first part
+     */
+    public void resetPhase(){
+        switch (gameStatus) {
+            case TROOP_PLACEMENT_PHASE:
+                break;
+            case SELECT_ATTACKING_PHASE:
+            case SELECT_DEFENDING_PHASE:
+                gameStatus = GameStatus.SELECT_ATTACKING_PHASE;
+                break;
+            case SELECT_TROOP_MOVING_FROM_PHASE:
+            case SELECT_TROOP_MOVING_TO_PHASE:
+                gameStatus = GameStatus.SELECT_TROOP_MOVING_FROM_PHASE;
+                break;
+        }
+        updateGame();
+    }
+
+    /**
+     * the logic when 1st part of two part phases is completed. Continues the game to the 2nd part
+     */
+    public void continuePhase(){
+        switch (gameStatus) {
+            case TROOP_PLACEMENT_PHASE:
+            case SELECT_DEFENDING_PHASE:
+            case SELECT_TROOP_MOVING_TO_PHASE:
+                break;
+            case SELECT_ATTACKING_PHASE:
+                gameStatus = GameStatus.SELECT_DEFENDING_PHASE;
+                break;
+            case SELECT_TROOP_MOVING_FROM_PHASE:
+                gameStatus = GameStatus.SELECT_TROOP_MOVING_TO_PHASE;
+                break;
+        }
+        updateGame();
+    }
+
+    /**
+     * the logic when next-button is clicked. Continues the game to the the next phase
+     * */
+    public void nextPhase() {
+        switch (gameStatus) {
+            case TROOP_PLACEMENT_PHASE:
+                gameStatus = GameStatus.SELECT_ATTACKING_PHASE;
+                break;
+            case SELECT_ATTACKING_PHASE:
+            case SELECT_DEFENDING_PHASE:
+                gameStatus = GameStatus.SELECT_TROOP_MOVING_FROM_PHASE;
+                break;
+            case SELECT_TROOP_MOVING_FROM_PHASE:
+            case SELECT_TROOP_MOVING_TO_PHASE:
+                nextTurn();
+                break;
+        }
+        updateGame();
     }
 }

@@ -40,15 +40,7 @@ public class Controller implements MouseListener, ActionListener {
     }
 
 
-    private void gameOver() {
-//        System.out.println("The game is over, " + players.get(currentPlayerPosition).getName() + " won. Congrats!");
-        System.exit(0);
-    }
-
     public void editCountry(String countryName, ArrayList<Country> neighbours, Continent continent) {
-        System.out.println("Edit: " + countryName + " " + neighbours + " " + continent.getName());
-
-
         // Get the neighbour names
         ArrayList<String> names = new ArrayList<>();
         neighbours.forEach(it -> names.add(it.getName()));
