@@ -4,6 +4,7 @@ package risk.Controller;
 import risk.Model.Country;
 import risk.Model.GameModel;
 import risk.Players.Player;
+import risk.View.Main.MainGUI;
 
 import javax.swing.*;
 import java.util.Arrays;
@@ -20,6 +21,7 @@ public class AttackController {
     private Country attackingCountry;
     private Country defendingCountry;
     private int attackingArmies = 0;
+    private int playersEliminated = 0;
 
     public AttackController(GameModel gameModel, JFrame frame) {
         this.gameModel = gameModel;
@@ -89,7 +91,7 @@ public class AttackController {
         }
 
         gameModel.updateGame();
-        // Figuer out who won, or if it is a tie
+        // Figure out who won, or if it is a tie
         if (attackingArmies <= 0) {
             // If the defender won then remove the lost armies from the defender and don't add anything to what the
             JOptionPane.showMessageDialog(window, "The attacker lost.");
@@ -102,7 +104,12 @@ public class AttackController {
                     continue;
                 } else {
                     p.setLost();
-                    JOptionPane.showMessageDialog(window, "Player " + p.getName() + " has no more countries.");
+                    playersEliminated++;
+                    JOptionPane.showMessageDialog(window,  p.getName() + " has no more countries.");
+                    if(playersEliminated == gameModel.getPlayers().size() - 1){
+                        JOptionPane.showMessageDialog(window, attackingCountry.getPlayer().getName() + " has won.");
+                        MainGUI.getMapGUI().dispose();
+                    }
                 }
             }
         } else {

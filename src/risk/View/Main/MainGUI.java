@@ -12,6 +12,8 @@ import java.awt.*;
 
 public class MainGUI extends JFrame {
 
+    private static MapGUI mapGUI;
+
     public static void main(String args[]){
 
 
@@ -112,11 +114,15 @@ public class MainGUI extends JFrame {
         // If the response is null then return
         if (numPlayers == null) return;
 
-        MapGUI mapGUI = new MapGUI(Integer.parseInt(numPlayers));
+        mapGUI = new MapGUI(Integer.parseInt(numPlayers));
         //TODO the controller setup the man given the map name and the number of players
         //controller.setUpModel(mapName, numPlayers);
         //mapGUI.loadGame(); //loads the gameModel into the map
         this.dispose();
+    }
+
+    public static MapGUI getMapGUI(){
+        return mapGUI;
     }
 
     /**
