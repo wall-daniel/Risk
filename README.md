@@ -40,4 +40,4 @@ Roadmap:
 - Add more polished map editing
 
 Issues:
-
+- some countries dont have the proper neighbours.
