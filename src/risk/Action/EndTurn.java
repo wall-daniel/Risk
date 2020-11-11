@@ -1,2 +1,4 @@
-package risk.Action;public class EndTurn {
+package risk.Action;
+
+public class EndTurn extends Action {
 }

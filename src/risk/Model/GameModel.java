@@ -3,6 +3,8 @@ package risk.Model;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
 import risk.Action.Action;
+import risk.Action.Attack;
+import risk.Action.EndTurn;
 import risk.Enums.PlayerType;
 import risk.Listener.Events.ContinentEvent;
 import risk.Listener.Events.CountryEvent;
@@ -204,10 +206,12 @@ public class GameModel {
             players.get(currentPlayer).startTurn(getContinentBonuses(players.get(currentPlayer)));
 
             if (getCurrentPlayer().getPlayerType() != PlayerType.HUMAN_PLAYER){ //problem with this implementation is if there is a game with no human players, there will be stack overflow
-                while (getCurrentPlayer().getPlayerType() != PlayerType.HUMAN_PLAYER){
-
-
+                while (true){
                     Action action = getCurrentPlayer().getAction();
+
+                    if (action instanceof EndTurn)
+                        break;
+
                     doAction(action);
                     updateGame();
                 }
@@ -217,7 +221,9 @@ public class GameModel {
     }
 
     private void doAction(Action action) {
+        if (action instanceof Attack){
 
+        }
 
 
 
