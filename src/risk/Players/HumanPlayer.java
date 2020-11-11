@@ -14,5 +14,4 @@ public class HumanPlayer extends Player {
     public Action getAction(){
         return null;
     }
-
 }

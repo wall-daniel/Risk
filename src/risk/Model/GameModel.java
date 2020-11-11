@@ -2,6 +2,7 @@ package risk.Model;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
+import risk.Action.Action;
 import risk.Enums.PlayerType;
 import risk.Listener.Events.ContinentEvent;
 import risk.Listener.Events.CountryEvent;
@@ -201,7 +202,25 @@ public class GameModel {
             nextTurn();
         } else {
             players.get(currentPlayer).startTurn(getContinentBonuses(players.get(currentPlayer)));
+
+            if (getCurrentPlayer().getPlayerType() != PlayerType.HUMAN_PLAYER){ //problem with this implementation is if there is a game with no human players, there will be stack overflow
+                while (getCurrentPlayer().getPlayerType() != PlayerType.HUMAN_PLAYER){
+
+
+                    Action action = getCurrentPlayer().getAction();
+                    doAction(action);
+                    updateGame();
+                }
+                nextTurn();
+            }
         }
+    }
+
+    private void doAction(Action action) {
+
+
+
+
     }
 
     public void placeArmies(Country country, int armies) {
@@ -311,17 +330,15 @@ public class GameModel {
         return bonus;
     }
 
-
-
-
-
     public void addActionListener(GameActionListener listener) {
         gameActionListeners.add(listener);
     }
 
+
+
+
     public void updateGame() {
         gameActionListeners.forEach(it -> it.updateMap(this));
-
     }
 
     public void addGameModelListener(GameModelListener listener) {
@@ -334,11 +351,6 @@ public class GameModel {
             continents.values().forEach(continent -> it.onNewContinent(new ContinentEvent(this, continent)));
         });
     }
-
-
-
-
-
 
     //for placing troops, selecting attacking from, selecting moving from country
     public ArrayList<String> getPlaceableCountries() {

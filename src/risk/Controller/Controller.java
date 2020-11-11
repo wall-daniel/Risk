@@ -35,11 +35,6 @@ public class Controller implements MouseListener, ActionListener {
         rand = new Random(System.currentTimeMillis());
     }
 
-    public GameModel getGameModel(){
-        return gameModel;
-    }
-
-
     public void editCountry(String countryName, ArrayList<Country> neighbours, Continent continent) {
         // Get the neighbour names
         ArrayList<String> names = new ArrayList<>();
@@ -315,6 +310,15 @@ public class Controller implements MouseListener, ActionListener {
         }
     }
 
+
+    public void updateEditor() {
+        gameModel.updateEditor();
+    }
+
+
+    /**
+     * For use during MapEditing, to update the component locations before saving the map
+     */
     public void updateAllComponentLocations() {
         for (Component component : gameView.getLayeredPane().getComponents()){
             if (component instanceof EditableCountryPanel) {
@@ -326,10 +330,10 @@ public class Controller implements MouseListener, ActionListener {
         }
     }
 
-    public void updateEditor() {
-        gameModel.updateEditor();
-    }
 
+    /**
+     * For use during MapEditing, to automatically generate the neighbours before saving the map
+     */
     public void updateNeighbours() {
         Component[] components = gameView.getLayeredPane().getComponents();
         for (int i = 0; i < components.length; i++){
@@ -356,6 +360,5 @@ public class Controller implements MouseListener, ActionListener {
             }
 
         }
-
     }
 }

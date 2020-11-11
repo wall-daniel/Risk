@@ -99,4 +99,8 @@ public class Player {
         return null;
     }
 
+    public PlayerType getPlayerType(){
+        return playerType;
+    }
+
 }
