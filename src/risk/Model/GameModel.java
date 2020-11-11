@@ -2,9 +2,13 @@ package risk.Model;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
+import risk.Enums.PlayerType;
 import risk.Listener.Events.ContinentEvent;
 import risk.Listener.Events.CountryEvent;
+import risk.Players.AIPlayer;
+import risk.Players.HumanPlayer;
 import risk.Players.Player;
+import risk.Players.RandomPlayer;
 import risk.View.Views.GameActionListener;
 import risk.View.Views.GameModelListener;
 
@@ -64,7 +68,7 @@ public class GameModel {
      * @param numPlayers number of players that are playing the game
      * @throws FileNotFoundException when file is not found
      */
-    public GameModel(int numPlayers) throws FileNotFoundException {
+    public GameModel(int numPlayers, String[] playerNames, PlayerType[] playerTypes) throws FileNotFoundException {
         players = new ArrayList<>(numPlayers);
         continents = new HashMap<>();
         countries = new HashMap<>();
@@ -73,7 +77,14 @@ public class GameModel {
 
         // Add the players
         for (int i = 0; i < numPlayers; i++) {
-            players.add(new Player("Player " + i, i));
+            if (playerTypes[i] == PlayerType.AI_PLAYER)
+                players.add(new AIPlayer(playerNames[i], i, playerTypes[i], this));
+            else if (playerTypes[i] == PlayerType.HUMAN_PLAYER)
+                players.add(new HumanPlayer(playerNames[i], i, playerTypes[i], this));
+            else if (playerTypes[i] == PlayerType.RANDOM_PLAYER)
+                players.add(new RandomPlayer(playerNames[i], i, playerTypes[i], this));
+
+
         }
 
         // Load the map
@@ -182,7 +193,6 @@ public class GameModel {
     }
 
     public void nextTurn() {
-        getCurrentPlayer().endTurn();
         currentPlayer = (currentPlayer + 1) % players.size();
         System.out.println("Start of " + players.get(currentPlayer).getName() + " turn.");
         gameStatus = GameStatus.TROOP_PLACEMENT_PHASE;
@@ -311,6 +321,7 @@ public class GameModel {
 
     public void updateGame() {
         gameActionListeners.forEach(it -> it.updateMap(this));
+
     }
 
     public void addGameModelListener(GameModelListener listener) {
