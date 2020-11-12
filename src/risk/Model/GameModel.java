@@ -85,7 +85,7 @@ public class GameModel {
             else if (playerTypes[i] == PlayerType.HUMAN_PLAYER)
                 players.add(new HumanPlayer(playerNames[i], i, playerTypes[i], this));
             else if (playerTypes[i] == PlayerType.RANDOM_PLAYER)
-                players.add(new RandomPlayer(playerNames[i], i, playerTypes[i], this));
+                players.add(new RandomPlayer(playerNames[i], i, this));
 
 
         }

@@ -25,7 +25,7 @@ public class GameModelTest {
 
     @Before
     public void setUp() throws Exception {
-        this.gm = new GameModel(4);
+        this.gm = new GameModel();
         testCountry1 = new Country("TestCountry", new Polygon(new int[] {0, 5, 28}, new int[] {0, 0, 56}, 3), new Point(3, 23), 1);
         testCountry2 = new Country("TestCountry2", new Polygon(new int[] {50, 5, 28}, new int[] {0, 25, 56}, 3), new Point(3, 23), 2);
         testCountry3 = new Country("TestCountry3", new Polygon(new int[] {0, 5, 68}, new int[] {100, 0, 56}, 3), new Point(3, 23), 3);
