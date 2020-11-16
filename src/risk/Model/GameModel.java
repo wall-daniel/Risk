@@ -2,9 +2,16 @@ package risk.Model;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
+import risk.Action.Action;
+import risk.Action.Attack;
+import risk.Action.EndTurn;
+import risk.Enums.PlayerType;
 import risk.Listener.Events.ContinentEvent;
 import risk.Listener.Events.CountryEvent;
+import risk.Players.AIPlayer;
+import risk.Players.HumanPlayer;
 import risk.Players.Player;
+import risk.Players.RandomPlayer;
 import risk.View.Views.GameActionListener;
 import risk.View.Views.GameModelListener;
 
@@ -64,7 +71,7 @@ public class GameModel {
      * @param numPlayers number of players that are playing the game
      * @throws FileNotFoundException when file is not found
      */
-    public GameModel(int numPlayers) throws FileNotFoundException {
+    public GameModel(int numPlayers, String[] playerNames, PlayerType[] playerTypes) throws FileNotFoundException {
         players = new ArrayList<>(numPlayers);
         continents = new HashMap<>();
         countries = new HashMap<>();
@@ -73,7 +80,14 @@ public class GameModel {
 
         // Add the players
         for (int i = 0; i < numPlayers; i++) {
-            players.add(new Player("Player " + i, i));
+            if (playerTypes[i] == PlayerType.AI_PLAYER)
+                players.add(new AIPlayer(playerNames[i], i, playerTypes[i], this));
+            else if (playerTypes[i] == PlayerType.HUMAN_PLAYER)
+                players.add(new HumanPlayer(playerNames[i], i, playerTypes[i], this));
+            else if (playerTypes[i] == PlayerType.RANDOM_PLAYER)
+                players.add(new RandomPlayer(playerNames[i], i, this));
+
+
         }
 
         // Load the map
@@ -182,7 +196,6 @@ public class GameModel {
     }
 
     public void nextTurn() {
-        getCurrentPlayer().endTurn();
         currentPlayer = (currentPlayer + 1) % players.size();
         System.out.println("Start of " + players.get(currentPlayer).getName() + " turn.");
         gameStatus = GameStatus.TROOP_PLACEMENT_PHASE;
@@ -191,7 +204,29 @@ public class GameModel {
             nextTurn();
         } else {
             players.get(currentPlayer).startTurn(getContinentBonuses(players.get(currentPlayer)));
+
+            if (getCurrentPlayer().getPlayerType() != PlayerType.HUMAN_PLAYER){ //problem with this implementation is if there is a game with no human players, there will be stack overflow
+                while (true){
+                    Action action = getCurrentPlayer().getAction();
+
+                    if (action instanceof EndTurn)
+                        break;
+
+                    doAction(action);
+                    updateGame();
+                }
+                nextTurn();
+            }
         }
+    }
+
+    private void doAction(Action action) {
+        if (action instanceof Attack){
+
+        }
+
+
+
     }
 
     public void placeArmies(Country country, int armies) {
@@ -301,13 +336,12 @@ public class GameModel {
         return bonus;
     }
 
-
-
-
-
     public void addActionListener(GameActionListener listener) {
         gameActionListeners.add(listener);
     }
+
+
+
 
     public void updateGame() {
         gameActionListeners.forEach(it -> it.updateMap(this));
@@ -323,11 +357,6 @@ public class GameModel {
             continents.values().forEach(continent -> it.onNewContinent(new ContinentEvent(this, continent)));
         });
     }
-
-
-
-
-
 
     //for placing troops, selecting attacking from, selecting moving from country
     public ArrayList<String> getPlaceableCountries() {

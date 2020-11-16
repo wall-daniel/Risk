@@ -2,6 +2,7 @@ package risk.View.Main;
 
 import risk.Controller.Controller;
 import risk.Enums.MapColor;
+import risk.Enums.PlayerType;
 import risk.Model.GameModel;
 import risk.View.Map.MapGUI;
 import risk.View.MapCreator.MapEditorGUI;
@@ -85,6 +86,9 @@ public class MainGUI extends JFrame {
      * enter number of players
      */
     private void loadPlayMapOptions() {
+
+
+
         String mapNamesOptions [] = {"Earth", "Italy", "Chicken"};
         //TODO have the controller getMapNames
         //String mapNamesOptions [] = controller.getMapNames();
@@ -100,24 +104,52 @@ public class MainGUI extends JFrame {
                 "Earth");
         */
 
+
+        JPanel playerOptionsMainPanel = new JPanel(new GridLayout(7, 1));
+
+        //num players set up
         String numPlayersOptions[] = {"2" , "3" , "4" , "5", "6"};
+        JComboBox numPlayersInput = new JComboBox(numPlayersOptions);
+        playerOptionsMainPanel.add(numPlayersInput);
 
-        String numPlayers = (String)JOptionPane.showInputDialog(
-                this,
-                "Number of Players:",
-                "New Game",
-                JOptionPane.PLAIN_MESSAGE,
-                null,
-                numPlayersOptions,
-                "3");
+        //player type string set up
+        String[] playerTypeStrings = new String[PlayerType.values().length+1];
+        for (PlayerType playerType : PlayerType.values())
+            playerTypeStrings[playerType.ordinal()] = playerType.name();
+        playerTypeStrings[PlayerType.values().length] = "No Player";
 
-        // If the response is null then return
-        if (numPlayers == null) return;
+        //input fields setup
+        int MAX_PLAYERS = 6;
+        JTextField [] playerNameFields = new JTextField[MAX_PLAYERS];
+        JComboBox [] playerTypeInputs = new JComboBox[MAX_PLAYERS];
 
-        mapGUI = new MapGUI(Integer.parseInt(numPlayers));
-        //TODO the controller setup the man given the map name and the number of players
-        //controller.setUpModel(mapName, numPlayers);
-        //mapGUI.loadGame(); //loads the gameModel into the map
+        //adding all components to main panel
+        for (int i = 0; i < 6; i++){
+            JPanel playerOptionsPanel = new JPanel(new GridLayout(1, 2));
+            playerNameFields[i] = new JTextField("Player " + i);
+
+            playerTypeInputs[i] = new JComboBox(playerTypeStrings);
+
+            playerOptionsPanel.add(playerNameFields[i]);
+            playerOptionsPanel.add(playerTypeInputs[i]);
+
+            playerOptionsMainPanel.add(playerOptionsPanel);
+        }
+
+        JOptionPane.showMessageDialog(this, playerOptionsMainPanel);
+
+        //setting up fields to pass to create game
+        int numPlayers = Integer.parseInt(numPlayersInput.getSelectedItem().toString());
+        String [] playerNames = new String[numPlayers];
+        PlayerType[] playerTypes = new PlayerType[numPlayers];
+
+        //adding inputs to the fields
+        for (int i = 0; i < numPlayers; i++){
+            playerNames[i] = playerNameFields[i].getText();
+            playerTypes[i] = PlayerType.valueOf(playerTypeInputs[i].getSelectedItem().toString());
+        }
+
+        mapGUI = new MapGUI(numPlayers, playerNames, playerTypes);
         this.dispose();
     }
 

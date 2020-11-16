@@ -1,6 +1,7 @@
 package risk.View.Map;
 
 import risk.Controller.PlayerController;
+import risk.Enums.PlayerType;
 import risk.Model.GameModel;
 import risk.View.Main.MainGUI;
 
@@ -14,9 +15,9 @@ public class MapGUI extends JFrame {
 
     PlayerController controller;
 
-    public MapGUI(int numPlayers) {
+    public MapGUI(int numPlayers, String[] playerNames, PlayerType[] playerTypes){
         try {
-            GameModel gameModel = new GameModel(numPlayers);
+            GameModel gameModel = new GameModel(numPlayers, playerNames, playerTypes);
             this.controller = new PlayerController(gameModel, this);
             this.map = new Map(controller);
             this.mapInformation = new MapInformation(controller);

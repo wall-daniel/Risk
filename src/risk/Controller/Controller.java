@@ -29,7 +29,7 @@ abstract public class Controller implements MouseListener {
         this.gameView = view;
     }
 
-    public GameModel getGameModel(){
+    public GameModel getGameModel() {
         return gameModel;
     }
 
@@ -53,8 +53,6 @@ abstract public class Controller implements MouseListener {
         }
     }
 
-
-
     @Override
     public void mousePressed(MouseEvent mouseEvent) { }
 
@@ -72,4 +70,5 @@ abstract public class Controller implements MouseListener {
     }
 
     abstract protected void countryClicked(MouseEvent mouseEvent);
+
 }
