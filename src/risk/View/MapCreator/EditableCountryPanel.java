@@ -2,6 +2,8 @@ package risk.View.MapCreator;
 
 
 import risk.Controller.Controller;
+import risk.Controller.EditorController;
+import risk.Controller.PlayerController;
 import risk.Enums.MapColor;
 
 import risk.View.Map.CountryPanel;
@@ -20,7 +22,7 @@ public class EditableCountryPanel extends CountryPanel implements MouseMotionLis
 
     private boolean pressed = false;;
 
-    public EditableCountryPanel(Country country, Dimension size, Controller controller) {
+    public EditableCountryPanel(Country country, Dimension size, EditorController controller) {
         super(country, size, controller);
         addMouseMotionListener(this);
         addMouseListener(this);

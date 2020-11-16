@@ -1,6 +1,6 @@
 package risk.View.Map;
 
-import risk.Controller.Controller;
+import risk.Controller.PlayerController;
 import risk.Model.GameModel;
 import risk.View.Main.MainGUI;
 
@@ -12,12 +12,12 @@ public class MapGUI extends JFrame {
     Map map;
     MapInformation mapInformation;
 
-    Controller controller;
+    PlayerController controller;
 
-    public MapGUI(int numPlayers){
+    public MapGUI(int numPlayers) {
         try {
             GameModel gameModel = new GameModel(numPlayers);
-            this.controller = new Controller(gameModel, this);
+            this.controller = new PlayerController(gameModel, this);
             this.map = new Map(controller);
             this.mapInformation = new MapInformation(controller);
             gameModel.addActionListener(map);
@@ -51,7 +51,7 @@ public class MapGUI extends JFrame {
         controller.startGame();
     }
 
-    public void addComponentToPane(Container pane)  {
+    public void addComponentToPane(Container pane) {
         addJMenuBar();
         pane.add(map, BorderLayout.CENTER);
         pane.add(mapInformation, BorderLayout.SOUTH);
@@ -64,8 +64,8 @@ public class MapGUI extends JFrame {
         JMenuItem quit = new JMenuItem("Quit");
 
         quit.addActionListener(e -> {
-           new MainGUI();
-           this.dispose();
+            new MainGUI();
+            this.dispose();
         });
 
         menu.add(quit);

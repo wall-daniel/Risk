@@ -1,6 +1,6 @@
 package risk.View.Map;
 
-import risk.Controller.Controller;
+import risk.Controller.PlayerController;
 import risk.Enums.MapColor;
 import risk.Model.GameModel;
 import risk.View.Views.GameActionListener;
@@ -11,10 +11,10 @@ import java.util.HashMap;
 
 public class Map extends JPanel implements GameActionListener {
 
-    private final Controller controller;
+    private final PlayerController controller;
     private final HashMap<String, CountryPanel> countryList = new HashMap<>();
 
-    public Map(Controller controller) {
+    public Map(PlayerController controller) {
         this.controller = controller;
 
         setLayout(null);

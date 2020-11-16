@@ -81,7 +81,7 @@ public class EditorController extends Controller {
                 countryListModel.addElement(e);
         });
 
-        JList<Country> neighboursJList = new JList<>(countryListModel);//GameModel.getCountryNamesDefaultListModel(countryName));
+        JList<Country> neighboursJList = new JList<>(countryListModel);
         neighboursJList.setSelectionMode(DefaultListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         neighboursJList.setSelectedIndices(gameModel.getCurrentNeighboursOfCountry(clickedCountry));
         JScrollPane neighboursScrollPane = new JScrollPane(neighboursJList);
@@ -89,7 +89,7 @@ public class EditorController extends Controller {
         DefaultListModel<Continent> continentListModel = new DefaultListModel<>();
         gameModel.getContinents().forEach(continentListModel::addElement);
 
-        JList<Continent> continentJList = new JList<>(continentListModel);//GameModel.getContinentNamesDefaultListModel());
+        JList<Continent> continentJList = new JList<>(continentListModel);
         continentJList.setSelectionMode(DefaultListSelectionModel.SINGLE_SELECTION);
         if (gameModel.getCountry(clickedCountry.getName()).getContinent()!=null)
             continentJList.setSelectedValue(clickedCountry.getContinent(), true);
@@ -113,36 +113,29 @@ public class EditorController extends Controller {
         editCountry(name, neighbours, continent);
     }
 
-    /**
-     * Finds highest layered country and sends a click of that country to determine what action is to be done.
-     *
-     * @param mouseEvent, the mouse event with x, y coordinates
-     */
     @Override
-    public void mouseClicked(MouseEvent mouseEvent) {
-        if (mouseEvent.getSource() instanceof EditableCountryPanel){
-            int highestLayer = -1;
-            EditableCountryPanel editableCountryPanel = null;
+    protected void countryClicked(MouseEvent mouseEvent) {
+        int highestLayer = -1;
+        EditableCountryPanel editableCountryPanel = null;
 
-            for (Component component : gameView.getLayeredPane().getComponents()){
-                if (component instanceof  EditableCountryPanel){
-                    EditableCountryPanel ecc = (EditableCountryPanel) component;
+        for (Component component : gameView.getLayeredPane().getComponents()){
+            if (component instanceof  EditableCountryPanel){
+                EditableCountryPanel ecc = (EditableCountryPanel) component;
 
-                    Polygon translated = new Polygon(ecc.getCountry().getPolygon().xpoints, ecc.getCountry().getPolygon().ypoints, ecc.getCountry().getPolygon().npoints);
-                    translated.translate(ecc.getLocationOnScreen().x, ecc.getLocationOnScreen().y);
+                Polygon translated = new Polygon(ecc.getCountry().getPolygon().xpoints, ecc.getCountry().getPolygon().ypoints, ecc.getCountry().getPolygon().npoints);
+                translated.translate(ecc.getLocationOnScreen().x, ecc.getLocationOnScreen().y);
 
-                    int layer = gameView.getLayeredPane().getLayer(ecc);
-                    if (layer > highestLayer && translated.contains(mouseEvent.getXOnScreen(), mouseEvent.getYOnScreen())){
-                        highestLayer = layer;
-                        editableCountryPanel = ecc;
-                    }
+                int layer = gameView.getLayeredPane().getLayer(ecc);
+                if (layer > highestLayer && translated.contains(mouseEvent.getXOnScreen(), mouseEvent.getYOnScreen())){
+                    highestLayer = layer;
+                    editableCountryPanel = ecc;
                 }
             }
-
-            // Make sure that it found a country
-            if (editableCountryPanel != null)
-                editCountryDetails(editableCountryPanel.getCountry());
         }
+
+        // Make sure that it found a country
+        if (editableCountryPanel != null)
+            editCountryDetails(editableCountryPanel.getCountry());
     }
 
     public void updateNeighbours() {
