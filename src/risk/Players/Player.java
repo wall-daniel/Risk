@@ -1,26 +1,33 @@
 package risk.Players;
 
+import risk.Action.Action;
 import risk.Enums.PlayerColor;
+import risk.Enums.PlayerType;
 import risk.Model.Country;
+import risk.Model.GameModel;
 
 import java.awt.*;
 import java.util.ArrayList;
 
 public class Player {
+    protected GameModel gameModel;
 
     private final String name;
-    private ArrayList<String> countriesOwned;
+    protected ArrayList<String> countriesOwned;
     private boolean lost = false;
     private final Color playerColor;
     private int placeableArmies = 0;
     private int index;
-    private boolean playingTurn = false;
 
-    public Player(String name, int index) {
+    private PlayerType playerType;
+
+    public Player(String name, int index, PlayerType playerType, GameModel gameModel) {
         this.name = name;
         this.index = index;
         countriesOwned = new ArrayList<>();
         playerColor = PlayerColor.getPlayerColor(index);
+        this.playerType = playerType;
+        this.gameModel = gameModel;
     }
 
     public Color getPlayerColor() {
@@ -43,28 +50,13 @@ public class Player {
         countriesOwned.add(countryName);
     }
 
-    public void endTurn() {
-        playingTurn = false;
-    }
-
     /**
      * Starts the players turn by adding placeable armies
      * @param continentBonus, bonus from owning all of a continent
      */
     public void startTurn(int continentBonus) {
-        playingTurn = true;
-
         // Number of armies is equal to countries divided by 3 rounded down, minimum 3.
         placeableArmies = Math.max(3, countriesOwned.size() / 3) + continentBonus;
-    }
-
-    public boolean addArmies(Country country, int numArmies) {
-        if (country.getPlayer() == this) {
-            country.addArmies(numArmies);
-            return true;
-        }
-
-        return false;
     }
 
     public int getPlaceableArmies() {
@@ -102,4 +94,13 @@ public class Player {
     public int getIndex() {
         return index;
     }
+
+    public Action getAction(){
+        return null;
+    }
+
+    public PlayerType getPlayerType(){
+        return playerType;
+    }
+
 }
