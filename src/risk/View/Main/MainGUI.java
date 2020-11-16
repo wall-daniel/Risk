@@ -110,6 +110,7 @@ public class MainGUI extends JFrame {
         //num players set up
         String numPlayersOptions[] = {"2" , "3" , "4" , "5", "6"};
         JComboBox numPlayersInput = new JComboBox(numPlayersOptions);
+        playerOptionsMainPanel.add(numPlayersInput);
 
         //player type string set up
         String[] playerTypeStrings = new String[PlayerType.values().length+1];
@@ -134,6 +135,8 @@ public class MainGUI extends JFrame {
 
             playerOptionsMainPanel.add(playerOptionsPanel);
         }
+
+        JOptionPane.showMessageDialog(this, playerOptionsMainPanel);
 
         //setting up fields to pass to create game
         int numPlayers = Integer.parseInt(numPlayersInput.getSelectedItem().toString());

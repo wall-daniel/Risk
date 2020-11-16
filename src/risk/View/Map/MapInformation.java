@@ -1,6 +1,7 @@
 package risk.View.Map;
 
 import risk.Controller.Controller;
+import risk.Controller.PlayerController;
 import risk.Enums.PlayerColor;
 import risk.Model.GameModel;
 import risk.View.Views.GameActionListener;
@@ -16,17 +17,17 @@ public class MapInformation extends JPanel implements GameActionListener {
     private JLabel phaseInfo;
     private JButton nextButton;
 
-    public MapInformation(Controller controller) {
+    public MapInformation(PlayerController controller) {
         setUp(controller);
     }
 
-    private void setUp(Controller controller) {
+    private void setUp(PlayerController controller) {
         JToolBar toolBar = new JToolBar("Controls & Info");
         addButtons(toolBar, controller);
         add(toolBar);
     }
 
-    protected void addButtons(JToolBar toolBar, Controller controller) {
+    protected void addButtons(JToolBar toolBar, PlayerController controller) {
         backButton = new JButton("Back");
         backButton.addActionListener(controller);
         backButton.setActionCommand("Back");

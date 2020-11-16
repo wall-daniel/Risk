@@ -1,6 +1,7 @@
 package risk.View.Map;
 
 import risk.Controller.Controller;
+import risk.Controller.PlayerController;
 import risk.Enums.MapColor;
 import risk.Enums.PlayerColor;
 import risk.Model.Country;
