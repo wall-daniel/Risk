@@ -1,6 +1,7 @@
 package risk.View.MapCreator;
 
 import risk.Controller.Controller;
+import risk.Controller.EditorController;
 import risk.Enums.MapColor;
 import risk.Listener.Events.ContinentEvent;
 import risk.Listener.Events.CountryEvent;
@@ -16,7 +17,7 @@ public class MapEditorGUI extends JFrame implements GameModelListener {
     private JLayeredPane layeredPane;
     private int countryCounter;
 
-    private Controller controller;
+    private EditorController controller;
     private String mapName;
 
 
@@ -26,7 +27,7 @@ public class MapEditorGUI extends JFrame implements GameModelListener {
         try {
             GameModel gameModel = new GameModel();
             gameModel.addGameModelListener(this);
-            this.controller = new Controller(gameModel, this);
+            this.controller = new EditorController(gameModel, this);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -38,7 +39,7 @@ public class MapEditorGUI extends JFrame implements GameModelListener {
         try {
             GameModel gameModel = new GameModel(filename);
             gameModel.addGameModelListener(this);
-            this.controller = new Controller(gameModel, this);
+            this.controller = new EditorController(gameModel, this);
         } catch (Exception e) {
             e.printStackTrace();
         }
