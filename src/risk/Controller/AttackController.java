@@ -93,6 +93,6 @@ public class AttackController {
 
         new FortifyController(gameModel, player.getActionBuilder().buildFortify()).initiateFortify();
 
-        System.out.println(player + " conquers " + defendingCountry.getName());
+        System.out.println(player.getName() + " conquers " + defendingCountry.getName());
     }
 }

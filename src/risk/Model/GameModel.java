@@ -88,8 +88,6 @@ public class GameModel {
                 players.add(new HumanPlayer(playerNames[i], i, playerTypes[i], this));
             else if (playerTypes[i] == PlayerType.RANDOM_PLAYER)
                 players.add(new RandomPlayer(playerNames[i], i, this));
-
-
         }
 
         // Load the map
@@ -143,7 +141,6 @@ public class GameModel {
             currentPlayer = (currentPlayer + 1) % players.size();
         }
 
-
         // Choose how many armies are on each country.
         // Does this by randomly choosing a country and assigning 1
         // more army, until the player has no more armies left.
@@ -156,8 +153,6 @@ public class GameModel {
                 currentArmies -= 1;
             }
         }
-
-        this.currentPlayer = 0;
     }
 
 
@@ -185,14 +180,10 @@ public class GameModel {
 
 
     public void startGame() {
-        initializeGame();
-        updateGame();
-    }
-
-    private void initializeGame() {
         currentPlayer = 0;
         gameStatus = GameStatus.TROOP_PLACEMENT_PHASE;
         players.get(currentPlayer).startTurn(getContinentBonuses(players.get(currentPlayer)));
+        updateGame();
     }
 
     public void nextTurn() {
@@ -206,11 +197,21 @@ public class GameModel {
             players.get(currentPlayer).startTurn(getContinentBonuses(players.get(currentPlayer)));
             while (getCurrentPlayer().getPlayerType() != PlayerType.HUMAN_PLAYER){ //if only computer players, then will cause infinite recursion
                 Action action = getCurrentPlayer().getAction();
+                sleep(500);
                 doAction(action);
-                updateGame();
             }
         }
     }
+
+
+    public void sleep(long delay){
+        try {
+            Thread.sleep(delay);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     /**
      * controller performs action, then game moves to next phase or next turn
@@ -231,7 +232,6 @@ public class GameModel {
         } else if (action instanceof Reset){
             resetPhase();
         }
-        updateGame();
     }
 
     public boolean donePlacingArmies() {
