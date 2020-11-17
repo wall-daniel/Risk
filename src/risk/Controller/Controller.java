@@ -70,5 +70,4 @@ abstract public class Controller implements MouseListener {
     }
 
     abstract protected void countryClicked(MouseEvent mouseEvent);
-
 }

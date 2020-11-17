@@ -2,9 +2,10 @@ package risk.Model;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
-import risk.Action.Action;
-import risk.Action.Attack;
-import risk.Action.EndTurn;
+import risk.Action.*;
+import risk.Controller.AttackController;
+import risk.Controller.DeployController;
+import risk.Controller.FortifyController;
 import risk.Enums.PlayerType;
 import risk.Listener.Events.ContinentEvent;
 import risk.Listener.Events.CountryEvent;
@@ -42,6 +43,7 @@ public class GameModel {
     private boolean isGameOver = false;
 
     public GameStatus gameStatus = GameStatus.TROOP_PLACEMENT_PHASE;
+
 
     /**
      * Used for the editor
@@ -86,8 +88,6 @@ public class GameModel {
                 players.add(new HumanPlayer(playerNames[i], i, playerTypes[i], this));
             else if (playerTypes[i] == PlayerType.RANDOM_PLAYER)
                 players.add(new RandomPlayer(playerNames[i], i, this));
-
-
         }
 
         // Load the map
@@ -115,8 +115,6 @@ public class GameModel {
         }
     }
 
-
-
     public void saveMap(String filename) throws IOException {
         JsonArray json = new JsonArray();
 
@@ -143,7 +141,6 @@ public class GameModel {
             currentPlayer = (currentPlayer + 1) % players.size();
         }
 
-
         // Choose how many armies are on each country.
         // Does this by randomly choosing a country and assigning 1
         // more army, until the player has no more armies left.
@@ -156,8 +153,6 @@ public class GameModel {
                 currentArmies -= 1;
             }
         }
-
-        this.currentPlayer = 0;
     }
 
 
@@ -185,14 +180,10 @@ public class GameModel {
 
 
     public void startGame() {
-        initializeGame();
-        updateGame();
-    }
-
-    private void initializeGame() {
         currentPlayer = 0;
         gameStatus = GameStatus.TROOP_PLACEMENT_PHASE;
         players.get(currentPlayer).startTurn(getContinentBonuses(players.get(currentPlayer)));
+        updateGame();
     }
 
     public void nextTurn() {
@@ -204,51 +195,53 @@ public class GameModel {
             nextTurn();
         } else {
             players.get(currentPlayer).startTurn(getContinentBonuses(players.get(currentPlayer)));
-
-            if (getCurrentPlayer().getPlayerType() != PlayerType.HUMAN_PLAYER){ //problem with this implementation is if there is a game with no human players, there will be stack overflow
-                while (true){
-                    Action action = getCurrentPlayer().getAction();
-
-                    if (action instanceof EndTurn)
-                        break;
-
-                    doAction(action);
-                    updateGame();
-                }
-                nextTurn();
+            while (getCurrentPlayer().getPlayerType() != PlayerType.HUMAN_PLAYER){ //if only computer players, then will cause infinite recursion
+                Action action = getCurrentPlayer().getAction();
+                sleep(500);
+                doAction(action);
             }
         }
     }
 
-    private void doAction(Action action) {
-        if (action instanceof Attack){
 
+    public void sleep(long delay){
+        try {
+            Thread.sleep(delay);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-
-
-
     }
 
-    public void placeArmies(Country country, int armies) {
-        getCurrentPlayer().placeArmies(country, armies);
-        updateGame();
+
+    /**
+     * controller performs action, then game moves to next phase or next turn
+     * @param action to be completed
+     */
+    public void doAction(Action action) {
+        System.out.println(action);
+        if (action instanceof Deploy){
+            new DeployController(this, (Deploy) action).initiateDeploy();
+            nextPhase();
+        } else if (action instanceof Attack){
+            new AttackController(this, (Attack) action).initiateAttack();
+        } else if (action instanceof Fortify){
+            new FortifyController(this, (Fortify) action).initiateFortify();
+            nextPhase();
+        } else if (action instanceof End){
+            nextPhase();
+        } else if (action instanceof Reset){
+            resetPhase();
+        }
     }
 
     public boolean donePlacingArmies() {
         return getCurrentPlayer().getPlaceableArmies() <= 0;
     }
 
-
-
-
-
     public void addCountry(Country country) {
         this.countries.put(country.getName(), country);
         gameModelListeners.forEach(it -> it.onNewCountry(new CountryEvent(this, country)));
     }
-
-
-
 
 
     public void editCountry(Country country, ArrayList<String> names, Continent continent) {
@@ -296,8 +289,6 @@ public class GameModel {
         return players.get(currentPlayer);
     }
 
-
-
     public void addContinent(Continent continent) {
         this.continents.put(continent.getName(), continent);
         gameModelListeners.forEach(it -> it.onNewContinent(new ContinentEvent(this, continent)));
@@ -340,13 +331,6 @@ public class GameModel {
         gameActionListeners.add(listener);
     }
 
-
-
-
-    public void updateGame() {
-        gameActionListeners.forEach(it -> it.updateMap(this));
-    }
-
     public void addGameModelListener(GameModelListener listener) {
         gameModelListeners.add(listener);
     }
@@ -358,25 +342,58 @@ public class GameModel {
         });
     }
 
+
+    public void updateGame() {
+        resetClickableCountries();
+        if (getCurrentPlayer().getPlayerType()==PlayerType.HUMAN_PLAYER)
+            updateClickableCountries();
+        gameActionListeners.forEach(it -> it.updateMap(this));
+    }
+
+    public void updateClickableCountries(){
+        switch (gameStatus) {
+            case TROOP_PLACEMENT_PHASE:
+            case SELECT_ATTACKING_PHASE:
+            case SELECT_TROOP_MOVING_FROM_PHASE:
+                updatePlaceableCountries();
+                break;
+            case SELECT_DEFENDING_PHASE:
+                updateAttackableCountries(((Attack)getCurrentPlayer().getAction()).getAttackingCountry());
+                break;
+            case SELECT_TROOP_MOVING_TO_PHASE:
+                updateMoveTroopsToCountries(((Fortify)getCurrentPlayer().getAction()).getFirstCountry());
+                break;
+        }
+    }
+
+    private void resetClickableCountries(){
+        for (Country country : countries.values())
+            country.resetClickable();
+    }
+
+
     //for placing troops, selecting attacking from, selecting moving from country
-    public ArrayList<String> getPlaceableCountries() {
-        return new ArrayList<>(players.get(currentPlayer).getCountries());
+    public void updatePlaceableCountries() {
+        for (String s : new ArrayList<>(players.get(currentPlayer).getCountries()))
+            countries.get(s).setClickable();
     }
 
     //for choosing defendingCountry
-    public ArrayList<String> getAttackableCountries(Country fromCountry) {
-        return fromCountry.getNeighbours().stream().filter(e ->
+    public void updateAttackableCountries(Country fromCountry) {
+        for (String s : fromCountry.getNeighbours().stream().filter(e ->
                 fromCountry.getPlayer().getIndex() != countries.get(e).getPlayer().getIndex()
-        ).collect(Collectors.toCollection(ArrayList::new));
+        ).collect(Collectors.toCollection(ArrayList::new)))
+            countries.get(s).setClickable();
     }
 
     //for choosing toCountry
-    public ArrayList<String> getMoveTroopsToCountries(Country fromCountry) {
+    public void updateMoveTroopsToCountries(Country fromCountry) {
         HashMap<String, Country> ss = new HashMap<>();
         ss.put(fromCountry.getName(), fromCountry);
         ArrayList<String> list = addCountries(fromCountry, ss, fromCountry.getPlayer().getIndex());
         list.remove(fromCountry.getName());
-        return list;
+        for (String s : list)
+            countries.get(s).setClickable();
     }
 
     private ArrayList<String> addCountries(Country currentCountry, HashMap<String, Country> ss, int playerIndex) {
@@ -436,7 +453,8 @@ public class GameModel {
     public void nextPhase() {
         switch (gameStatus) {
             case TROOP_PLACEMENT_PHASE:
-                gameStatus = GameStatus.SELECT_ATTACKING_PHASE;
+                if (donePlacingArmies())
+                    gameStatus = GameStatus.SELECT_ATTACKING_PHASE;
                 break;
             case SELECT_ATTACKING_PHASE:
             case SELECT_DEFENDING_PHASE:

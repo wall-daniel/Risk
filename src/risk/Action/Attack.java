@@ -3,36 +3,45 @@ package risk.Action;
 import risk.Model.Country;
 
 public class Attack extends Action{
-    int numTroops;
-    Country firstCountry, secondCountry;
+    private int attackingArmies;
+    private Country attackingCountry, defendingCountry;
 
-    public Attack(int numTroops, Country firstCountry, Country secondCountry) {
-        this.numTroops = numTroops;
-        this.firstCountry = firstCountry;
-        this.secondCountry = secondCountry;
+    public Attack(Country firstCountry, Country secondCountry, int attackingArmies) {
+        this.attackingArmies = attackingArmies;
+        this.attackingCountry = firstCountry;
+        this.defendingCountry = secondCountry;
     }
 
-    public int getNumTroops() {
-        return numTroops;
+    public int getAttackingArmies() {
+        return attackingArmies;
     }
 
-    public void setNumTroops(int numTroops) {
-        this.numTroops = numTroops;
+    public void setAttackingArmies(int attackingArmies) {
+        this.attackingArmies = attackingArmies;
     }
 
-    public Country getFirstCountry() {
-        return firstCountry;
+    public Country getAttackingCountry() {
+        return attackingCountry;
     }
 
-    public void setFirstCountry(Country firstCountry) {
-        this.firstCountry = firstCountry;
+    public void setAttackingCountry(Country firstCountry) {
+        this.attackingCountry = firstCountry;
     }
 
-    public Country getSecondCountry() {
-        return secondCountry;
+    public Country getDefendingCountry() {
+        return defendingCountry;
     }
 
-    public void setSecondCountry(Country secondCountry) {
-        this.secondCountry = secondCountry;
+    public void setDefendingCountry(Country secondCountry) {
+        this.defendingCountry = secondCountry;
     }
+
+    public void removeAttackingArmies(int armies){
+        this.attackingArmies -= armies;
+    }
+
+    public String toString(){
+        return "Attack " + defendingCountry.getName() + " from " + attackingCountry.getName() + " with " + attackingArmies;
+    }
+
 }

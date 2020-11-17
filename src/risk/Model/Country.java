@@ -22,6 +22,8 @@ public class Country {
     private int layer;
     private Point polygonPoint;
 
+    private boolean clickable;
+
     public Country(String name, Polygon polygon) {
         this.name = name;
         this.polygon = polygon;
@@ -29,6 +31,7 @@ public class Country {
         labelPoint = new Point();
         polygonPoint = new Point();
         layer = -1;
+        clickable = false;
     }
 
     public Country(String name, Polygon polygon, Point labelPoint, int layer) {
@@ -37,6 +40,7 @@ public class Country {
         neighbours = new ArrayList<>();
         this.labelPoint = labelPoint;
         this.layer = layer;
+        clickable = false;
     }
 
     /**
@@ -68,6 +72,7 @@ public class Country {
         this.labelPoint = new Point(labelPoint.get("x").getAsInt(), labelPoint.get("y").getAsInt());
 
         this.layer = json.get("layer").getAsInt();
+        clickable = false;
     }
 
     public Polygon getPolygon() {
@@ -84,6 +89,18 @@ public class Country {
 
     public int getLayer() {
         return layer;
+    }
+
+    public void setClickable(){
+        clickable = true;
+    }
+
+    public void resetClickable(){
+        clickable = false;
+    }
+
+    public boolean isClickable(){
+        return clickable;
     }
 
     /**
@@ -120,6 +137,12 @@ public class Country {
         return name;
     }
 
+    public void setPlayer(Player p){
+        this.controlledBy = p;
+        System.out.println(name + " is controlled by " + p.getIndex());
+    }
+
+
     public void setPlayer(Player p, int numArmies) {
         // Remove current player from controlling it
         if (controlledBy != null) {
@@ -154,7 +177,6 @@ public class Country {
     @Override
     public String toString() {
         return name;
-
     }
 
 

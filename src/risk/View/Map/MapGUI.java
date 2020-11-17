@@ -49,6 +49,7 @@ public class MapGUI extends JFrame {
         pack();
         setVisible(true);
 
+
         controller.startGame();
     }
 

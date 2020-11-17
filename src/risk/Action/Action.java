@@ -1,4 +1,4 @@
 package risk.Action;
 
-public abstract class Action {
+public class Action {
 }
