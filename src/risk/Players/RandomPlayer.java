@@ -25,7 +25,7 @@ public class RandomPlayer extends Player {
 
     @Override
     public void inputTroopCount(String msg, int min, int max) {
-        int val = random.nextInt(max + 1) + 1;
+        int val = random.nextInt(max) + 1;
         setNumTroopsOfAction(val);
     }
 

@@ -344,12 +344,13 @@ public class GameModel {
 
 
     public void updateGame() {
-        updateClickableCountries();
+        resetClickableCountries();
+        if (getCurrentPlayer().getPlayerType()==PlayerType.HUMAN_PLAYER)
+            updateClickableCountries();
         gameActionListeners.forEach(it -> it.updateMap(this));
     }
 
     public void updateClickableCountries(){
-        resetClickableCountries();
         switch (gameStatus) {
             case TROOP_PLACEMENT_PHASE:
             case SELECT_ATTACKING_PHASE:

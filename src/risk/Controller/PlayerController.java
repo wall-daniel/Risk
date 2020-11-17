@@ -16,8 +16,6 @@ import java.util.ArrayList;
 
 public class PlayerController extends Controller implements ActionListener {
 
-    private Country countryClicked;
-
     public PlayerController(GameModel gameModel, JFrame view) {
         super(gameModel, view);
     }
@@ -49,26 +47,20 @@ public class PlayerController extends Controller implements ActionListener {
                 gameModel.doAction(gameModel.getCurrentPlayer().getAction());
                 break;
             case SELECT_ATTACKING_PHASE:
+            case SELECT_TROOP_MOVING_FROM_PHASE:
                 gameModel.getCurrentPlayer().setFirstCountryOfAction(country);
-                System.out.println("selecting country to attack");
+                gameModel.continuePhase();
                 gameModel.updateGame();
                 break;
             case SELECT_DEFENDING_PHASE:
                 gameModel.getCurrentPlayer().setSecondCountryOfAction(country);
-                System.out.println("selecting country to defend");
                 Country attackingCountry = gameModel.getCurrentPlayer().getFirstCountryOfAction();
                 gameModel.getCurrentPlayer().inputTroopCount(
                         "How many troops do you want to attack with?", 1,  Math.min(attackingCountry.getArmies() - 1, 3));
                 gameModel.doAction(gameModel.getCurrentPlayer().getAction());
                 break;
-            case SELECT_TROOP_MOVING_FROM_PHASE:
-                gameModel.getCurrentPlayer().setFirstCountryOfAction(country);
-                System.out.println("selecting country to move troops from");
-                gameModel.updateGame();
-                break;
             case SELECT_TROOP_MOVING_TO_PHASE:
                 gameModel.getCurrentPlayer().setSecondCountryOfAction(country);
-                System.out.println("selecting country to move troops to");
                 Country fromCountry = gameModel.getCurrentPlayer().getFirstCountryOfAction();
                 gameModel.getCurrentPlayer().inputTroopCount(
                         "How many troops do you want to move?", 1, fromCountry.getArmies() - 1);

@@ -111,7 +111,6 @@ public abstract class Player {
 
     public void setFirstCountryOfAction(Country country){
         actionBuilder.setFirstCountry(country);
-        gameModel.continuePhase();
     }
 
     public Country getFirstCountryOfAction(){
