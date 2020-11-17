@@ -2,12 +2,12 @@ package risk.Action;
 
 import risk.Model.Country;
 
-public class Place extends Action{
+public class Deploy extends Action{
 
     int numTroops;
     Country country;
 
-    public Place(int numTroops, Country country) {
+    public Deploy(Country country, int numTroops) {
         this.numTroops = numTroops;
         this.country = country;
     }
@@ -26,6 +26,10 @@ public class Place extends Action{
 
     public void setCountry(Country country) {
         this.country = country;
+    }
+
+    public String toString(){
+        return "Deploy: " + numTroops + " to " + country.getName();
     }
 
 

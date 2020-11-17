@@ -1,6 +1,9 @@
 package risk.Controller;
 
 //import jdk.nashorn.internal.scripts.JO;
+import risk.Action.Attack;
+import risk.Action.Deploy;
+import risk.Action.Fortify;
 import risk.Model.Country;
 import risk.Model.GameModel;
 import risk.Players.Player;
@@ -11,187 +14,85 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Random;
 
+/**
+ * Handles the logic of an attack
+ */
 public class AttackController {
 
     private final Random random;
-
     private final GameModel gameModel;
-    private final JFrame window;
+    private Attack attack;
 
-    private Country attackingCountry;
-    private Country defendingCountry;
-    private int attackingArmies = 0;
-    private int playersEliminated = 0;
-
-    public AttackController(GameModel gameModel, JFrame frame) {
+    public AttackController(GameModel gameModel, Attack attack){
         this.gameModel = gameModel;
-        this.window = frame;
         this.random = new Random(System.currentTimeMillis());
+        this.attack = attack;
     }
 
-    public void resetController() {
-        // Make sure the armies get re-added
-        if (attackingCountry != null && attackingArmies > 0) attackingCountry.addArmies(attackingArmies);
-        attackingCountry = null;
-        defendingCountry = null;
-    }
+    public void initiateAttack(){
+        Country attackingCountry = attack.getAttackingCountry();
+        Country defendingCountry = attack.getDefendingCountry();
+        int attackingArmies = attack.getAttackingArmies();
 
-    /**
-     * Starts the dice rolling phase.
-     * This ends when either someone has won or the attacking player types end.
-     */
-    private void attack() {
-        // Continue until either one player has no armies, that player loses
-        while (true) {
-            // Get attacking rolls
-            Integer[] attackingDice = new Integer[Math.min(attackingArmies, 3)];
-            for (int i = 0; i < attackingDice.length; i++) {
-                attackingDice[i] = random.nextInt(6) + 1;
-            }
-
-            // Get defending rolls
-            Integer[] defendingDice = new Integer[Math.min(defendingCountry.getArmies(), 2)];
-            for (int i = 0; i < defendingDice.length; i++) {
-                defendingDice[i] = random.nextInt(6) + 1;
-            }
-
-            // Print out the result
-            Arrays.sort(attackingDice, Collections.reverseOrder());
-            Arrays.sort(defendingDice, Collections.reverseOrder());
-
-            // Find outcome of dice roll
-            // Sort dice and then compare the highest dice of each player until
-            for (int i = 0; i < attackingDice.length && i < defendingDice.length; i++) {
-                if (attackingDice[i] > defendingDice[i]) {  // Then the attacker won this set
-                    defendingCountry.removeArmies(1);
-                } else {                                    // If attacker doesn't win, then the defender wins
-                    attackingArmies--;
-                }
-            }
-
-
-
-            String message = "Attacking player roled: " + Arrays.toString(attackingDice) +
-                    "\nDefending player roled: " + Arrays.toString(defendingDice) + "" +
-                    "\n\nAttacker has: " + attackingArmies + " armies\n" +
-                    "Defender has: " + defendingCountry.getArmies() + " armies.\n";
-
-            // Check if there is a winner
-            if (attackingArmies < 1 || defendingCountry.getArmies() < 1) {
-                JOptionPane.showMessageDialog(window, message);
-                break;
-            }
-
-            int retreat = JOptionPane.showConfirmDialog(window, message +  "\nDo you want to continue?", "Roled dice", JOptionPane.YES_NO_OPTION);
-
-            if (retreat != JOptionPane.YES_OPTION) break;
-
-
-            gameModel.updateGame();
+        Integer[] attackingDice = new Integer[Math.min(attackingArmies, 3)];
+        for (int i = 0; i < attackingDice.length; i++) {
+            attackingDice[i] = random.nextInt(6) + 1;
         }
 
+        // Get defending rolls
+        Integer[] defendingDice = new Integer[Math.min(defendingCountry.getArmies(), 2)];
+        for (int i = 0; i < defendingDice.length; i++) {
+            defendingDice[i] = random.nextInt(6) + 1;
+        }
+
+        Arrays.sort(attackingDice, Collections.reverseOrder());
+        Arrays.sort(defendingDice, Collections.reverseOrder());
+
+        // Find outcome of dice roll
+        // Sort dice and then compare the highest dice of each player until
+        for (int i = 0; i < attackingDice.length && i < defendingDice.length; i++) {
+            if (attackingDice[i] > defendingDice[i]) {  // Then the attacker won this set
+                defendingCountry.removeArmies(1);
+            } else {                                    // If attacker doesn't win, then the defender wins
+                attackingCountry.removeArmies(1);
+            }
+        }
+
+        String message = "Attacking player roled: " + Arrays.toString(attackingDice) +
+                "\nDefending player roled: " + Arrays.toString(defendingDice) + "" +
+                "\n\nAttacker has: " + attackingArmies + " armies\n" +
+                "Defender has: " + defendingCountry.getArmies() + " armies.\n";
+        JOptionPane.showMessageDialog(null, message);
+
+        if (defendingCountry.getArmies() <= 0)
+            handleAttackerWon();
+
+        gameModel.resetPhase();
         gameModel.updateGame();
-        // Figure out who won, or if it is a tie
-        if (attackingArmies <= 0) {
-            // If the defender won then remove the lost armies from the defender and don't add anything to what the
-            JOptionPane.showMessageDialog(window, "The attacker lost.");
-        } else if (defendingCountry.getArmies() <= 0) {
-            JOptionPane.showMessageDialog(window, "The attacker won.");
-            attackerWon();
-            Player p = defendingCountry.getPlayer();
-            for (String c : p.getCountries()){
-                if (gameModel.getCountry(c).getArmies() > 0){
-                    continue;
-                } else {
-                    p.setLost();
-                    playersEliminated++;
-                    JOptionPane.showMessageDialog(window,  p.getName() + " has no more countries.");
-                    if(playersEliminated == gameModel.getPlayers().size() - 1){
-                        JOptionPane.showMessageDialog(window, attackingCountry.getPlayer().getName() + " has won.");
-                        MainGUI.getMapGUI().dispose();
-                    }
-                }
-            }
-        } else {
-            // If it is a tie then move the armies back to where they are supposed to be.
-            JOptionPane.showMessageDialog(window, "It's a tie!.");
-        }
     }
 
     /**
      * When the attacker wins then they can move 1-attacking_armies_left to the new country,
      * and make the country theirs.
      */
-    private void attackerWon() {
-        while (true) {
-            try {
-                int armies = Integer.parseInt(
-                        JOptionPane.showInputDialog(
-                                window,
-                                "How many armies do you want to move (1-" + attackingArmies + "?",
-                                JOptionPane.INFORMATION_MESSAGE
-                        )
-                );
+    private void handleAttackerWon() {
+        Country attackingCountry = attack.getAttackingCountry();
+        Country defendingCountry = attack.getDefendingCountry();
+        Player player = attackingCountry.getPlayer();
 
-                // Move armies, has to be at least 1
-                if (attackingArmies >= armies && armies > 0) {
-                    defendingCountry.setPlayer(gameModel.getCurrentPlayer(), armies);
-                    attackingArmies -= armies;
-                    return;
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
 
-    public void setAttackingCountry(Country country) {
-        if (gameModel.getCurrentPlayer() == country.getPlayer()) {
+        //handle country change
+        defendingCountry.getPlayer().removeCountry(defendingCountry.getName());
+        defendingCountry.setPlayer(player);
+        player.addCountry(defendingCountry.getName());
 
-            // Get how many armies
-            while (true) {
-                try {
-                    String response = JOptionPane.showInputDialog(
-                            window,
-                            "How many armies do you want to attack with?",
-                            JOptionPane.INFORMATION_MESSAGE
-                    );
+        //create action to handle troop transfer from attacking to defending
+        player.setFirstCountryOfAction(attackingCountry);
+        player.setSecondCountryOfAction(defendingCountry);
+        player.inputTroopCount("How many troops do you want to move?", 1, attackingCountry.getArmies() - 1);
 
-                    // If null then exited
-                    if (response == null) {
-                        return;
-                    }
+        new FortifyController(gameModel, player.getActionBuilder().buildFortify()).initiateFortify();
 
-                    int armies = Integer.parseInt(response);
-                    if (country.getArmies() > armies && armies > 0) {
-                        this.attackingCountry = country;
-                        System.out.println("Attacking from " + country);
-
-                        attackingCountry.removeArmies(armies);
-                        attackingArmies = armies;
-                        gameModel.continuePhase();
-                        return;
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
-    public Country getAttackingCountry(){
-        return attackingCountry;
-    }
-
-    public void setDefendingCountry(Country country) {
-        if (gameModel.getCurrentPlayer() != country.getPlayer() && attackingCountry.isNeighbour(country)) {
-            this.defendingCountry = country;
-            System.out.println("Defending from " + country);
-
-            // Attack country
-            attack();
-            resetController();
-            gameModel.resetPhase();
-        }
+        System.out.println(player + " conquers " + defendingCountry.getName());
     }
 }

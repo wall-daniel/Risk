@@ -1,6 +1,7 @@
 package risk.Players;
 
 import risk.Action.Action;
+import risk.Action.ActionBuilder;
 import risk.Enums.PlayerColor;
 import risk.Enums.PlayerType;
 import risk.Model.Country;
@@ -9,7 +10,7 @@ import risk.Model.GameModel;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class Player {
+public abstract class Player {
     protected GameModel gameModel;
 
     private final String name;
@@ -21,6 +22,8 @@ public class Player {
 
     private PlayerType playerType;
 
+    protected ActionBuilder actionBuilder;
+
     public Player(String name, int index, PlayerType playerType, GameModel gameModel) {
         this.name = name;
         this.index = index;
@@ -28,6 +31,7 @@ public class Player {
         playerColor = PlayerColor.getPlayerColor(index);
         this.playerType = playerType;
         this.gameModel = gameModel;
+        actionBuilder = new ActionBuilder();
     }
 
     public Color getPlayerColor() {
@@ -90,17 +94,52 @@ public class Player {
         this.lost = true;
     }
 
-
     public int getIndex() {
         return index;
     }
 
-    public Action getAction(){
-        return null;
+
+    public ActionBuilder getActionBuilder(){
+        return actionBuilder;
     }
+
+
+    public abstract void inputTroopCount(String msg, int min, int max);
+
+
+
+
+    public void setFirstCountryOfAction(Country country){
+        actionBuilder.setFirstCountry(country);
+        gameModel.continuePhase();
+    }
+
+    public Country getFirstCountryOfAction(){
+        return actionBuilder.getFirstCountry();
+    }
+
+
+    public void setSecondCountryOfAction(Country country){
+        actionBuilder.setSecondCountry(country);
+    }
+
+    public void setNumTroopsOfAction(int numTroopsOfAction){
+        actionBuilder.setNumTroops(numTroopsOfAction);
+    }
+
+
 
     public PlayerType getPlayerType(){
         return playerType;
     }
+
+
+    /**
+     * Handle inputs
+     * @return
+     */
+    public abstract Action getAction();
+
+
 
 }

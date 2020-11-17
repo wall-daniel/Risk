@@ -1,7 +1,11 @@
 package risk.Controller;
 
+import risk.Action.ActionBuilder;
+import risk.Action.Attack;
+import risk.Action.Fortify;
 import risk.Model.Country;
 import risk.Model.GameModel;
+import risk.Players.HumanPlayer;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,125 +16,11 @@ import java.util.ArrayList;
 
 public class PlayerController extends Controller implements ActionListener {
 
-
-    private AttackController attackController;
-    private MovementController movementController;
+    private Country countryClicked;
 
     public PlayerController(GameModel gameModel, JFrame view) {
         super(gameModel, view);
-        this.attackController = new AttackController(gameModel, view);
-        this.movementController = new MovementController(gameModel, view);
     }
-
-    public void clickedInCountry(Country country) {
-        switch (gameModel.gameStatus) {
-            case TROOP_PLACEMENT_PHASE:
-                placeArmies(country);
-                break;
-            case SELECT_ATTACKING_PHASE:
-                attackController.setAttackingCountry(country);
-                break;
-            case SELECT_DEFENDING_PHASE:
-                attackController.setDefendingCountry(country);
-                break;
-            case SELECT_TROOP_MOVING_FROM_PHASE:
-                movementController.setMovingFromCountry(country);
-                break;
-            case SELECT_TROOP_MOVING_TO_PHASE:
-                movementController.setMovingToCountry(country);
-                break;
-        }
-    }
-
-    private void placeArmies(Country country) {
-        // Make sure that the country is owned by the player
-        if (country.getPlayer() == gameModel.getCurrentPlayer()) {
-            try {
-                String result = JOptionPane.showInputDialog(
-                        gameView,
-                        "How many armies do you want to place in " + country.getName() + "?",
-                        JOptionPane.INFORMATION_MESSAGE
-                );
-
-                // If it returns null then they closed or cancelled
-                if (result == null) {
-                    return;
-                }
-
-                // Update the armies in the country
-                int armies = Integer.parseInt(result);
-                if (armies < 1) {
-                    showErrorMessage("Have to supply a number greater than 0.");
-                    return;
-                }
-                gameModel.placeArmies(country, armies);
-
-                // Check if done placing troops
-                if (gameModel.donePlacingArmies()) {
-                    gameModel.nextPhase();
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                showErrorMessage("Error getting number: " + e.getMessage());
-            }
-        }
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent actionEvent) {
-        if (actionEvent.getActionCommand().equals("Back")){
-            switch (gameModel.gameStatus) {
-                case TROOP_PLACEMENT_PHASE:
-                case SELECT_ATTACKING_PHASE:
-                    break;
-                case SELECT_DEFENDING_PHASE:
-                    attackController.resetController();
-                    gameModel.resetPhase();
-                    break;
-                case SELECT_TROOP_MOVING_FROM_PHASE:
-                    break;
-                case SELECT_TROOP_MOVING_TO_PHASE:
-                    movementController.resetController();
-                    gameModel.resetPhase();
-                    break;
-            }
-        } else {
-            switch (gameModel.gameStatus) {
-                case TROOP_PLACEMENT_PHASE:
-                    break;
-                case SELECT_ATTACKING_PHASE:
-                case SELECT_TROOP_MOVING_FROM_PHASE:
-                    gameModel.nextPhase();
-                    break;
-                case SELECT_DEFENDING_PHASE:
-                    attackController.resetController();
-                    gameModel.nextPhase();
-                    break;
-                case SELECT_TROOP_MOVING_TO_PHASE:
-                    movementController.resetController();
-                    gameModel.nextPhase();
-                    break;
-            }
-        }
-
-        gameModel.updateGame();
-    }
-
-    public ArrayList<String> getClickableCountries(){
-        switch (gameModel.gameStatus) {
-            case TROOP_PLACEMENT_PHASE:
-            case SELECT_ATTACKING_PHASE:
-            case SELECT_TROOP_MOVING_FROM_PHASE:
-                return gameModel.getPlaceableCountries();
-            case SELECT_DEFENDING_PHASE:
-                return gameModel.getAttackableCountries(attackController.getAttackingCountry());
-            case SELECT_TROOP_MOVING_TO_PHASE:
-                return gameModel.getMoveTroopsToCountries(movementController.getFromCountry());
-            default:
-                return new ArrayList<>();
-        }
-    }
-
     @Override
     protected void countryClicked(MouseEvent mouseEvent) {
         int highestLayer = -1;
@@ -139,7 +29,6 @@ public class PlayerController extends Controller implements ActionListener {
         for (Country country : gameModel.getCountries()) {
             Polygon translated = new Polygon(country.getPolygon().xpoints, country.getPolygon().ypoints, country.getPolygon().npoints);
             translated.translate(country.getPolygonPoint().x, country.getPolygonPoint().y);
-
 
             if (translated.contains(mouseEvent.getX(), mouseEvent.getY()) && country.getLayer() > highestLayer) {
                 highestLayer = country.getLayer();
@@ -150,4 +39,58 @@ public class PlayerController extends Controller implements ActionListener {
         // Make sure that a country was clicked
         if (clickedCountry != null) clickedInCountry(clickedCountry);
     }
+
+    public void clickedInCountry(Country country) {
+        switch (gameModel.gameStatus) {
+            case TROOP_PLACEMENT_PHASE:
+                gameModel.getCurrentPlayer().setFirstCountryOfAction(country);
+                gameModel.getCurrentPlayer().inputTroopCount(
+                        "How many troops do you want to place?", 1, gameModel.getCurrentPlayer().getPlaceableArmies());
+                gameModel.doAction(gameModel.getCurrentPlayer().getAction());
+                break;
+            case SELECT_ATTACKING_PHASE:
+                gameModel.getCurrentPlayer().setFirstCountryOfAction(country);
+                System.out.println("selecting country to attack");
+                gameModel.updateGame();
+                break;
+            case SELECT_DEFENDING_PHASE:
+                gameModel.getCurrentPlayer().setSecondCountryOfAction(country);
+                System.out.println("selecting country to defend");
+                Country attackingCountry = gameModel.getCurrentPlayer().getFirstCountryOfAction();
+                gameModel.getCurrentPlayer().inputTroopCount(
+                        "How many troops do you want to attack with?", 1,  Math.min(attackingCountry.getArmies() - 1, 3));
+                gameModel.doAction(gameModel.getCurrentPlayer().getAction());
+                break;
+            case SELECT_TROOP_MOVING_FROM_PHASE:
+                gameModel.getCurrentPlayer().setFirstCountryOfAction(country);
+                System.out.println("selecting country to move troops from");
+                gameModel.updateGame();
+                break;
+            case SELECT_TROOP_MOVING_TO_PHASE:
+                gameModel.getCurrentPlayer().setSecondCountryOfAction(country);
+                System.out.println("selecting country to move troops to");
+                Country fromCountry = gameModel.getCurrentPlayer().getFirstCountryOfAction();
+                gameModel.getCurrentPlayer().inputTroopCount(
+                        "How many troops do you want to move?", 1, fromCountry.getArmies() - 1);
+                gameModel.doAction(gameModel.getCurrentPlayer().getAction());
+                break;
+        }
+
+    }
+
+
+    @Override
+    public void actionPerformed(ActionEvent actionEvent) {
+        if (actionEvent.getActionCommand().equals("Back")){
+            gameModel.doAction(new ActionBuilder().buildReset());
+        } else if (actionEvent.getActionCommand().equals("Next")){
+            gameModel.doAction(new ActionBuilder().buildEnd());
+        }
+
+        gameModel.updateGame();
+    }
+
+
+
+
 }

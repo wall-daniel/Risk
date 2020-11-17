@@ -97,14 +97,6 @@ public class GameModelTest {
         assertEquals(testCountry1.getContinent(), testContinent1);
     }
 
-    @Test
-    public void placeArmies() {
-        Player p = gm.getCurrentPlayer();
-        p.startTurn(10);
-        gm.placeArmies(testCountry1, 5);
-        assertEquals(6,testCountry1.getArmies());
-
-    }
 
     @Test
     public void startGame() {
@@ -127,15 +119,6 @@ public class GameModelTest {
         assertTrue(nextPlayer.getPlaceableArmies() == Math.max(3, nextPlayer.getCountries().size() / 3) + gm.getContinentBonuses(nextPlayer));
     }
 
-    @Test
-    public void donePlacingArmies() {
-        Player p = gm.getCurrentPlayer();
-        p.startTurn(10);
-        System.out.println(p.getPlaceableArmies());
-        assertFalse(gm.donePlacingArmies());
-        gm.placeArmies(testCountry1, 13);
-        assertTrue(gm.donePlacingArmies());
-    }
 
     @Test
     public void nextPhase() {

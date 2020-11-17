@@ -2,11 +2,11 @@ package risk.Action;
 
 import risk.Model.Country;
 
-public class Move extends Action{
+public class Fortify extends Action{
     int numTroops;
     Country firstCountry, secondCountry;
 
-    public Move(int numTroops, Country firstCountry, Country secondCountry) {
+    public Fortify(Country firstCountry, Country secondCountry, int numTroops) {
         this.numTroops = numTroops;
         this.firstCountry = firstCountry;
         this.secondCountry = secondCountry;
@@ -34,5 +34,9 @@ public class Move extends Action{
 
     public void setSecondCountry(Country secondCountry) {
         this.secondCountry = secondCountry;
+    }
+
+    public String toString(){
+        return "Fortify " + secondCountry.getName() + " from " + firstCountry.getName() + " with " + numTroops;
     }
 }

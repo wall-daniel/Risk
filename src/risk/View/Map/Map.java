@@ -31,12 +31,18 @@ public class Map extends JPanel implements GameActionListener {
                 countryList.put(country.getName(), countryPanel);
                 add(countryPanel);
             }
+
+            if (country.isClickable())
+                countryList.get(country.getName()).setColorClickable();
+
         });
 
+        /*
         ArrayList<String> clickableCountries = controller.getClickableCountries();
 
         for (String countryNames : clickableCountries)
             countryList.get(countryNames).setColorClickable();
+        */
 
         repaint();
     }
