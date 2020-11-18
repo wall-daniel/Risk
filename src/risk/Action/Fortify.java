@@ -1,8 +1,10 @@
 package risk.Action;
 
+import risk.Controller.FortifyController;
 import risk.Model.Country;
+import risk.Model.GameModel;
 
-public class Fortify extends Action{
+public class Fortify implements Action {
     int numTroops;
     Country firstCountry, secondCountry;
 
@@ -38,5 +40,11 @@ public class Fortify extends Action{
 
     public String toString(){
         return "Fortify " + secondCountry.getName() + " from " + firstCountry.getName() + " with " + numTroops;
+    }
+
+    @Override
+    public void doAction(GameModel gameModel) {
+        new FortifyController(gameModel, this).initiateFortify();
+        gameModel.nextPhase();
     }
 }

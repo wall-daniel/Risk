@@ -1,8 +1,10 @@
 package risk.Action;
 
+import risk.Controller.DeployController;
 import risk.Model.Country;
+import risk.Model.GameModel;
 
-public class Deploy extends Action{
+public class Deploy implements Action{
 
     int numTroops;
     Country country;
@@ -32,5 +34,8 @@ public class Deploy extends Action{
         return "Deploy: " + numTroops + " to " + country.getName();
     }
 
-
+    @Override
+    public void doAction(GameModel gameModel) {
+        new DeployController(gameModel, this).initiateDeploy();
+    }
 }

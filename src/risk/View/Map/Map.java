@@ -6,7 +6,6 @@ import risk.Model.GameModel;
 import risk.View.Views.GameActionListener;
 
 import javax.swing.*;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Map extends JPanel implements GameActionListener {
@@ -36,13 +35,6 @@ public class Map extends JPanel implements GameActionListener {
                 countryList.get(country.getName()).setColorClickable();
 
         });
-
-        /*
-        ArrayList<String> clickableCountries = controller.getClickableCountries();
-
-        for (String countryNames : clickableCountries)
-            countryList.get(countryNames).setColorClickable();
-        */
 
         repaint();
     }

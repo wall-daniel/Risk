@@ -3,6 +3,7 @@ package risk.Model;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
 import risk.Action.*;
+import risk.Action.Action;
 import risk.Controller.AttackController;
 import risk.Controller.DeployController;
 import risk.Controller.FortifyController;
@@ -16,6 +17,7 @@ import risk.Players.RandomPlayer;
 import risk.View.Views.GameActionListener;
 import risk.View.Views.GameModelListener;
 
+import javax.swing.*;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -184,6 +186,15 @@ public class GameModel {
         gameStatus = GameStatus.TROOP_PLACEMENT_PHASE;
         players.get(currentPlayer).startTurn(getContinentBonuses(players.get(currentPlayer)));
         updateGame();
+
+        SwingUtilities.invokeLater(() -> {
+            players.get(currentPlayer).startTurn(getContinentBonuses(players.get(currentPlayer)));
+            while (getCurrentPlayer().getPlayerType() != PlayerType.HUMAN_PLAYER){ //if only computer players, then will cause infinite recursion
+                Action action = getCurrentPlayer().getAction();
+                sleep(500);
+                doAction(action);
+            }
+        });
     }
 
     public void nextTurn() {
@@ -219,19 +230,7 @@ public class GameModel {
      */
     public void doAction(Action action) {
         System.out.println(action);
-        if (action instanceof Deploy){
-            new DeployController(this, (Deploy) action).initiateDeploy();
-            nextPhase();
-        } else if (action instanceof Attack){
-            new AttackController(this, (Attack) action).initiateAttack();
-        } else if (action instanceof Fortify){
-            new FortifyController(this, (Fortify) action).initiateFortify();
-            nextPhase();
-        } else if (action instanceof End){
-            nextPhase();
-        } else if (action instanceof Reset){
-            resetPhase();
-        }
+        action.doAction(this);
     }
 
     public boolean donePlacingArmies() {
