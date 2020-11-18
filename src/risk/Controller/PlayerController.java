@@ -70,7 +70,6 @@ public class PlayerController extends Controller implements ActionListener {
 
     }
 
-
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         if (actionEvent.getActionCommand().equals("Back")){
@@ -81,8 +80,5 @@ public class PlayerController extends Controller implements ActionListener {
 
         gameModel.updateGame();
     }
-
-
-
 
 }

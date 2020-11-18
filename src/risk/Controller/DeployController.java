@@ -20,6 +20,9 @@ public class DeployController {
     public void initiateDeploy(){
         Country firstCountry = deploy.getCountry();
         firstCountry.getPlayer().placeArmies(firstCountry, deploy.getNumTroops());
+
+        gameModel.updateGame();
+        gameModel.nextPhase();
     }
 
 

@@ -1,8 +1,11 @@
 package risk.Action;
 
+import risk.Controller.AttackController;
+import risk.Controller.DeployController;
 import risk.Model.Country;
+import risk.Model.GameModel;
 
-public class Attack extends Action{
+public class Attack implements Action{
     private int attackingArmies;
     private Country attackingCountry, defendingCountry;
 
@@ -44,4 +47,8 @@ public class Attack extends Action{
         return "Attack " + defendingCountry.getName() + " from " + attackingCountry.getName() + " with " + attackingArmies;
     }
 
+    @Override
+    public void doAction(GameModel gameModel) {
+        new AttackController(gameModel, this).initiateAttack();
+    }
 }

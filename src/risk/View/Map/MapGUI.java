@@ -24,7 +24,8 @@ public class MapGUI extends JFrame {
             gameModel.addActionListener(map);
             gameModel.addActionListener(mapInformation);
 
-            javax.swing.SwingUtilities.invokeLater(this::createAndShowGUI);
+//            javax.swing.SwingUtilities.invokeLater(this::createAndShowGUI);
+            createAndShowGUI();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -48,7 +49,6 @@ public class MapGUI extends JFrame {
 
         pack();
         setVisible(true);
-
 
         controller.startGame();
     }
