@@ -46,6 +46,15 @@ public abstract class Player {
         return countriesOwned;
     }
 
+    public int getTotalArmies(){
+        int totalArmies = 0;
+        for (String countryName : this.getCountries()){
+            Country playerCountry = gameModel.getCountry(countryName);
+            totalArmies += playerCountry.getArmies();
+        }
+        return totalArmies;
+    }
+
     public void removeCountry(String countryName) {
         countriesOwned.remove(countryName);
     }
