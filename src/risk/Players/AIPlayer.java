@@ -10,9 +10,12 @@ import java.util.Random;
 
 public class AIPlayer extends Player {
 
+    //CONSTANTS
+    private static int LOW_ARMIES_THRESHOLD = 10;
+
     //DEPLOYING WEIGHTS
     private static double COUNTRY_WILL_LIKELY_BE_CONQUERED = 3;                 // if the country has very few armies
-    private static double COUNTRY_IS_ALREADY_POWERFUL = 4;                              // if the country has many armies, and should be reinforced
+    private static double COUNTRY_IS_ALREADY_POWERFUL = 4;                      // if the country has many armies, and should be reinforced
     private static double COUNTRY_IS_SAFE = 2;                                  // if the country has a similar number of armies to the enemy countries around it
     //more to be added if needed
 
@@ -46,14 +49,35 @@ public class AIPlayer extends Player {
      * @return the country to attack from.
      */
     private Action getBestAttackCommand(){
+
+        ArrayList<Country> validCountries = new ArrayList<>();
+        for (String country : countriesOwned) {
+            Country country1 = gameModel.getCountry(country);
+            if (country1.getArmies() > 1) {
+                validCountries.add(country1);
+            }
+        }
+        if (validCountries.isEmpty()) {
+            return new End();
+        }
+
         ArrayList<Country> bestCountries = new ArrayList<>();
         double bestScore = 0;
-        for (String country : countriesOwned){
+
+        for (Country c : validCountries){
             double score = 0;
-            Country c = gameModel.getCountry(country);
 
+            for (String neighbourName : c.getNeighbours()){
+                Country neighbour = gameModel.getCountry(neighbourName);
 
+                int totalNeighbourArmies = neighbour.getPlayer().getTotalArmies();
 
+                if (totalNeighbourArmies < LOW_ARMIES_THRESHOLD){           // This neighbour is close to being eliminated
+                    score += COUNTRY_BELONGS_TO_WEAK_PLAYER_WEIGHT;
+                } else {
+
+                }
+            }
 
             if (score == bestScore){
                 bestCountries.add(c);
