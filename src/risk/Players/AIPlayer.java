@@ -10,6 +10,14 @@ import java.util.Random;
 
 public class AIPlayer extends Player {
 
+    //DEPLOYING WEIGHTS
+    private static double COUNTRY_WILL_LIKELY_BE_CONQUERED = 3;                 // if the country has very few armies
+    private static double COUNTRY_IS_ALREADY_POWERFUL = 4;                              // if the country has many armies, and should be reinforced
+    private static double COUNTRY_IS_SAFE = 2;                                  // if the country has a similar number of armies to the enemy countries around it
+    //more to be added if needed
+
+
+    //ATTACKING WEIGHTS
     private static double REGION_WILL_LIKELY_BE_DIVIDED_WEIGHT = 0;             // if attacking this country would likely divide the region
     private static double REGION_WILL_LIKELY_BE_CONQUERED_WEIGHT = 0;           // if attacking this country would make it significantly easier to capture the region
     private static double LAST_COUNTRY_TO_CAPTURE_WEIGHT = 0;                   // if attacking this country would conquer the region
@@ -37,12 +45,15 @@ public class AIPlayer extends Player {
      * Checks through all the player's owned countries and determines which is the best to attack from.
      * @return the country to attack from.
      */
-    private Country getBestAttackingCountry(){
+    private Action getBestAttackCommand(){
         ArrayList<Country> bestCountries = new ArrayList<>();
         double bestScore = 0;
         for (String country : countriesOwned){
             double score = 0;
             Country c = gameModel.getCountry(country);
+
+
+
 
             if (score == bestScore){
                 bestCountries.add(c);
@@ -55,9 +66,44 @@ public class AIPlayer extends Player {
         }
         if (bestCountries.size() > 1){ // if multiple countries end up with the same score, randomly pick one
             Random r = new Random();
-            return bestCountries.get(r.nextInt(bestCountries.size()));
+            Country c = bestCountries.get(r.nextInt(bestCountries.size()));
         }
         return null;
+    }
+
+    private ActionBuilder getBestDeployCommand(){
+        ArrayList<Country> bestCountries = new ArrayList<>();
+        double bestScore = 0;
+        for (String country : countriesOwned){
+            Country c = gameModel.getCountry(country);
+            double score = 0;
+
+            for (String neighbourName : c.getNeighbours()){
+                Country neighbour = gameModel.getCountry(neighbourName);
+                if (neighbour.getArmies() > c.getArmies() + 3){             // This neighbour is dangerous
+                    score += COUNTRY_WILL_LIKELY_BE_CONQUERED;
+                } else if (neighbour.getArmies() < c.getArmies() - 3){      // This neighbour is a good target
+                    score += COUNTRY_IS_ALREADY_POWERFUL;
+                } else {                                                    // This neighbour is not currently a big threat
+                    score += COUNTRY_IS_SAFE;
+                }
+            }
+
+            if (score == bestScore){
+                bestCountries.add(c);
+            }
+            if (score > bestScore){
+                bestScore = score;
+                bestCountries = new ArrayList<>();
+                bestCountries.add(c);
+            }
+        }
+        if (bestCountries.size() > 1){ // if multiple countries end up with the same score, randomly pick one
+            Random r = new Random();
+            Country c = bestCountries.get(r.nextInt(bestCountries.size()));
+            return new ActionBuilder(c, 1);
+        }
+        return new ActionBuilder(bestCountries.get(0), 1);
     }
 
     /**
