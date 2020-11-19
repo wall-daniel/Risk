@@ -17,6 +17,10 @@ public class HumanPlayer extends Player {
         int input = 0;
         do {
             String val = JOptionPane.showInputDialog(msg + "(" + min + " - " + max + ")");
+
+            if (val == null)
+                return 0;
+
             input = Integer.parseInt(val);
         } while (input < min || input > max);
         return input;

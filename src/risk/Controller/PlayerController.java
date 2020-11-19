@@ -41,23 +41,34 @@ public class PlayerController extends Controller implements ActionListener {
     public void clickedInCountry(Country country) {
         switch (gameModel.gameStatus) {
             case TROOP_PLACEMENT_PHASE:
-                gameModel.getCurrentPlayer().setFirstCountryOfAction(country);
-                gameModel.getCurrentPlayer().inputTroopCount(
-                        "How many troops do you want to place?", 1, gameModel.getCurrentPlayer().getPlaceableArmies());
-                gameModel.doAction(gameModel.getCurrentPlayer().getAction());
+                if (gameModel.getCurrentPlayer().ownsCountry(country)) {
+                    gameModel.getCurrentPlayer().setFirstCountryOfAction(country);
+                    gameModel.getCurrentPlayer().inputTroopCount(
+                            "How many troops do you want to place?", 1, gameModel.getCurrentPlayer().getPlaceableArmies());
+                    gameModel.doAction(gameModel.getCurrentPlayer().getAction());
+                }
                 break;
             case SELECT_ATTACKING_PHASE:
+                if (gameModel.getCurrentPlayer().ownsCountry(country)) {
+                    gameModel.getCurrentPlayer().setFirstCountryOfAction(country);
+                    gameModel.continuePhase();
+                    gameModel.updateGame();
+                }
+                break;
+            case SELECT_DEFENDING_PHASE:
+                if (!gameModel.getCurrentPlayer().ownsCountry(country) &&
+                        gameModel.getCurrentPlayer().getFirstCountryOfAction().isNeighbour(country)) {
+                    gameModel.getCurrentPlayer().setSecondCountryOfAction(country);
+                    Country attackingCountry = gameModel.getCurrentPlayer().getFirstCountryOfAction();
+                    gameModel.getCurrentPlayer().inputTroopCount(
+                            "How many troops do you want to attack with?", 1, Math.min(attackingCountry.getArmies() - 1, 3));
+                    gameModel.doAction(gameModel.getCurrentPlayer().getAction());
+                }
+                break;
             case SELECT_TROOP_MOVING_FROM_PHASE:
                 gameModel.getCurrentPlayer().setFirstCountryOfAction(country);
                 gameModel.continuePhase();
                 gameModel.updateGame();
-                break;
-            case SELECT_DEFENDING_PHASE:
-                gameModel.getCurrentPlayer().setSecondCountryOfAction(country);
-                Country attackingCountry = gameModel.getCurrentPlayer().getFirstCountryOfAction();
-                gameModel.getCurrentPlayer().inputTroopCount(
-                        "How many troops do you want to attack with?", 1,  Math.min(attackingCountry.getArmies() - 1, 3));
-                gameModel.doAction(gameModel.getCurrentPlayer().getAction());
                 break;
             case SELECT_TROOP_MOVING_TO_PHASE:
                 gameModel.getCurrentPlayer().setSecondCountryOfAction(country);

@@ -6,7 +6,6 @@ public class ActionBuilder {
     private Country firstCountry, secondCountry;
     private int numTroops;
 
-
     public ActionBuilder(){
 
     }
@@ -20,6 +19,20 @@ public class ActionBuilder {
         this.firstCountry = firstCountry;
         this.secondCountry = secondCountry;
         this.numTroops = numTroops;
+    }
+
+    /**
+     * @return true if the countries are neighbours
+     */
+    public boolean countriesConnected() {
+        String secondCountryName = secondCountry.getName();
+        for (String neighbourName : firstCountry.getNeighbours()) {
+            if (neighbourName.equals(secondCountryName)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public Country getFirstCountry(){
@@ -42,7 +55,10 @@ public class ActionBuilder {
         return new Deploy(firstCountry, numTroops);
     }
 
-    public Attack buildAttack(){
+    public Attack buildAttack() {
+//        if (countriesConnected()) {
+//            throw new Exception("Not neighbours.");
+//        }
         return new Attack(firstCountry, secondCountry, numTroops);
     }
 

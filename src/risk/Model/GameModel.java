@@ -180,7 +180,6 @@ public class GameModel {
         }
     }
 
-
     public void startGame() {
         currentPlayer = 0;
         gameStatus = GameStatus.TROOP_PLACEMENT_PHASE;
