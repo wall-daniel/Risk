@@ -130,6 +130,9 @@ public abstract class Player {
         actionBuilder.setNumTroops(numTroopsOfAction);
     }
 
+    public boolean isTroopActionSet() {
+        return actionBuilder.isTroopsSet();
+    }
 
 
     public PlayerType getPlayerType(){

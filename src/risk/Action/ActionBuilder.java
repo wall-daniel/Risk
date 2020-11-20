@@ -51,6 +51,10 @@ public class ActionBuilder {
         this.numTroops = numTroops;
     }
 
+    public boolean isTroopsSet() {
+        return numTroops > 0;
+    }
+
     public Deploy buildDeploy(){
         return new Deploy(firstCountry, numTroops);
     }
