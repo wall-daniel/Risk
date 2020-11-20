@@ -67,6 +67,10 @@ public abstract class Player {
         return placeableArmies;
     }
 
+    public boolean ownsCountry(Country country) {
+        return countriesOwned.contains(country.getName());
+    }
+
     /**
      * Place armies on country during army placement at start of turn.
      *
@@ -126,6 +130,9 @@ public abstract class Player {
         actionBuilder.setNumTroops(numTroopsOfAction);
     }
 
+    public boolean isTroopActionSet() {
+        return actionBuilder.isTroopsSet();
+    }
 
 
     public PlayerType getPlayerType(){

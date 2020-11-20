@@ -5,6 +5,8 @@ import risk.Enums.PlayerType;
 import risk.Model.Country;
 import risk.Model.GameModel;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 
 public class RandomPlayer extends Player {
@@ -38,7 +40,7 @@ public class RandomPlayer extends Player {
             case SELECT_ATTACKING_PHASE:
             case SELECT_DEFENDING_PHASE:
                 if (random.nextDouble() > attackThreshold) {
-                    attackThreshold *= 1.5;
+                    attackThreshold *= 1.2;
                     return getAttackCommand();//.buildAttack();
                 } else {
                     return getEndCommand().buildEnd();
@@ -76,30 +78,31 @@ public class RandomPlayer extends Player {
      * @return an attack action.
      */
     private Action getAttackCommand() {
-        boolean canAttack = false;
-        for (String country : countriesOwned) {
-            Country country1 = gameModel.getCountry(country);
-            if (country1.getArmies() > 1) {
-                canAttack = true;
-                break;
+        // Start in random place in countries and add
+        for (int i = random.nextInt(countriesOwned.size()); i < countriesOwned.size(); i++) {
+            Country attackCountry = gameModel.getCountry(countriesOwned.get(i));
+
+            if (attackCountry.getArmies() <= 1) {
+                continue;
+            }
+
+            // Can shuffle neighbours with no effect on how game is run
+            List<String> neighbours = attackCountry.getNeighbours();
+            Collections.shuffle(neighbours, random);
+
+            for (String neighbour : neighbours) {
+                Country defendingCountry = gameModel.getCountry(neighbour);
+
+                if (defendingCountry.getPlayer() != this) {
+                    actionBuilder.setFirstCountry(attackCountry);
+                    actionBuilder.setSecondCountry(defendingCountry);
+                    actionBuilder.setNumTroops(Math.min(attackCountry.getArmies(), 3));
+                    return actionBuilder.buildAttack();
+                }
             }
         }
 
-        if (!canAttack) {
-            return new End();
-        }
-
-        // Find a country with more than one army and that has a neighbour that isn't owned by player
-        Country attackingCountry;
-        Country defendingCountry;
-        do {
-            attackingCountry = gameModel.getCountry(countriesOwned.get(random.nextInt(countriesOwned.size())));
-            defendingCountry = gameModel.getCountry(attackingCountry.getNeighbours().get(random.nextInt(attackingCountry.getNeighbours().size())));
-            System.out.println("Attack command countries..." + attackingCountry + " - " + defendingCountry);
-        } while (attackingCountry.getArmies() == 1 || defendingCountry.getPlayer() == this);
-
-        // Attack with all armies, could change this to a random number
-        return new ActionBuilder(attackingCountry, defendingCountry, attackingCountry.getArmies() - 1).buildAttack();
+        return actionBuilder.buildEnd();
     }
 
 
