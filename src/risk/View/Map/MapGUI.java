@@ -7,6 +7,7 @@ import risk.View.Main.MainGUI;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.InputStream;
 
 public class MapGUI extends JFrame {
 

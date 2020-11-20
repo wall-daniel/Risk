@@ -38,7 +38,7 @@ public class RandomPlayer extends Player {
             case SELECT_ATTACKING_PHASE:
             case SELECT_DEFENDING_PHASE:
                 if (random.nextDouble() > attackThreshold) {
-                    attackThreshold *= 1.5;
+                    attackThreshold *= 1.2;
                     return getAttackCommand();//.buildAttack();
                 } else {
                     return getEndCommand().buildEnd();
