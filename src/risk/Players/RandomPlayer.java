@@ -12,7 +12,7 @@ import java.util.Random;
 public class RandomPlayer extends Player {
     private Random random;
     private double attackThreshold = 0.4;
-    private double fortifyThreshold = 0.8;
+    private double fortifyThreshold = 0.2;
 
     public RandomPlayer(String name, int index, GameModel gameModel) {
         super(name, index, PlayerType.RANDOM_PLAYER, gameModel);
@@ -48,7 +48,7 @@ public class RandomPlayer extends Player {
             case SELECT_TROOP_MOVING_FROM_PHASE:
             case SELECT_TROOP_MOVING_TO_PHASE:
                 if (random.nextDouble() > fortifyThreshold)
-                    return getFortifyCommand().buildFortify();
+                    return getFortifyCommand();
                 else
                     return getEndCommand().buildEnd();
         }
@@ -113,18 +113,33 @@ public class RandomPlayer extends Player {
      *
      * @return a movement action
      */
-    private ActionBuilder getFortifyCommand() {
-        Country firstCountry;
-        Country secondCountry;
+    private Action getFortifyCommand() {
+        // Start in random place in countries and add
+        for (int i = random.nextInt(countriesOwned.size()); i < countriesOwned.size(); i++) {
+            Country firstCountry = gameModel.getCountry(countriesOwned.get(i));
 
-        // TODO: Make the country not just neighbour, but have a path between the two.
-        do {
-            firstCountry = gameModel.getCountry(countriesOwned.get(random.nextInt(countriesOwned.size())));
-            secondCountry = gameModel.getCountry(firstCountry.getNeighbours().get(random.nextInt(firstCountry.getNeighbours().size())));
-        } while (firstCountry.getArmies() == 1 || firstCountry.getPlayer().getIndex() != secondCountry.getPlayer().getIndex());
+            // Make sure the country can move armies
+            if (firstCountry.getArmies() <= 1) {
+                continue;
+            }
 
+            // Find the second country
+            // Can shuffle neighbours with no effect on how game is run
+            List<String> neighbours = firstCountry.getNeighbours();
 
-        return new ActionBuilder(firstCountry, secondCountry, random.nextInt(firstCountry.getArmies() - 1) + 1);
+            for (String neighbour : neighbours) {
+                Country secondCountry = gameModel.getCountry(neighbour);
+
+                if (secondCountry.getPlayer() == this) {
+                    actionBuilder.setFirstCountry(firstCountry);
+                    actionBuilder.setSecondCountry(secondCountry);
+                    actionBuilder.setNumTroops(random.nextInt(firstCountry.getArmies() - 1) + 1);
+                    return actionBuilder.buildFortify();
+                }
+            }
+        }
+
+        return actionBuilder.buildEnd();
     }
 
 
