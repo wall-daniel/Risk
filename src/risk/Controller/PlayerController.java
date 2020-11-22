@@ -47,6 +47,9 @@ public class PlayerController extends Controller implements ActionListener {
                 gameModel.doAction(gameModel.getCurrentPlayer().getAction());
                 break;
             case SELECT_ATTACKING_PHASE:
+                if(country.getArmies() <= 1){
+                    break;
+                }
             case SELECT_TROOP_MOVING_FROM_PHASE:
                 gameModel.getCurrentPlayer().setFirstCountryOfAction(country);
                 gameModel.continuePhase();
