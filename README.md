@@ -13,9 +13,9 @@ Authors:
 - Khalid Kana’an
   - (Dropping the course)
 - Rahel Gunaratne
-  - Map Creator/Editor
-  - Map
-  - Movement controller logic
+  - computer player to play with human player
+  - Refactoring code for Action
+  - All controller refactoring
 - Francois Argent
   - AI Player logic
   - Some code refactoring/cleaning
@@ -29,12 +29,13 @@ Deliverables:
 
 Changes/Additions:
 - Added ai player and random player
+- Modularized controllers and actions
 - Cleaned up some code
 - Added placing/moving armies (done previously)
 
 Roadmap:
 - Add saving and loading map
-- check to ensure map is good
+- check to ensure map is good (with neighbours)
 
 Issues:
 - some countries dont have the proper neighbours.
