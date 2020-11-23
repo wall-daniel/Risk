@@ -67,14 +67,6 @@ public class PlayerController extends Controller implements ActionListener {
                 gameModel.doAction(gameModel.getCurrentPlayer().getAction());
                 break;
         }
-
-                    // Make sure the user actually entered a valid number
-                    if (gameModel.getCurrentPlayer().isTroopActionSet()) {
-                        gameModel.doAction(gameModel.getCurrentPlayer().getAction());
-                    }
-                    break;
-            }
-        }
     }
 
     @Override
