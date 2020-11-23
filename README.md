@@ -17,9 +17,9 @@ Authors:
   - Map
   - Movement controller logic
 - Francois Argent
-  - Baseline for map editor with polygons
-  - JUnit tests for GameModel
-  - Player elimination detection
+  - AI Player logic
+  - Some code refactoring/cleaning
+  - Attack validation
 
 Deliverables:
 1. Current iteration
