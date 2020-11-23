@@ -2,11 +2,10 @@ package risk.Model;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
-import risk.Action.*;
 import risk.Action.Action;
-import risk.Controller.AttackController;
-import risk.Controller.DeployController;
-import risk.Controller.FortifyController;
+import risk.Action.Attack;
+import risk.Action.End;
+import risk.Action.Fortify;
 import risk.Enums.PlayerType;
 import risk.Listener.Events.ContinentEvent;
 import risk.Listener.Events.CountryEvent;
@@ -165,7 +164,7 @@ public class GameModel {
         int INITIAL_ARMY_3_PLAYERS = 25;
         int INITIAL_ARMY_2_PLAYERS = 20;
 
-        switch(numPlayers){
+        switch (numPlayers) {
             case 6:
                 return INITIAL_ARMY_6_PLAYERS;
             case 5:
@@ -186,35 +185,48 @@ public class GameModel {
         players.get(currentPlayer).startTurn(getContinentBonuses(players.get(currentPlayer)));
         updateGame();
 
-        SwingUtilities.invokeLater(() -> {
-            players.get(currentPlayer).startTurn(getContinentBonuses(players.get(currentPlayer)));
-            while (getCurrentPlayer().getPlayerType() != PlayerType.HUMAN_PLAYER){ //if only computer players, then will cause infinite recursion
-                Action action = getCurrentPlayer().getAction();
-                sleep(500);
-                doAction(action);
-            }
-        });
+        SwingUtilities.invokeLater(this::aiGameLoop);
     }
 
     public void nextTurn() {
-        currentPlayer = (currentPlayer + 1) % players.size();
-        System.out.println("Start of " + players.get(currentPlayer).getName() + " turn.");
+        // Find next player who is playing
+        int lastPlayer = currentPlayer;
+        do {
+            currentPlayer = (currentPlayer + 1) % players.size();
+            System.out.println("Start of " + players.get(currentPlayer).getName() + " turn.");
+
+            // Check if all players besides one has lost
+            if (currentPlayer == lastPlayer) {
+                JOptionPane.showMessageDialog(null, "Congrats " + getCurrentPlayer().getName() + ", you have won the game! :D");
+                System.exit(0);
+                break;
+            }
+        } while (players.get(currentPlayer).hasLost());
         gameStatus = GameStatus.TROOP_PLACEMENT_PHASE;
 
-        if (players.get(currentPlayer).hasLost()) {
+        players.get(currentPlayer).startTurn(getContinentBonuses(players.get(currentPlayer)));
+
+        // Call this, will automatically get out if not ai player
+        if (getCurrentPlayer().getPlayerType() != PlayerType.HUMAN_PLAYER) {
+            aiGameLoop();
             nextTurn();
-        } else {
-            players.get(currentPlayer).startTurn(getContinentBonuses(players.get(currentPlayer)));
-            while (getCurrentPlayer().getPlayerType() != PlayerType.HUMAN_PLAYER){ //if only computer players, then will cause infinite recursion
-                Action action = getCurrentPlayer().getAction();
-                sleep(500);
+        }
+    }
+
+    private void aiGameLoop() {
+        while (true) { //if only computer players, then will cause infinite recursion
+            Action action = getCurrentPlayer().getAction();
+            sleep(1);
+
+            if (action instanceof End) {
+                return;
+            } else {
                 doAction(action);
             }
         }
     }
 
-
-    public void sleep(long delay){
+    public void sleep(long delay) {
         try {
             Thread.sleep(delay);
         } catch (InterruptedException e) {
@@ -225,6 +237,7 @@ public class GameModel {
 
     /**
      * controller performs action, then game moves to next phase or next turn
+     *
      * @param action to be completed
      */
     public void doAction(Action action) {
@@ -343,12 +356,12 @@ public class GameModel {
 
     public void updateGame() {
         resetClickableCountries();
-        if (getCurrentPlayer().getPlayerType()==PlayerType.HUMAN_PLAYER)
+        if (getCurrentPlayer().getPlayerType() == PlayerType.HUMAN_PLAYER)
             updateClickableCountries();
         gameActionListeners.forEach(it -> it.updateMap(this));
     }
 
-    public void updateClickableCountries(){
+    public void updateClickableCountries() {
         switch (gameStatus) {
             case TROOP_PLACEMENT_PHASE:
             case SELECT_ATTACKING_PHASE:
@@ -356,15 +369,15 @@ public class GameModel {
                 updatePlaceableCountries();
                 break;
             case SELECT_DEFENDING_PHASE:
-                updateAttackableCountries(((Attack)getCurrentPlayer().getAction()).getAttackingCountry());
+                updateAttackableCountries(((Attack) getCurrentPlayer().getAction()).getAttackingCountry());
                 break;
             case SELECT_TROOP_MOVING_TO_PHASE:
-                updateMoveTroopsToCountries(((Fortify)getCurrentPlayer().getAction()).getFirstCountry());
+                updateMoveTroopsToCountries(((Fortify) getCurrentPlayer().getAction()).getFirstCountry());
                 break;
         }
     }
 
-    private void resetClickableCountries(){
+    private void resetClickableCountries() {
         for (Country country : countries.values())
             country.resetClickable();
     }
@@ -398,8 +411,8 @@ public class GameModel {
      * Recursively gets all connected countries for fortification.
      *
      * @param currentCountry, country moving troops from
-     * @param ss, the list of countries that are connected
-     * @param playerIndex, current player index
+     * @param ss,             the list of countries that are connected
+     * @param playerIndex,    current player index
      * @return a list of countries connected
      */
     private ArrayList<String> addCountries(Country currentCountry, HashMap<String, Country> ss, int playerIndex) {
@@ -418,7 +431,7 @@ public class GameModel {
     /**
      * the logic when back-button is clicked when in 2nd part of two part phases. It resets to the first part
      */
-    public void resetPhase(){
+    public void resetPhase() {
         switch (gameStatus) {
             case TROOP_PLACEMENT_PHASE:
                 break;
@@ -437,7 +450,7 @@ public class GameModel {
     /**
      * the logic when 1st part of two part phases is completed. Continues the game to the 2nd part
      */
-    public void continuePhase(){
+    public void continuePhase() {
         switch (gameStatus) {
             case TROOP_PLACEMENT_PHASE:
             case SELECT_DEFENDING_PHASE:
@@ -455,7 +468,7 @@ public class GameModel {
 
     /**
      * the logic when next-button is clicked. Continues the game to the the next phase
-     * */
+     */
     public void nextPhase() {
         switch (gameStatus) {
             case TROOP_PLACEMENT_PHASE:
