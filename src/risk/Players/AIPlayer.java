@@ -60,7 +60,7 @@ public class AIPlayer extends Player {
                     c2 = getBestDefendingCountry(c1);
                 }
                 if (c2 != null){
-                    return new ActionBuilder(c1, c2, Math.floorDiv(c1.getArmies(), 2)).buildAttack();
+                    return new ActionBuilder(c1, c2, Math.min(c1.getArmies(), 3)).buildAttack();
                 } else return getEndCommand().buildEnd();
             case SELECT_TROOP_MOVING_FROM_PHASE:
             case SELECT_TROOP_MOVING_TO_PHASE:
