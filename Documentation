@@ -4,7 +4,7 @@ DOCUMENTATION
 
 User Manual:
 Start of game:
-- Choose new game and select number of players
+- Choose new game and select number of players and what type of players you want (human, random, ai)
 - The info section is on the right, and you can skip/return from certain phases there.
 - Note that the middle east is gone, that is okay there just isn't anything there.
 Game phase:
@@ -19,6 +19,7 @@ Decisions made:
 - We decided to make the map editor now because creating the map using hard coded values would have taken a while, so the time required becomes less.
 - Have multiple controllers for different phases to try and not make the main controller to bloated.
 - We used the polygon class for drawing countries because it came with a built in drawing method in JPanel and a built in contains point method for determining if user clicked in country.
+- For the ai player we decided that the training time for monte carlos, so we did purely state based logic (e.g. the decisions it makes is based on what the board currently looks like)
 
 Descriptions of Data Structures/Interfaces:
 - Game model
