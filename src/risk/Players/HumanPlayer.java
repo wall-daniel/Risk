@@ -9,8 +9,8 @@ import risk.Model.GameModel;
 import javax.swing.*;
 
 public class HumanPlayer extends Player {
-    public HumanPlayer(String name, int index, PlayerType playerType, GameModel gameModel) {
-        super(name, index, playerType, gameModel);
+    public HumanPlayer(String name, int index, GameModel gameModel) {
+        super(name, index, PlayerType.HUMAN_PLAYER, gameModel);
     }
 
     private int getIntegerInput(String msg, int min, int max){

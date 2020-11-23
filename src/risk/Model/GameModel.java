@@ -54,6 +54,12 @@ public class GameModel {
         countries = new HashMap<>();
         gameActionListeners = new ArrayList<>();
         gameModelListeners = new ArrayList<>();
+        players = new ArrayList<>();
+
+        // Add a few players
+        players.add(new HumanPlayer("human", 0, this));
+        players.add(new HumanPlayer("random", 1, this));
+        players.add(new HumanPlayer("ai", 2, this));
     }
 
     /**
@@ -86,7 +92,7 @@ public class GameModel {
             if (playerTypes[i] == PlayerType.AI_PLAYER)
                 players.add(new AIPlayer(playerNames[i], i, playerTypes[i], this));
             else if (playerTypes[i] == PlayerType.HUMAN_PLAYER)
-                players.add(new HumanPlayer(playerNames[i], i, playerTypes[i], this));
+                players.add(new HumanPlayer(playerNames[i], i, this));
             else if (playerTypes[i] == PlayerType.RANDOM_PLAYER)
                 players.add(new RandomPlayer(playerNames[i], i, this));
         }
