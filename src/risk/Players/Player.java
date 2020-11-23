@@ -105,10 +105,10 @@ public abstract class Player {
     }
 
     /**
-     * @return true if player has lost the game.
+     * @return true if player has lost the game (e.g. has no countries).
      */
     public boolean hasLost() {
-        return lost;
+        return countriesOwned.isEmpty();
     }
 
     /**
