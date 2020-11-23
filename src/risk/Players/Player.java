@@ -15,7 +15,6 @@ public abstract class Player {
 
     private final String name;
     protected ArrayList<String> countriesOwned;
-    private boolean lost = false;
     private final Color playerColor;
     private int placeableArmies = 0;
     private int index;
@@ -111,13 +110,6 @@ public abstract class Player {
         return countriesOwned.isEmpty();
     }
 
-    /**
-     * Set the player as lost.
-     */
-    public void setLost() {
-        this.lost = true;
-    }
-
     public int getIndex() {
         return index;
     }
@@ -129,9 +121,6 @@ public abstract class Player {
 
 
     public abstract void inputTroopCount(String msg, int min, int max);
-
-
-
 
     public void setFirstCountryOfAction(Country country){
         actionBuilder.setFirstCountry(country);
