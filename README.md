@@ -7,9 +7,9 @@ README
 
 Authors:
 - Daniel Wall
-  - Attack and Movement controllers
-  - Game model
-  - JSON saving/loading
+  - Random player
+  - Code cleaning
+  - play validation
 - Khalid Kana’an
   - (Dropping the course)
 - Rahel Gunaratne
@@ -28,16 +28,13 @@ Deliverables:
 4. Save iteration: Add saving/loading, and 
 
 Changes/Additions:
-- Added GUI, both the map and info panel
-- Added loading of map from JSON
-- Made the game follow MVC pattern (so added view and game model)
-- Added a movement controller to separate functionality from main controller
-- Created map in json using the incomplete map editor (can be tested/used)
+- Added ai player and random player
+- Cleaned up some code
+- Added placing/moving armies (done previously)
 
 Roadmap:
-- Add ai player
-- Make moving armies more complete
-- Add more polished map editing
+- Add saving and loading map
+- check to ensure map is good
 
 Issues:
 - some countries dont have the proper neighbours.

@@ -180,7 +180,6 @@ public class GameModel {
         }
     }
 
-
     public void startGame() {
         currentPlayer = 0;
         gameStatus = GameStatus.TROOP_PLACEMENT_PHASE;
@@ -395,6 +394,14 @@ public class GameModel {
             countries.get(s).setClickable();
     }
 
+    /**
+     * Recursively gets all connected countries for fortification.
+     *
+     * @param currentCountry, country moving troops from
+     * @param ss, the list of countries that are connected
+     * @param playerIndex, current player index
+     * @return a list of countries connected
+     */
     private ArrayList<String> addCountries(Country currentCountry, HashMap<String, Country> ss, int playerIndex) {
         for (String countryName : currentCountry.getNeighbours()) {
             Country country = getCountry(countryName);

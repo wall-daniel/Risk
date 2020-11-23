@@ -1,24 +1,21 @@
 package risk.Controller;
 
 import risk.Action.ActionBuilder;
-import risk.Action.Attack;
-import risk.Action.Fortify;
 import risk.Model.Country;
 import risk.Model.GameModel;
-import risk.Players.HumanPlayer;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 
 public class PlayerController extends Controller implements ActionListener {
 
     public PlayerController(GameModel gameModel, JFrame view) {
         super(gameModel, view);
     }
+
     @Override
     protected void countryClicked(MouseEvent mouseEvent) {
         int highestLayer = -1;
@@ -71,13 +68,20 @@ public class PlayerController extends Controller implements ActionListener {
                 break;
         }
 
+                    // Make sure the user actually entered a valid number
+                    if (gameModel.getCurrentPlayer().isTroopActionSet()) {
+                        gameModel.doAction(gameModel.getCurrentPlayer().getAction());
+                    }
+                    break;
+            }
+        }
     }
 
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
-        if (actionEvent.getActionCommand().equals("Back")){
+        if (actionEvent.getActionCommand().equals("Back")) {
             gameModel.doAction(new ActionBuilder().buildReset());
-        } else if (actionEvent.getActionCommand().equals("Next")){
+        } else if (actionEvent.getActionCommand().equals("Next")) {
             gameModel.doAction(new ActionBuilder().buildEnd());
         }
 

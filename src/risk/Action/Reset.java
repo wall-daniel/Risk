@@ -10,6 +10,6 @@ public class Reset implements Action {
 
     @Override
     public void doAction(GameModel gameModel) {
-        gameModel.nextPhase();
+        gameModel.resetPhase();
     }
 }

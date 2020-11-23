@@ -6,6 +6,7 @@ import risk.Players.Player;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Country {
 
@@ -13,7 +14,7 @@ public class Country {
     private int numArmies = 1;
     private Player controlledBy = null;
 
-    private ArrayList<String> neighbours;
+    private List<String> neighbours;
     private Continent continent;
 
     private Polygon polygon;
@@ -125,7 +126,7 @@ public class Country {
         return continent;
     }
 
-    public ArrayList<String> getNeighbours() {
+    public List<String> getNeighbours() {
         return neighbours;
     }
 
