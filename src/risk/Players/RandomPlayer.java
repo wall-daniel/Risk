@@ -154,14 +154,5 @@ public class RandomPlayer extends Player {
         return new ActionBuilder(firstCountry, secondCountry, random.nextInt(firstCountry.getArmies() - 1) + 1);
     }
 
-    /**
-     * Choose two countries to move armies from and to.
-     * Make sure that the countries have a path between them.
-     * The number of armies is between 1 and first country armies minus 1.
-     *
-     * @return a movement action
-     */
-    private ActionBuilder getEndCommand() {
-        return new ActionBuilder();
-    }
+
 }

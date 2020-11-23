@@ -46,6 +46,26 @@ public abstract class Player {
         return countriesOwned;
     }
 
+    /**
+     * Choose two countries to move armies from and to.
+     * Make sure that the countries have a path between them.
+     * The number of armies is between 1 and first country armies minus 1.
+     *
+     * @return a movement action
+     */
+    protected ActionBuilder getEndCommand() {
+        return new ActionBuilder();
+    }
+
+    public int getTotalArmies(){
+        int totalArmies = 0;
+        for (String countryName : this.getCountries()){
+            Country playerCountry = gameModel.getCountry(countryName);
+            totalArmies += playerCountry.getArmies();
+        }
+        return totalArmies;
+    }
+
     public void removeCountry(String countryName) {
         countriesOwned.remove(countryName);
     }
