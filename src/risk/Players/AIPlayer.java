@@ -41,7 +41,12 @@ public class AIPlayer extends Player {
      */
     @Override
     public void inputTroopCount(String msg, int min, int max) {
-        setNumTroopsOfAction(Math.floorDiv(max, 2));
+        if (countryIsSafe(getActionBuilder().getFirstCountry())){
+            setNumTroopsOfAction(max);
+        } else {
+            setNumTroopsOfAction(Math.floorDiv(max, 2) + 1);
+        }
+
     }
     /**
      * Logic for ai to choose action depending on game phase
