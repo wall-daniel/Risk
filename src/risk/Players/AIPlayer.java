@@ -41,7 +41,12 @@ public class AIPlayer extends Player {
      */
     @Override
     public void inputTroopCount(String msg, int min, int max) {
-        setNumTroopsOfAction(Math.floorDiv(max, 2));
+        if (countryIsSafe(getActionBuilder().getFirstCountry())){
+            setNumTroopsOfAction(max);
+        } else {
+            setNumTroopsOfAction(Math.floorDiv(max, 2) + 1);
+        }
+
     }
     /**
      * Logic for ai to choose action depending on game phase
@@ -60,7 +65,7 @@ public class AIPlayer extends Player {
                     c2 = getBestDefendingCountry(c1);
                 }
                 if (c2 != null){
-                    return new ActionBuilder(c1, c2, Math.floorDiv(c1.getArmies(), 2)).buildAttack();
+                    return new ActionBuilder(c1, c2, Math.min(c1.getArmies(), 3)).buildAttack();
                 } else return getEndCommand().buildEnd();
             case SELECT_TROOP_MOVING_FROM_PHASE:
             case SELECT_TROOP_MOVING_TO_PHASE:
