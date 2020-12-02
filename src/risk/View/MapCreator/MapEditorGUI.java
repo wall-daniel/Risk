@@ -13,13 +13,11 @@ import javax.swing.*;
 import java.awt.*;
 
 public class MapEditorGUI extends JFrame implements GameModelListener {
-    private JLabel status;
     private JLayeredPane layeredPane;
     private int countryCounter;
 
     private EditorController controller;
     private String mapName;
-
 
     public MapEditorGUI(){
         countryCounter = 0;
@@ -32,7 +30,9 @@ public class MapEditorGUI extends JFrame implements GameModelListener {
             e.printStackTrace();
         }
 
-        javax.swing.SwingUtilities.invokeLater(() -> createAndShowGUI(true));
+        this.mapName = JOptionPane.showInputDialog("Enter New Map Name");
+
+        javax.swing.SwingUtilities.invokeLater(() -> createAndShowGUI());
     }
 
     public MapEditorGUI(String filename) {
@@ -44,7 +44,8 @@ public class MapEditorGUI extends JFrame implements GameModelListener {
             e.printStackTrace();
         }
 
-        javax.swing.SwingUtilities.invokeLater(() -> createAndShowGUI(false));
+        mapName = filename;
+        javax.swing.SwingUtilities.invokeLater(() -> createAndShowGUI());
     }
 
 
@@ -52,10 +53,7 @@ public class MapEditorGUI extends JFrame implements GameModelListener {
         return layeredPane;
     }
 
-    private void createAndShowGUI(boolean newMap) {
-        if (newMap)
-            mapName = JOptionPane.showInputDialog("Enter New Map Name");
-
+    private void createAndShowGUI() {
         addComponentToPane(getContentPane());
 
         addJMenuBar();
@@ -77,17 +75,20 @@ public class MapEditorGUI extends JFrame implements GameModelListener {
 
         JMenuItem addCountry = new JMenuItem("Add Country");
         JMenuItem addContinent = new JMenuItem("Add Continent");
+        JMenuItem autoGenerateNeighbours = new JMenuItem("Auto-Generate Neighbours");
         JMenuItem saveMap = new JMenuItem("Save Map");
         JMenuItem quit = new JMenuItem("Quit");
 
         addCountry.addActionListener(e -> {
             new CountryCreatorGUI(this);
-            status.setText("Draw the countries");
         });
 
         addContinent.addActionListener(e -> {
             addNewContinent();
+        });
 
+        autoGenerateNeighbours.addActionListener(e -> {
+            autoGenerateNeighbours();
         });
 
         saveMap.addActionListener(e -> {
@@ -118,24 +119,21 @@ public class MapEditorGUI extends JFrame implements GameModelListener {
     }
 
 
-    private void loadMap(){
 
-
+    private void autoGenerateNeighbours(){
+        controller.updateNeighbours();
     }
 
     private void saveMap() {
-        controller.updateNeighbours();
         controller.updateAllComponentLocations();
-        controller.saveMap();
+
+        controller.saveMap(mapName);
     }
 
     public void addComponentToPane(Container pane)  {
         layeredPane = new JLayeredPane();
         layeredPane.setLayout(null);
 
-        status = new JLabel("Draw the countries", SwingConstants.CENTER);
-
-        pane.add(status, BorderLayout.NORTH);
         pane.add(layeredPane, BorderLayout.CENTER);
     }
 

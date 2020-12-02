@@ -32,9 +32,9 @@ public class EditorController extends Controller {
         gameModel.updateEditor();
     }
 
-    public void saveMap() {
+    public void saveMap(String fileName) {
         try {
-            gameModel.saveMap("RiskMap.txt");
+            gameModel.saveMap(fileName + ".txt");
         } catch (Exception e) {
             e.printStackTrace();
         }
