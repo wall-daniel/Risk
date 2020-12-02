@@ -1,6 +1,7 @@
 package risk.Model;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import risk.Action.Action;
 import risk.Action.Attack;
@@ -17,10 +18,7 @@ import risk.View.Views.GameActionListener;
 import risk.View.Views.GameModelListener;
 
 import javax.swing.*;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -191,7 +189,9 @@ public class GameModel {
         players.get(currentPlayer).startTurn(getContinentBonuses(players.get(currentPlayer)));
         updateGame();
 
-        SwingUtilities.invokeLater(this::aiGameLoop);
+        if (getCurrentPlayer().getPlayerType() != PlayerType.HUMAN_PLAYER) {
+            SwingUtilities.invokeLater(this::aiGameLoop);
+        }
     }
 
     public void nextTurn() {
@@ -491,5 +491,33 @@ public class GameModel {
                 break;
         }
         updateGame();
+    }
+
+    private JsonObject getGameStateJson() {
+        JsonObject obj = new JsonObject();
+
+        JsonArray playerArr = new JsonArray(players.size());
+        for (Player player : players) {
+            playerArr.add(player.savePlayer());
+        }
+        obj.add("players", playerArr);
+
+        // Add current player
+        obj.addProperty("currentPlayer", currentPlayer);
+
+        return obj;
+    }
+
+    /**
+     *
+     */
+    public void saveGameState(String filename) {
+        try {
+            FileWriter fileWriter = new FileWriter(new File(filename));
+            fileWriter.write(getGameStateJson().toString());
+            fileWriter.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

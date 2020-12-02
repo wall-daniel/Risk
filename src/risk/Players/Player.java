@@ -1,5 +1,7 @@
 package risk.Players;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import risk.Action.Action;
 import risk.Action.ActionBuilder;
 import risk.Enums.PlayerColor;
@@ -155,6 +157,29 @@ public abstract class Player {
      */
     public abstract Action getAction();
 
+    public JsonObject savePlayer() {
+        JsonObject player = new JsonObject();
 
+        // Save some fields
+        player.addProperty("name", name);
+        player.addProperty("index", index);
+        player.addProperty("type", playerType.toString());
+
+        // Save countries owned
+        JsonArray countryArray = new JsonArray();
+        for (String countryString : countriesOwned) {
+            Country country = gameModel.getCountry(countryString);
+
+            // Save country name and number of armies, the owner is contained by player
+            JsonObject countryObj = new JsonObject();
+            countryObj.addProperty("name", countryString);
+            countryObj.addProperty("armies", country.getArmies());
+
+            countryArray.add(countryObj);
+        }
+        player.add("countries", countryArray);
+
+        return player;
+    }
 
 }

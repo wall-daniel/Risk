@@ -73,6 +73,15 @@ public class MapGUI extends JFrame {
 
         menu.add(quit);
 
+        JMenuItem save = new JMenuItem("Save");
+        save.addActionListener(e -> {
+            String filename = JOptionPane.showInputDialog(this, "Enter filename:");
+
+            if (filename == null) return;
+
+            controller.saveGame(filename);
+        });
+        menu.add(save);
 
         bar.add(menu);
 
