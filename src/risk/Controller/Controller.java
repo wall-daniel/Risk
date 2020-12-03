@@ -33,12 +33,6 @@ abstract public class Controller implements MouseListener {
         return gameModel;
     }
 
-    /**
-     * @param errorMessage to be displayed to user.
-     */
-    protected void showErrorMessage(String errorMessage) {
-        JOptionPane.showMessageDialog(gameView, errorMessage, "Error", JOptionPane.INFORMATION_MESSAGE);
-    }
 
     /**
      * Finds highest layered country and sends a click of that country to determine what action is to be done.

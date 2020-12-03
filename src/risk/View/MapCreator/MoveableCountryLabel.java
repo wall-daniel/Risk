@@ -23,6 +23,12 @@ public class MoveableCountryLabel extends CountryLabel implements MouseListener,
     }
 
     @Override
+    public void updateLabel(String text, int armies){
+        setText(text);
+        repaint();
+    }
+
+    @Override
     public void mouseClicked(MouseEvent e) {
 
     }

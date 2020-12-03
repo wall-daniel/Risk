@@ -10,7 +10,7 @@ import java.util.List;
 
 public class Country {
 
-    private final String name;
+    private String name;
     private int numArmies = 1;
     private Player controlledBy = null;
 
@@ -245,5 +245,23 @@ public class Country {
     public void addNeighbour(String countryName) {
         if (!neighbours.contains(countryName))
             neighbours.add(countryName);
+
+        System.out.println("ADDING: " + countryName);
+    }
+
+    public void removeNeighbour(String countryName){
+        System.out.println("REMOVING: " + countryName);
+        neighbours.remove(countryName);
+    }
+
+    public void toggleNeighbour(Country neighbour) {
+        if (neighbours.contains(neighbour.getName()))
+            removeNeighbour(neighbour.getName());
+        else
+            addNeighbour(neighbour.getName());
+    }
+
+    public void setName(String countryName) {
+        name = countryName;
     }
 }

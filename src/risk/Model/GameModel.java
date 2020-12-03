@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 
 public class GameModel {
 
+
     public enum GameStatus {
         TROOP_PLACEMENT_PHASE,
         SELECT_ATTACKING_PHASE,
@@ -255,6 +256,12 @@ public class GameModel {
         return getCurrentPlayer().getPlaceableArmies() <= 0;
     }
 
+    public void toggleNeighbourToCountry(Country country, Country neighbour){
+        country.toggleNeighbour(neighbour);
+        gameModelListeners.forEach(it -> it.onEditCountry(new CountryEvent(this, country)));
+    }
+
+
     public void addCountry(Country country) {
         this.countries.put(country.getName(), country);
         gameModelListeners.forEach(it -> it.onNewCountry(new CountryEvent(this, country)));
@@ -264,8 +271,25 @@ public class GameModel {
     public void editCountry(Country country, ArrayList<String> names, Continent continent) {
         country.setContinent(continent);
         country.setNeighbourNames(names);
+        gameModelListeners.forEach(it -> it.onEditCountry(new CountryEvent(this, country)));
     }
 
+    public void editCountryName(Country country, String countryName) {
+        if (!countries.containsKey(countryName)) {
+            CountryEvent ce = new CountryEvent(this, country, country.getName());
+            countries.remove(country.getName()); //remove old entry
+            countries.put(countryName, country); //add new entry
+            country.setName(countryName);
+            gameModelListeners.forEach(it -> it.onEditCountry(ce));
+        }
+    }
+
+    public void editCountryContinent(Country country, String continentName){
+        if (continents.containsKey(continentName)){
+            country.setContinent(continents.get(continentName));
+            gameModelListeners.forEach(it -> it.onEditCountry(new CountryEvent(this, country)));
+        }
+    }
 
     public Country getCountry(String countryName) {
         return countries.get(countryName);
@@ -308,7 +332,6 @@ public class GameModel {
 
     public void addContinent(Continent continent) {
         this.continents.put(continent.getName(), continent);
-        gameModelListeners.forEach(it -> it.onNewContinent(new ContinentEvent(this, continent)));
     }
 
     public Continent getContinent(String name) {
@@ -355,7 +378,6 @@ public class GameModel {
     public void updateEditor() {
         gameModelListeners.forEach(it -> {
             countries.values().forEach(country -> it.onNewCountry(new CountryEvent(this, country)));
-            continents.values().forEach(continent -> it.onNewContinent(new ContinentEvent(this, continent)));
         });
     }
 
