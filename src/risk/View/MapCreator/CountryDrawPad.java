@@ -14,11 +14,10 @@ public class CountryDrawPad extends JPanel implements MouseListener {
     private Graphics2D graphics2D;
     private Polygon polygon;
 
-
     private int oldX = -1, oldY = -1, startX, startY;
 
-    int BORDER_DETAIL = 100000;
-    double BORDER_DEVIATION = 0.5;
+    int borderDetail = 1000;
+    final double BORDER_DEVIATION = 0.5;
 
     public CountryDrawPad(){
         polygon = new Polygon();
@@ -95,12 +94,8 @@ public class CountryDrawPad extends JPanel implements MouseListener {
 
     }
 
-    public void setBORDER_DETAIL(int border_detail){
-        this.BORDER_DETAIL = border_detail;
-    }
-
-    public void setBORDER_DEVIATION(double borderDeviation){
-        this.BORDER_DEVIATION = borderDeviation;
+    public void setBorderDetail(int borderDetail){
+        this.borderDetail = borderDetail;
     }
 
     public void randomFractal(int lX, int lY, int rX, int rY){
@@ -108,7 +103,7 @@ public class CountryDrawPad extends JPanel implements MouseListener {
         int midX, midY;
         int delta;
 
-        if (Math.abs(rX-lX) <= BORDER_DETAIL && Math.abs(rY-lY) <= BORDER_DETAIL) {
+        if (Math.abs(rX-lX) <= borderDetail && Math.abs(rY-lY) <= borderDetail) {
             graphics2D.drawLine(lX, lY, rX, rY);
             polygon.addPoint(rX, rY);
         }else{

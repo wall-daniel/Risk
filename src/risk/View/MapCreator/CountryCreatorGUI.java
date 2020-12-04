@@ -1,19 +1,15 @@
 package risk.View.MapCreator;
 
-import risk.Enums.CountryDrawingEnum;
-
 import javax.swing.*;
 import java.awt.*;
+import java.util.Hashtable;
 
 public class CountryCreatorGUI extends JFrame {
 
-    CountryDrawingEnum drawingStatus;
-    JLabel drawingStatusLabel;
+    JPanel drawingButtons;
     CountryDrawPad drawingPad;
 
     MapEditorGUI mapEditorGUI;
-
-    //TODO add menu items to set border_detail and border_deviation of countrydrawpad
 
     public CountryCreatorGUI(MapEditorGUI mapEditorGUI){
         this.mapEditorGUI = mapEditorGUI;
@@ -38,85 +34,59 @@ public class CountryCreatorGUI extends JFrame {
 
 
     public void addComponentToPane(Container pane) {
-        drawingStatus = CountryDrawingEnum.FIRST_POINT;
-        drawingStatusLabel = new JLabel(drawingStatus.getDescription());
+        drawingButtons = new JPanel(new FlowLayout());
+        JButton clear = new JButton("Clear");
+        clear.addActionListener(e -> drawingPad.clear());
 
-        drawingPad = new CountryDrawPad();
+        JButton closeShape = new JButton("Close Shape");
+        closeShape.addActionListener(e -> drawingPad.closeShape());
 
-        pane.add(drawingStatusLabel, BorderLayout.NORTH);
-        pane.add(drawingPad, BorderLayout.CENTER);
-    }
-
-    private void addJMenuBar() {
-        JMenuBar bar = new JMenuBar();
-        JMenu controlMenu = new JMenu("Shape Options");
-
-        JMenuItem clear = new JMenuItem("Clear");
-        JMenuItem closeShape = new JMenuItem("Close Shape");
-        JMenuItem newShape = new JMenuItem("New Shape");
-        JMenuItem finish = new JMenuItem("Finish");
-
-        clear.addActionListener(e -> {
-            drawingPad.clear();
-            setDrawingStatus(CountryDrawingEnum.FIRST_POINT);
-        });
-
-
-        closeShape.addActionListener(e -> {
-            drawingPad.closeShape();
-            setDrawingStatus(CountryDrawingEnum.FILL);
-        });
-
-
-        newShape.addActionListener(e -> {
-            drawingPad.reset();
-            setDrawingStatus(CountryDrawingEnum.FIRST_POINT);
-        });
-
-
+        JButton finish = new JButton("Finish");
         finish.addActionListener(e -> {
             String countryName = JOptionPane.showInputDialog("Enter Country Name");
             mapEditorGUI.addNewCountry(countryName, drawingPad.getPolygon());
             this.dispose();
         });
 
+        JPanel borderDetailPanel = new JPanel(new GridLayout(2, 1));
+        JLabel borderDetailLabel = new JLabel("Border Detail", JLabel.CENTER);
+        JSlider borderDetailSlider = new JSlider(JSlider.HORIZONTAL, 2, 100, 100);
+        Hashtable labelTable = new Hashtable();
+        labelTable.put(2, new JLabel("Max") );
+        labelTable.put(100, new JLabel("Min") );
+        borderDetailSlider.setLabelTable( labelTable );
+        borderDetailSlider.setPaintLabels(true);
+        borderDetailSlider.addChangeListener(e-> drawingPad.setBorderDetail(borderDetailSlider.getValue()));
+        borderDetailPanel.add(borderDetailLabel);
+        borderDetailPanel.add(borderDetailSlider);
 
+        drawingButtons.add(clear);
+        drawingButtons.add(closeShape);
+        drawingButtons.add(finish);
 
-        JMenu drawingOptionsMenu = new JMenu("Drawing Options");
+        drawingButtons.add(borderDetailPanel);
 
-        JMenuItem setBorderDetail = new JMenuItem("Set Border Detail");
-        JMenuItem setBorderDeviation = new JMenuItem("Set Border Deviation");
+        drawingPad = new CountryDrawPad();
 
-        setBorderDetail.addActionListener(e -> {
-            int borderDetail = Integer.parseInt(JOptionPane.showInputDialog("Set Border Detail (4 (highest) - 100 (lowest))"));
-            drawingPad.setBORDER_DETAIL(borderDetail);
+        pane.add(drawingButtons, BorderLayout.NORTH);
+        pane.add(drawingPad, BorderLayout.CENTER);
+    }
+
+    private void addJMenuBar() {
+        JMenuBar bar = new JMenuBar();
+        JMenu controlMenu = new JMenu("Options");
+
+        JMenuItem cancel = new JMenuItem("Cancel");
+
+        cancel.addActionListener(e -> {
+            this.dispose();
         });
 
-        setBorderDeviation.addActionListener(e -> {
-            double borderDeviation = Double.parseDouble(JOptionPane.showInputDialog("Set Border Detail (0.0 (highest) - 1.0 (lowest))"));
-            drawingPad.setBORDER_DEVIATION(borderDeviation);
-        });
-
-        drawingOptionsMenu.add(setBorderDetail);
-        drawingOptionsMenu.add(setBorderDeviation);
-
-
-        controlMenu.add(clear);
-        controlMenu.add(closeShape);
-        controlMenu.add(newShape);
-        controlMenu.add(finish);
+        controlMenu.add(cancel);
 
         bar.add( controlMenu);
-        bar.add( drawingOptionsMenu);
 
         setJMenuBar(bar);
     }
-
-    public void setDrawingStatus(CountryDrawingEnum drawingStatus){
-        this.drawingStatus = drawingStatus;
-        this.drawingStatusLabel.setText(drawingStatus.getDescription());
-    }
-
-
 
 }
