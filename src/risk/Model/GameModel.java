@@ -18,6 +18,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -43,7 +44,6 @@ public class GameModel {
     private boolean isGameOver = false;
 
     public GameStatus gameStatus = GameStatus.TROOP_PLACEMENT_PHASE;
-
 
     /**
      * Used for the editor
