@@ -8,21 +8,26 @@ import risk.Action.Attack;
 import risk.Action.End;
 import risk.Action.Fortify;
 import risk.Enums.PlayerType;
-import risk.Listener.Events.ContinentEvent;
-import risk.Listener.Events.CountryEvent;
 import risk.Players.AIPlayer;
 import risk.Players.HumanPlayer;
 import risk.Players.Player;
 import risk.Players.RandomPlayer;
 import risk.View.Views.GameActionListener;
-import risk.View.Views.GameModelListener;
 
 import javax.swing.*;
+
 import java.io.*;
+
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class GameModel {
+
 
 
     public enum GameStatus {
@@ -35,15 +40,14 @@ public class GameModel {
 
     private List<Player> players;
     private final HashMap<String, Continent> continents;
+    private final DefaultListModel continentsDLM = new DefaultListModel();
     private final HashMap<String, Country> countries;
     private final List<GameActionListener> gameActionListeners;
-    private final List<GameModelListener> gameModelListeners;
 
     private int currentPlayer = 0;
     private boolean isGameOver = false;
 
     public GameStatus gameStatus = GameStatus.TROOP_PLACEMENT_PHASE;
-
 
     /**
      * Used for the editor
@@ -52,7 +56,6 @@ public class GameModel {
         continents = new HashMap<>();
         countries = new HashMap<>();
         gameActionListeners = new ArrayList<>();
-        gameModelListeners = new ArrayList<>();
         players = new ArrayList<>();
 
         // Add a few players
@@ -68,7 +71,6 @@ public class GameModel {
         continents = new HashMap<>();
         countries = new HashMap<>();
         gameActionListeners = new ArrayList<>();
-        gameModelListeners = new ArrayList<>();
 
         if (saved) {
             players = new ArrayList<>();
@@ -94,7 +96,6 @@ public class GameModel {
         continents = new HashMap<>();
         countries = new HashMap<>();
         gameActionListeners = new ArrayList<>();
-        gameModelListeners = new ArrayList<>();
 
         // Add the players
         for (int i = 0; i < numPlayers; i++) {
@@ -121,9 +122,7 @@ public class GameModel {
         for (int i = 0; i < json.size(); i++) {
             // The continent json contains the countries in it.
             Continent continent = new Continent(json.get(i).getAsJsonObject());
-
-            // Add the continent and all the countries
-            continents.put(continent.getName(), continent);
+            addContinent(continent);
 
             for (Country country : continent.getCountries()) {
                 countries.put(country.getName(), country);
@@ -282,37 +281,36 @@ public class GameModel {
 
     public void toggleNeighbourToCountry(Country country, Country neighbour){
         country.toggleNeighbour(neighbour);
-        gameModelListeners.forEach(it -> it.onEditCountry(new CountryEvent(this, country)));
+        updateEditor();
     }
-
 
     public void addCountry(Country country) {
         this.countries.put(country.getName(), country);
-        gameModelListeners.forEach(it -> it.onNewCountry(new CountryEvent(this, country)));
+        updateEditor();
     }
 
+    public void deleteCountry(Country country){
 
-    public void editCountry(Country country, ArrayList<String> names, Continent continent) {
-        country.setContinent(continent);
-        country.setNeighbourNames(names);
-        gameModelListeners.forEach(it -> it.onEditCountry(new CountryEvent(this, country)));
+
     }
+
 
     public void editCountryName(Country country, String countryName) {
         if (!countries.containsKey(countryName)) {
-            CountryEvent ce = new CountryEvent(this, country, country.getName());
             countries.remove(country.getName()); //remove old entry
             countries.put(countryName, country); //add new entry
             country.setName(countryName);
-            gameModelListeners.forEach(it -> it.onEditCountry(ce));
+            updateEditor();
         }
     }
 
-    public void editCountryContinent(Country country, String continentName){
-        if (continents.containsKey(continentName)){
-            country.setContinent(continents.get(continentName));
-            gameModelListeners.forEach(it -> it.onEditCountry(new CountryEvent(this, country)));
-        }
+    public void editCountryContinent(Country country, Continent continent){
+        if (country.getContinent()!=null)
+            country.getContinent().removeCountry(country);
+
+        country.setContinent(continent);
+        continent.addCountry(country);
+        updateEditor();
     }
 
     public Country getCountry(String countryName) {
@@ -354,8 +352,27 @@ public class GameModel {
         return players.get(currentPlayer);
     }
 
+
+
+
+
     public void addContinent(Continent continent) {
         this.continents.put(continent.getName(), continent);
+        continentsDLM.addElement(continent);
+        updateEditor();
+    }
+
+    public void deleteContinent(Continent continent){
+        this.continents.remove(continent.getName());
+        continentsDLM.removeElement(continent);
+        updateEditor();
+    }
+
+    public void editContinentProperties(Continent continent, String continentName, int continentBonus){
+        if (!continents.containsKey(continentName))
+            continent.setName(continentName);
+        continent.setContinentBonus(continentBonus);
+        updateEditor();
     }
 
     public Continent getContinent(String name) {
@@ -364,6 +381,10 @@ public class GameModel {
 
     public ArrayList<Continent> getContinents() {
         return new ArrayList<>(continents.values());
+    }
+
+    public DefaultListModel<Continent> getContinentListModel(){
+        return continentsDLM;
     }
 
     /**
@@ -395,16 +416,10 @@ public class GameModel {
         gameActionListeners.add(listener);
     }
 
-    public void addGameModelListener(GameModelListener listener) {
-        gameModelListeners.add(listener);
-    }
 
     public void updateEditor() {
-        gameModelListeners.forEach(it -> {
-            countries.values().forEach(country -> it.onNewCountry(new CountryEvent(this, country)));
-        });
+        gameActionListeners.forEach(it -> it.updateMap(this));
     }
-
 
     public void updateGame() {
         resetClickableCountries();

@@ -1,21 +1,12 @@
 package risk.Controller;
 
 import risk.View.Map.CountryPanel;
-import risk.View.MapCreator.EditableCountryPanel;
-import risk.View.MapCreator.MapEditorGUI;
-import risk.View.Views.GameActionListener;
-import risk.View.Views.GameModelListener;
 
 import risk.Model.*;
 
 import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.geom.Area;
-import java.util.*;
 
 abstract public class Controller implements MouseListener {
 

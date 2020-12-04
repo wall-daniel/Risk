@@ -130,6 +130,7 @@ public class Country {
         return neighbours;
     }
 
+
     public Player getPlayer() {
         return controlledBy;
     }
@@ -245,12 +246,9 @@ public class Country {
     public void addNeighbour(String countryName) {
         if (!neighbours.contains(countryName))
             neighbours.add(countryName);
-
-        System.out.println("ADDING: " + countryName);
     }
 
     public void removeNeighbour(String countryName){
-        System.out.println("REMOVING: " + countryName);
         neighbours.remove(countryName);
     }
 
