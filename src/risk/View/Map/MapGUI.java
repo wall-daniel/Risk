@@ -32,6 +32,22 @@ public class MapGUI extends JFrame {
         }
     }
 
+    public MapGUI(String filename) {
+        try {
+            GameModel gameModel = new GameModel(filename, true);
+            this.controller = new PlayerController(gameModel, this);
+            this.map = new Map(controller);
+            this.mapInformation = new MapInformation(controller);
+            gameModel.addActionListener(map);
+            gameModel.addActionListener(mapInformation);
+
+//            javax.swing.SwingUtilities.invokeLater(this::createAndShowGUI);
+            createAndShowGUI();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     private void createAndShowGUI() {
         addComponentToPane(getContentPane());
 
@@ -73,6 +89,15 @@ public class MapGUI extends JFrame {
 
         menu.add(quit);
 
+        JMenuItem save = new JMenuItem("Save");
+        save.addActionListener(e -> {
+            String filename = JOptionPane.showInputDialog(this, "Enter filename:");
+
+            if (filename == null) return;
+
+            controller.saveGame(filename);
+        });
+        menu.add(save);
 
         bar.add(menu);
 

@@ -1,5 +1,6 @@
 package risk.Players;
 
+import com.google.gson.JsonObject;
 import risk.Action.*;
 import risk.Enums.PlayerType;
 import risk.Model.Continent;
@@ -32,6 +33,9 @@ public class AIPlayer extends Player {
         super(name, index, playerType, gameModel);
     }
 
+    public AIPlayer(GameModel gameModel, JsonObject state) {
+        super(state, gameModel);
+    }
 
     /**
      * used to set the num troops to move in actionBuilder if a country is won in an attack

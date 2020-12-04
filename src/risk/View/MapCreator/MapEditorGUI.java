@@ -43,7 +43,7 @@ public class MapEditorGUI extends JFrame implements GameModelListener {
 
     public MapEditorGUI(String filename) {
         try {
-            GameModel gameModel = new GameModel(filename);
+            GameModel gameModel = new GameModel(filename, false);
             setup(gameModel);
         } catch (Exception e) {
             e.printStackTrace();
