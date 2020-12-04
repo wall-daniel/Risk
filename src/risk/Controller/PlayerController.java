@@ -82,4 +82,8 @@ public class PlayerController extends Controller implements ActionListener {
         gameModel.updateGame();
     }
 
+    public void saveGame(String filename) {
+        gameModel.saveGameState(filename);
+    }
+
 }

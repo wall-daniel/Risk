@@ -1,5 +1,6 @@
 package risk.Players;
 
+import com.google.gson.JsonObject;
 import risk.Action.*;
 import risk.Enums.PlayerType;
 import risk.Model.Country;
@@ -18,6 +19,10 @@ public class RandomPlayer extends Player {
         super(name, index, PlayerType.RANDOM_PLAYER, gameModel);
 
         random = new Random(System.currentTimeMillis());
+    }
+
+    public RandomPlayer(GameModel gameModel, JsonObject state) {
+        super(state, gameModel);
     }
 
     @Override

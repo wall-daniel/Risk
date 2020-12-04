@@ -1,5 +1,6 @@
 package risk.Players;
 
+import com.google.gson.JsonObject;
 import risk.Action.*;
 import risk.Action.Action;
 import risk.Enums.PlayerType;
@@ -11,6 +12,10 @@ import javax.swing.*;
 public class HumanPlayer extends Player {
     public HumanPlayer(String name, int index, GameModel gameModel) {
         super(name, index, PlayerType.HUMAN_PLAYER, gameModel);
+    }
+
+    public HumanPlayer(GameModel gameModel, JsonObject state) {
+        super(state, gameModel);
     }
 
     private int getIntegerInput(String msg, int min, int max){
