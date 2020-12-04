@@ -46,11 +46,11 @@ public class MainGUI extends JFrame {
 
     public void addComponentToPane(Container pane)  {
 
-        JPanel p = new JPanel(new GridLayout(3, 1));
+        JPanel p = new JPanel(new GridLayout(4, 1));
         p.setBorder(new EmptyBorder(100, 100, 100, 100));
 
         JButton newGame = new JButton("New Game");
-       // JButton loadGame = new JButton("Load Game");
+        JButton loadGame = new JButton("Load Game");
         JButton createMap = new JButton("Create New Map");
         JButton editMap = new JButton("Edit Map");
 
@@ -58,11 +58,11 @@ public class MainGUI extends JFrame {
             loadPlayMapOptions();
         });
 
-        /*
+
         loadGame.addActionListener(e -> {
             loadSaveOptions();
         });
-*/
+
         createMap.addActionListener(e -> {
             new MapEditorGUI();
             this.setVisible(false);
@@ -74,7 +74,7 @@ public class MainGUI extends JFrame {
 
 
         p.add(newGame);
-        //p.add(loadGame);
+        p.add(loadGame);
         p.add(createMap);
         p.add(editMap);
 
@@ -160,29 +160,20 @@ public class MainGUI extends JFrame {
     /**
      * displays saves from file in rows, select one
      */
-    /*
     private void loadSaveOptions() {
-        String gameNamesOptions [] = {"EarthGame1", "ItalyGame2", "ChickenGame3"};
-        //TODO have the controller get names of all saved games
-        //String gameNamesOptions [] = controller.getSavedGamesNames();
 
-        String gameName = (String)JOptionPane.showInputDialog(
+        String filename = (String)JOptionPane.showInputDialog(
                 this,
-                "Choose map:",
+                "Enter filename of saved game:",
                 "New Game",
-                JOptionPane.PLAIN_MESSAGE,
-                null,
-                gameNamesOptions,
-                "EarthGame1");
+                JOptionPane.PLAIN_MESSAGE);
 
-        MapGUI mapGUI = new MapGUI(6);
+        MapGUI mapGUI = new MapGUI(filename);
         //TODO the controller setup the man given the map name and the number of players
         //controller.setUpModel(gameName);
         //map.loadGame(); //loads the gameModel into the map
         this.dispose();
     }
-
-     */
 
     /**
      * displays maps from file in rows, select one

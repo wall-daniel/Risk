@@ -1,6 +1,7 @@
 package risk.Players;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import risk.Action.Action;
 import risk.Action.ActionBuilder;
@@ -180,6 +181,26 @@ public abstract class Player {
         player.add("countries", countryArray);
 
         return player;
+    }
+
+    public Player(JsonObject playerObj, GameModel gameModel) {
+        this.gameModel = gameModel;
+        name = playerObj.get("name").getAsString();
+        index = playerObj.get("index").getAsInt();
+        playerType = PlayerType.valueOf(playerObj.get("type").getAsString());
+        playerColor = PlayerColor.getPlayerColor(index);
+
+        JsonArray countries = playerObj.get("countries").getAsJsonArray();
+        countriesOwned = new ArrayList<>(countries.size());
+        actionBuilder = new ActionBuilder();
+
+        // Add each country to player and set country player and num armies.
+        for (JsonElement element : countries) {
+            JsonObject countryObj = element.getAsJsonObject();
+
+            Country country = gameModel.getCountry(countryObj.get("name").getAsString());
+            country.setPlayer(this, countryObj.get("armies").getAsInt());
+        }
     }
 
 }

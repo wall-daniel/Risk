@@ -63,13 +63,23 @@ public class GameModel {
     /**
      * Used for the editor
      */
-    public GameModel(String filename) throws FileNotFoundException {
+    public GameModel(String filename, boolean saved) throws FileNotFoundException {
         continents = new HashMap<>();
         countries = new HashMap<>();
         gameActionListeners = new ArrayList<>();
         gameModelListeners = new ArrayList<>();
 
-        loadMap(JsonParser.parseReader(new FileReader(filename)).getAsJsonArray());
+        if (saved) {
+            players = new ArrayList<>();
+            JsonObject savedGame = JsonParser.parseReader(new FileReader(filename)).getAsJsonObject();
+
+            loadMap(JsonParser.parseReader(new FileReader(savedGame.get("map_location").getAsString())).getAsJsonArray());
+            loadGameState(savedGame);
+
+            currentPlayer = savedGame.get("currentPlayer").getAsInt();
+        } else {
+            loadMap(JsonParser.parseReader(new FileReader(filename)).getAsJsonArray());
+        }
     }
 
     /**
@@ -120,6 +130,22 @@ public class GameModel {
         }
     }
 
+    private void loadGameState(JsonObject savedGame) {
+        savedGame.get("players").getAsJsonArray().forEach(e -> {
+            switch (PlayerType.valueOf(e.getAsJsonObject().get("type").getAsString())) {
+                case AI_PLAYER:
+                    players.add(new AIPlayer(this, e.getAsJsonObject()));
+                    break;
+                case HUMAN_PLAYER:
+                    players.add(new HumanPlayer(this, e.getAsJsonObject()));
+                    break;
+                case RANDOM_PLAYER:
+                    players.add(new RandomPlayer(this, e.getAsJsonObject()));
+                    break;
+            }
+        });
+    }
+
     public void saveMap(String filename) throws IOException {
         JsonArray json = new JsonArray();
 
@@ -160,7 +186,6 @@ public class GameModel {
         }
     }
 
-
     private int getInitialArmies(int numPlayers) {
         int INITIAL_ARMY_6_PLAYERS = 50;
         int INITIAL_ARMY_5_PLAYERS = 35;
@@ -184,7 +209,6 @@ public class GameModel {
     }
 
     public void startGame() {
-        currentPlayer = 0;
         gameStatus = GameStatus.TROOP_PLACEMENT_PHASE;
         players.get(currentPlayer).startTurn(getContinentBonuses(players.get(currentPlayer)));
         updateGame();
@@ -504,6 +528,7 @@ public class GameModel {
 
         // Add current player
         obj.addProperty("currentPlayer", currentPlayer);
+        obj.addProperty("map_location", "RiskMap.txt");
 
         return obj;
     }
