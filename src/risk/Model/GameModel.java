@@ -201,10 +201,12 @@ public class GameModel {
 
         Country start = tempCountries.get(0);
         start.visit();
-        validCountries.add(start.getName());
+        if (start.getContinent() != null) {
+            validCountries.add(start.getName());
+        }
 
         for (Country neighbour : getUnvisitedNeighbours(start)){
-            if (!validCountries.contains(neighbour)){
+            if (!validCountries.contains(neighbour) && neighbour.getContinent() != null){
                 neighbour.visit();
                 validCountries.add(neighbour.getName());
             }
