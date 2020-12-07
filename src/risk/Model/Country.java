@@ -17,6 +17,8 @@ public class Country {
     private List<String> neighbours;
     private Continent continent;
 
+    private boolean visited;
+
     private Polygon polygon;
 
     private Point labelPoint;
@@ -39,6 +41,7 @@ public class Country {
         this.name = name;
         this.polygon = polygon;
         neighbours = new ArrayList<>();
+        this.visited = false;
         this.labelPoint = labelPoint;
         this.layer = layer;
         clickable = false;
@@ -130,7 +133,6 @@ public class Country {
         return neighbours;
     }
 
-
     public Player getPlayer() {
         return controlledBy;
     }
@@ -179,6 +181,14 @@ public class Country {
     @Override
     public String toString() {
         return name;
+    }
+
+    public void visit() {
+        this.visited = true;
+    }
+
+    public boolean getVisited(){
+        return visited;
     }
 
 

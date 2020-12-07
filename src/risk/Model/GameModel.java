@@ -109,6 +109,10 @@ public class GameModel {
 
         // Setup the map with players
         setupMap();
+
+        if (!mapIsValid()){
+            
+        }
     }
 
     /**
@@ -181,6 +185,59 @@ public class GameModel {
                 currentArmies -= 1;
             }
         }
+    }
+
+    public boolean mapIsValid(){
+        ArrayList<String> tempCountryNames = getCountriesNames();
+        ArrayList<Country> tempCountries = new ArrayList<>();
+        ArrayList<String> validCountries = new ArrayList<>();
+
+        for (String countryName : tempCountryNames){
+            tempCountries.add(getCountry(countryName));
+        }
+
+        Country start = tempCountries.get(0);
+        start.visit();
+        if (start.getContinent() != null) {
+            validCountries.add(start.getName());
+        }
+
+        for (Country neighbour : getUnvisitedNeighbours(start)){
+            if (!validCountries.contains(neighbour) && neighbour.getContinent() != null){
+                neighbour.visit();
+                validCountries.add(neighbour.getName());
+            }
+        }
+
+        Stack<Country> stack = new Stack<Country>();
+        Country current = start;
+        stack.push(start);
+        while(!stack.isEmpty()) {
+            current = stack.pop();
+            current.visit();
+
+            for (Country neighbour : getUnvisitedNeighbours(current)){
+                stack.push(neighbour);
+            }
+
+        }
+
+        Collections.sort(tempCountryNames);
+        Collections.sort(validCountries);
+
+        return (tempCountryNames.equals(validCountries));
+    }
+
+
+    public List<Country> getUnvisitedNeighbours(Country c) {
+        List<Country> temp = new ArrayList<>();
+        for (String neighbourString : c.getNeighbours()){
+            Country neighbour = getCountry(neighbourString);
+            if (!neighbour.getVisited()){
+                temp.add(neighbour);
+            }
+        }
+        return temp;
     }
 
     private int getInitialArmies(int numPlayers) {
