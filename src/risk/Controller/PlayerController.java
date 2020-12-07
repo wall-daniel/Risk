@@ -12,8 +12,11 @@ import java.awt.event.MouseEvent;
 
 public class PlayerController extends Controller implements ActionListener {
 
+    private GameModel gameModel;
+
     public PlayerController(GameModel gameModel, JFrame view) {
-        super(gameModel, view);
+        super(view);
+        this.gameModel = gameModel;
     }
 
     @Override
@@ -69,6 +72,10 @@ public class PlayerController extends Controller implements ActionListener {
                     break;
             }
         }
+    }
+
+    public void startGame() {
+        gameModel.startGame();
     }
 
     @Override

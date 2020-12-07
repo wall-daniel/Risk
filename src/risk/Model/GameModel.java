@@ -28,8 +28,6 @@ import java.util.stream.Collectors;
 
 public class GameModel {
 
-
-
     public enum GameStatus {
         TROOP_PLACEMENT_PHASE,
         SELECT_ATTACKING_PHASE,
@@ -39,13 +37,11 @@ public class GameModel {
     }
 
     private List<Player> players;
-    private final HashMap<String, Continent> continents;
-    private final DefaultListModel continentsDLM = new DefaultListModel();
-    private final HashMap<String, Country> countries;
+    protected final HashMap<String, Continent> continents;
+    protected final HashMap<String, Country> countries;
     private final List<GameActionListener> gameActionListeners;
 
     private int currentPlayer = 0;
-    private boolean isGameOver = false;
 
     public GameStatus gameStatus = GameStatus.TROOP_PLACEMENT_PHASE;
 
@@ -123,7 +119,7 @@ public class GameModel {
         for (int i = 0; i < json.size(); i++) {
             // The continent json contains the countries in it.
             Continent continent = new Continent(json.get(i).getAsJsonObject());
-            addContinent(continent);
+            continents.put(continent.getName(), continent);
 
             for (Country country : continent.getCountries()) {
                 countries.put(country.getName(), country);
@@ -264,7 +260,6 @@ public class GameModel {
         }
     }
 
-
     /**
      * controller performs action, then game moves to next phase or next turn
      *
@@ -277,40 +272,6 @@ public class GameModel {
 
     public boolean donePlacingArmies() {
         return getCurrentPlayer().getPlaceableArmies() <= 0;
-    }
-
-    public void toggleNeighbourToCountry(Country country, Country neighbour){
-        country.toggleNeighbour(neighbour);
-        updateEditor();
-    }
-
-    public void addCountry(Country country) {
-        this.countries.put(country.getName(), country);
-        updateEditor();
-    }
-
-    public void deleteCountry(Country country){
-
-
-    }
-
-
-    public void editCountryName(Country country, String countryName) {
-        if (!countries.containsKey(countryName)) {
-            countries.remove(country.getName()); //remove old entry
-            countries.put(countryName, country); //add new entry
-            country.setName(countryName);
-            updateEditor();
-        }
-    }
-
-    public void editCountryContinent(Country country, Continent continent){
-        if (country.getContinent()!=null)
-            country.getContinent().removeCountry(country);
-
-        country.setContinent(continent);
-        continent.addCountry(country);
-        updateEditor();
     }
 
     public Country getCountry(String countryName) {
@@ -352,39 +313,12 @@ public class GameModel {
         return players.get(currentPlayer);
     }
 
-
-
-
-
-    public void addContinent(Continent continent) {
-        this.continents.put(continent.getName(), continent);
-        continentsDLM.addElement(continent);
-        updateEditor();
-    }
-
-    public void deleteContinent(Continent continent){
-        this.continents.remove(continent.getName());
-        continentsDLM.removeElement(continent);
-        updateEditor();
-    }
-
-    public void editContinentProperties(Continent continent, String continentName, int continentBonus){
-        if (!continents.containsKey(continentName))
-            continent.setName(continentName);
-        continent.setContinentBonus(continentBonus);
-        updateEditor();
-    }
-
     public Continent getContinent(String name) {
         return continents.get(name);
     }
 
     public ArrayList<Continent> getContinents() {
         return new ArrayList<>(continents.values());
-    }
-
-    public DefaultListModel<Continent> getContinentListModel(){
-        return continentsDLM;
     }
 
     /**

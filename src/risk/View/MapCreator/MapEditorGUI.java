@@ -4,6 +4,7 @@ import risk.Controller.EditorController;
 import risk.Enums.MapColor;
 import risk.Model.Continent;
 import risk.Model.Country;
+import risk.Model.EditableGameModel;
 import risk.Model.GameModel;
 import risk.View.Main.MainGUI;
 import risk.View.Map.CountryPanel;
@@ -35,14 +36,14 @@ public class MapEditorGUI extends JFrame implements GameActionListener {
 
 
     public MapEditorGUI(){
-        GameModel gameModel = new GameModel();
+        EditableGameModel gameModel = new EditableGameModel();
         this.mapName = JOptionPane.showInputDialog("Enter New Map Name");
         setup(gameModel);
     }
 
     public MapEditorGUI(String filename) {
         try {
-            GameModel gameModel = new GameModel(filename, false);
+            EditableGameModel gameModel = new EditableGameModel(filename);
             mapName = filename;
             setup(gameModel);
         } catch (Exception e) {
@@ -50,7 +51,7 @@ public class MapEditorGUI extends JFrame implements GameActionListener {
         }
     }
 
-    public void setup(GameModel gameModel){
+    public void setup(EditableGameModel gameModel){
         this.controller = new EditorController(gameModel, this);
         gameModel.addActionListener(this);
 
@@ -64,7 +65,7 @@ public class MapEditorGUI extends JFrame implements GameActionListener {
         return layeredPane;
     }
 
-    private void createAndShowGUI(GameModel gameModel) {
+    private void createAndShowGUI(EditableGameModel gameModel) {
         addComponentToPane(getContentPane(), gameModel);
 
         addJMenuBar();
@@ -83,7 +84,7 @@ public class MapEditorGUI extends JFrame implements GameActionListener {
         controller.updateEditor();
     }
 
-    public void addComponentToPane(Container pane, GameModel gameModel)  {
+    public void addComponentToPane(Container pane, EditableGameModel gameModel)  {
         layeredPane = new JLayeredPane();
         layeredPane.setLayout(null);
 
