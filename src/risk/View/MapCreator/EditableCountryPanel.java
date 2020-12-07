@@ -38,6 +38,11 @@ public class EditableCountryPanel extends CountryPanel implements MouseMotionLis
     }
 
     @Override
+    public void updateCountry(){
+        countryLabel.updateLabel(country.getName(), 0);
+    }
+
+    @Override
     public void paintComponent(Graphics g) {
         Graphics2D graphics2D = (Graphics2D) g.create();
         Polygon polygon = country.getPolygon();

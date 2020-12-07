@@ -87,15 +87,6 @@ public class GameModelTest {
         assertTrue(a.contains(testCountry1.getName()));
     }
 
-    @Test
-    public void editCountry() {
-        ArrayList<String> neighbours = new ArrayList<String>();
-        neighbours.add("Brasil");
-        neighbours.add("North Africa");
-        gm.editCountry(testCountry1, neighbours, testContinent1);
-        assertEquals(testCountry1.getNeighbours(), neighbours);
-        assertEquals(testCountry1.getContinent(), testContinent1);
-    }
 
 
     @Test

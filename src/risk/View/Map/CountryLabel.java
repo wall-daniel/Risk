@@ -20,7 +20,7 @@ public class CountryLabel extends JLabel {
         setVisible(true);
     }
 
-    public void updateArmies(String text, int armies) {
+    public void updateLabel(String text, int armies) {
         setText(text + " : " + armies);
         repaint();
     }

@@ -42,17 +42,10 @@ public class CountryPanel extends JPanel {
         add(countryLabel);
     }
 
-
     public void updateCountry(){
-        updateCountryLabel();
         color = country.getPlayer().getPlayerColor();
+        countryLabel.updateLabel(country.getName(), country.getArmies());
     }
-
-    public void updateCountryLabel(){
-        countryLabel.updateArmies(country.getName(), country.getArmies());
-    }
-
-
 
     public CountryLabel getCountryLabel(){
         return countryLabel;
@@ -82,5 +75,13 @@ public class CountryPanel extends JPanel {
     public void setColorClickable(){
         color = MapColor.CLICKABLE_COLOR.getColor();
     }
+
+    public void resetColor(){
+        if (country.getPlayer() == null)
+            color = PlayerColor.getRandomPlayerColor();
+        else
+            color = country.getPlayer().getPlayerColor();
+    }
+
 
 }

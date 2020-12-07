@@ -4,17 +4,23 @@ import risk.Model.Continent;
 import risk.Model.Country;
 import risk.Model.GameModel;
 import risk.View.MapCreator.EditableCountryPanel;
+import risk.View.MapCreator.MapEditorGUI;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Area;
 import java.util.ArrayList;
 
 public class EditorController extends Controller {
 
+    private Country selectedCountry;
+
     public EditorController(GameModel gameModel, JFrame view) {
         super(gameModel, view);
+        selectedCountry = null;
     }
 
     public void updateAllComponentLocations() {
@@ -32,9 +38,9 @@ public class EditorController extends Controller {
         gameModel.updateEditor();
     }
 
-    public void saveMap() {
+    public void saveMap(String fileName) {
         try {
-            gameModel.saveMap("RiskMap.txt");
+            gameModel.saveMap(fileName + ".txt");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -44,74 +50,31 @@ public class EditorController extends Controller {
         gameModel.addCountry(new Country(name, polygon));
     }
 
+    public void deleteCountry(Country country){
+        gameModel.deleteCountry(country);
+    }
+
+    public void editCountryName(Country country, String countryName){
+        gameModel.editCountryName(country, countryName);
+    }
+
+    public void editCountryContinent(Country country, Continent continent){
+        gameModel.editCountryContinent(country, continent);
+    }
+
     public void createNewContinent(String continentName, int continentBonus) {
         gameModel.addContinent(new Continent(continentName, continentBonus));
     }
 
-    public void editCountry(String countryName, ArrayList<Country> neighbours, Continent continent) {
-        // Get the neighbour names
-        ArrayList<String> names = new ArrayList<>();
-        neighbours.forEach(it -> names.add(it.getName()));
-
-        // Get the country and then edit it
-        for (Country c : gameModel.getCountries()) {
-            if (c.getName().equals(countryName)) {
-                gameModel.editCountry(c, names, continent);
-            }
-        }
+    public void deleteContinent(Continent continent){
+        gameModel.deleteContinent(continent);
     }
 
-    /**
-     * Edit the country's name, neighbours, and continent.
-     *
-     * @param clickedCountry, country clicked on
-     */
-    private void editCountryDetails(Country clickedCountry) {
-        JPanel countryInfoPanel = new JPanel(new GridLayout(2, 3));
-        countryInfoPanel.setPreferredSize(new Dimension(600,500));
-        JLabel countryNameLabel = new JLabel("Country Name");
-        JLabel neighboursLabel = new JLabel("Select Neighbours");
-        JLabel continentLabel = new JLabel("Select Continent");
+    public void editContinentProperties(Continent continent, String continentName, int continentBonus){
+        gameModel.editContinentProperties(continent, continentName, continentBonus);
 
-        JTextField countryNameTextField = new JTextField(clickedCountry.getName());
-
-        DefaultListModel<Country> countryListModel = new DefaultListModel<>();
-        gameModel.getCountries().forEach(e -> {
-            if (!e.getName().equals(clickedCountry.getName()))
-                countryListModel.addElement(e);
-        });
-
-        JList<Country> neighboursJList = new JList<>(countryListModel);
-        neighboursJList.setSelectionMode(DefaultListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        neighboursJList.setSelectedIndices(gameModel.getCurrentNeighboursOfCountry(clickedCountry));
-        JScrollPane neighboursScrollPane = new JScrollPane(neighboursJList);
-
-        DefaultListModel<Continent> continentListModel = new DefaultListModel<>();
-        gameModel.getContinents().forEach(continentListModel::addElement);
-
-        JList<Continent> continentJList = new JList<>(continentListModel);
-        continentJList.setSelectionMode(DefaultListSelectionModel.SINGLE_SELECTION);
-        if (gameModel.getCountry(clickedCountry.getName()).getContinent()!=null)
-            continentJList.setSelectedValue(clickedCountry.getContinent(), true);
-        JScrollPane continentsScrollPane = new JScrollPane(continentJList);
-
-
-        countryInfoPanel.add(countryNameLabel);
-        countryInfoPanel.add(neighboursLabel);
-        countryInfoPanel.add(continentLabel);
-
-        countryInfoPanel.add(countryNameTextField);
-        countryInfoPanel.add(neighboursScrollPane);
-        countryInfoPanel.add(continentsScrollPane);
-
-        JOptionPane.showMessageDialog(gameView, countryInfoPanel);
-
-        String name = countryNameTextField.getText();
-        ArrayList<Country> neighbours = neighboursJList.isSelectionEmpty() ? new ArrayList<>() : (ArrayList<Country>) neighboursJList.getSelectedValuesList();
-        Continent continent = continentJList.getSelectedValue();
-
-        editCountry(name, neighbours, continent);
     }
+
 
     @Override
     protected void countryClicked(MouseEvent mouseEvent) {
@@ -134,8 +97,25 @@ public class EditorController extends Controller {
         }
 
         // Make sure that it found a country
-        if (editableCountryPanel != null)
-            editCountryDetails(editableCountryPanel.getCountry());
+        if (editableCountryPanel != null) {
+            if (selectedCountry == null) {
+                System.out.println("selected: " + editableCountryPanel.getCountry());
+                ((MapEditorGUI) gameView).setCountryInformation(editableCountryPanel.getCountry());
+                selectedCountry = editableCountryPanel.getCountry();
+            } else if (selectedCountry == editableCountryPanel.getCountry()){
+                System.out.println("de-selected: " + editableCountryPanel.getCountry());
+                selectedCountry = null;
+                ((MapEditorGUI) gameView).resetCountryInformation();
+            }else if (((MapEditorGUI) gameView).isToggleNeighbours()){
+                System.out.println("neighbour: " + editableCountryPanel.getCountry());
+                gameModel.toggleNeighbourToCountry(selectedCountry, editableCountryPanel.getCountry());
+            } else {
+                System.out.println("select new country: " + editableCountryPanel.getCountry());
+                ((MapEditorGUI) gameView).setCountryInformation(editableCountryPanel.getCountry());
+                selectedCountry = editableCountryPanel.getCountry();
+                ((MapEditorGUI) gameView).resetToggleNeighbours();
+            }
+        }
     }
 
     public void updateNeighbours() {
@@ -163,5 +143,9 @@ public class EditorController extends Controller {
                 }
             }
         }
+
+        updateEditor();
     }
+
+
 }

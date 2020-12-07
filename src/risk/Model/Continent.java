@@ -10,8 +10,8 @@ import java.util.Set;
 // Not useful right now, but later for bonuses and gui will be.
 public class Continent {
 
-    private final String continentName;
-    private final int continentBonus;
+    private String continentName;
+    private int continentBonus;
     private Set<Country> countries;
 
     public Continent(String name, int bonus) {
@@ -80,4 +80,10 @@ public class Continent {
         countries = new HashSet<>(c);
     }
 
+    public void setName(String continentName) {
+        this.continentName = continentName;
+    }
+    public void setContinentBonus(int continentBonus) {
+        this.continentBonus = continentBonus;
+    }
 }
