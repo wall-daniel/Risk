@@ -75,7 +75,6 @@ public class CountryCreatorGUI extends JFrame {
     private void addJMenuBar() {
         JMenuBar bar = new JMenuBar();
         JMenu controlMenu = new JMenu("Options");
-
         JMenuItem cancel = new JMenuItem("Cancel");
 
         cancel.addActionListener(e -> {

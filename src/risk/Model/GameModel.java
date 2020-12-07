@@ -74,14 +74,14 @@ public class GameModel {
 
         if (saved) {
             players = new ArrayList<>();
-            JsonObject savedGame = JsonParser.parseReader(new FileReader(filename)).getAsJsonObject();
+            JsonObject savedGame = JsonParser.parseReader(new FileReader("saves/" + filename)).getAsJsonObject();
 
-            loadMap(JsonParser.parseReader(new FileReader(savedGame.get("map_location").getAsString())).getAsJsonArray());
+            loadMap(JsonParser.parseReader(new FileReader("maps/" + savedGame.get("map_location").getAsString())).getAsJsonArray());
             loadGameState(savedGame);
 
             currentPlayer = savedGame.get("currentPlayer").getAsInt();
         } else {
-            loadMap(JsonParser.parseReader(new FileReader(filename)).getAsJsonArray());
+            loadMap(JsonParser.parseReader(new FileReader("maps/" + filename)).getAsJsonArray());
         }
     }
 
@@ -91,7 +91,7 @@ public class GameModel {
      * @param numPlayers number of players that are playing the game
      * @throws FileNotFoundException when file is not found
      */
-    public GameModel(int numPlayers, String[] playerNames, PlayerType[] playerTypes) throws FileNotFoundException {
+    public GameModel(String mapName, int numPlayers, String[] playerNames, PlayerType[] playerTypes) throws FileNotFoundException {
         players = new ArrayList<>(numPlayers);
         continents = new HashMap<>();
         countries = new HashMap<>();
@@ -108,7 +108,8 @@ public class GameModel {
         }
 
         // Load the map
-        loadMap(JsonParser.parseReader(new FileReader("RiskMap.txt")).getAsJsonArray());
+
+        loadMap(JsonParser.parseReader(new FileReader("maps/" + mapName)).getAsJsonArray());
 
         // Setup the map with players
         setupMap();
