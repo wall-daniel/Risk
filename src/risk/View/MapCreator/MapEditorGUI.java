@@ -34,7 +34,6 @@ public class MapEditorGUI extends JFrame implements GameActionListener {
 
     private JScrollPane continentScroll;
 
-
     public MapEditorGUI(){
         EditableGameModel gameModel = new EditableGameModel();
         this.mapName = JOptionPane.showInputDialog("Enter New Map Name");
@@ -221,8 +220,6 @@ public class MapEditorGUI extends JFrame implements GameActionListener {
 
     @Override
     public void updateMap(GameModel gameModel) {
-        System.out.println("UPDATE MAP");
-
         //handling new/update of countries
         for (Country country : gameModel.getCountries()){
             if (countryList.containsKey(country)){ //update country

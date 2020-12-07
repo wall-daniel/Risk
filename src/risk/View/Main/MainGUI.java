@@ -10,27 +10,19 @@ import risk.View.MapCreator.MapEditorGUI;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class MainGUI extends JFrame {
 
-    private static MapGUI mapGUI;
-
     public static void main(String args[]){
-
-
         new MainGUI();
     }
 
-
-
-
-
     public MainGUI(){
         super("Risk");
-
-
-
-        javax.swing.SwingUtilities.invokeLater(() -> createAndShowGUI());
+        javax.swing.SwingUtilities.invokeLater(this::createAndShowGUI);
     }
 
     private void createAndShowGUI() {
@@ -86,29 +78,12 @@ public class MainGUI extends JFrame {
      * enter number of players
      */
     private void loadPlayMapOptions() {
-
-
-
-        String mapNamesOptions [] = {"Earth", "Italy", "Chicken"};
-        //TODO have the controller getMapNames
-        //String mapNamesOptions [] = controller.getMapNames();
-
-        /*
-        String mapName = (String)JOptionPane.showInputDialog(
-                this,
-                "Choose map: (Just placeholder)",
-                "New Game",
-                JOptionPane.PLAIN_MESSAGE,
-                null,
-                mapNamesOptions,
-                "Earth");
-        */
-
+        String mapName = getFileName("maps");
 
         JPanel playerOptionsMainPanel = new JPanel(new GridLayout(7, 1));
 
         //num players set up
-        String numPlayersOptions[] = {"2" , "3" , "4" , "5", "6"};
+        String[] numPlayersOptions = {"2" , "3" , "4" , "5", "6"};
         JComboBox numPlayersInput = new JComboBox(numPlayersOptions);
         playerOptionsMainPanel.add(numPlayersInput);
 
@@ -149,29 +124,18 @@ public class MainGUI extends JFrame {
             playerTypes[i] = PlayerType.valueOf(playerTypeInputs[i].getSelectedItem().toString());
         }
 
-        mapGUI = new MapGUI(numPlayers, playerNames, playerTypes);
+        new MapGUI(mapName, numPlayers, playerNames, playerTypes);
         this.dispose();
     }
 
-    public static MapGUI getMapGUI(){
-        return mapGUI;
-    }
 
     /**
      * displays saves from file in rows, select one
      */
     private void loadSaveOptions() {
+        String saveName = getFileName("saves");
 
-        String filename = (String)JOptionPane.showInputDialog(
-                this,
-                "Enter filename of saved game:",
-                "New Game",
-                JOptionPane.PLAIN_MESSAGE);
-
-        MapGUI mapGUI = new MapGUI(filename);
-        //TODO the controller setup the man given the map name and the number of players
-        //controller.setUpModel(gameName);
-        //map.loadGame(); //loads the gameModel into the map
+        new MapGUI(saveName);
         this.dispose();
     }
 
@@ -179,14 +143,32 @@ public class MainGUI extends JFrame {
      * displays maps from file in rows, select one
      */
     private void loadMapOptions() {
+        String saveName = getFileName("maps");
 
-        String filename = JOptionPane.showInputDialog(
-                this,
-                "Enter map filename:",
-                JOptionPane.PLAIN_MESSAGE
-        );
-
-        MapEditorGUI mapEditorGUI = new MapEditorGUI(filename);
+        new MapEditorGUI(saveName);
         this.dispose();
+    }
+
+    private String getFileName(String folder){
+        File [] files = new File(folder).listFiles();
+        if (files.length==0){
+            JOptionPane.showMessageDialog(this,"No files");
+            System.exit(0);
+        }
+
+        String [] saveNames = new String[files.length];
+
+        for (int i = 0; i < files.length; i++)
+            saveNames[i] = files[i].getName();
+        String saveName = (String)JOptionPane.showInputDialog(
+                this,
+                "Choose map:",
+                "Load Saved Game",
+                JOptionPane.PLAIN_MESSAGE,
+                null,
+                saveNames,
+                saveNames[0]);
+
+        return saveName;
     }
 }
