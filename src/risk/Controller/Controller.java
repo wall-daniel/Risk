@@ -10,18 +10,11 @@ import java.awt.event.MouseListener;
 
 abstract public class Controller implements MouseListener {
 
-    protected GameModel gameModel;
-
     protected JFrame gameView;
 
 
-    public Controller(GameModel gameModel, JFrame view) {
-        this.gameModel = gameModel;
+    public Controller(JFrame view) {
         this.gameView = view;
-    }
-
-    public GameModel getGameModel() {
-        return gameModel;
     }
 
 
@@ -49,10 +42,6 @@ abstract public class Controller implements MouseListener {
 
     @Override
     public void mouseExited(MouseEvent mouseEvent) { }
-
-    public void startGame() {
-        gameModel.startGame();
-    }
 
     abstract protected void countryClicked(MouseEvent mouseEvent);
 }
