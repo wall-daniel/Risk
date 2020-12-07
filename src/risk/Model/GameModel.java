@@ -77,6 +77,7 @@ public class GameModel {
             loadGameState(savedGame);
 
             currentPlayer = savedGame.get("currentPlayer").getAsInt();
+            gameStatus = GameStatus.valueOf(savedGame.get("phase").getAsString());
         } else {
             loadMap(JsonParser.parseReader(new FileReader(filename)).getAsJsonArray());
         }
@@ -209,7 +210,6 @@ public class GameModel {
     }
 
     public void startGame() {
-        gameStatus = GameStatus.TROOP_PLACEMENT_PHASE;
         players.get(currentPlayer).startTurn(getContinentBonuses(players.get(currentPlayer)));
         updateGame();
 
@@ -528,7 +528,23 @@ public class GameModel {
 
         // Add current player
         obj.addProperty("currentPlayer", currentPlayer);
+        obj.addProperty("phase", gameStatus.toString());
         obj.addProperty("map_location", "RiskMap.txt");
+
+        // Save game phase, but only one of 3 different ones to avoid nulls when loading
+        switch (gameStatus) {
+            case TROOP_PLACEMENT_PHASE:
+                obj.addProperty("phase", GameStatus.TROOP_PLACEMENT_PHASE.toString());
+                break;
+            case SELECT_ATTACKING_PHASE:
+            case SELECT_DEFENDING_PHASE:
+                obj.addProperty("phase", GameStatus.SELECT_ATTACKING_PHASE.toString());
+                break;
+            case SELECT_TROOP_MOVING_FROM_PHASE:
+            case SELECT_TROOP_MOVING_TO_PHASE:
+                obj.addProperty("phase", GameStatus.SELECT_TROOP_MOVING_TO_PHASE.toString());
+                break;
+        }
 
         return obj;
     }
