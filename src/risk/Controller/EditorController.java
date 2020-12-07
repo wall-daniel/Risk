@@ -41,7 +41,7 @@ public class EditorController extends Controller {
 
     public void saveMap(String fileName) {
         try {
-            gameModel.saveMap(fileName + ".txt");
+            gameModel.saveMap("maps/"+fileName + ".txt");
         } catch (Exception e) {
             e.printStackTrace();
         }

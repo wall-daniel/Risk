@@ -111,9 +111,7 @@ public class GameModel {
         // Setup the map with players
         setupMap();
 
-        if (!mapIsValid()){
-            
-        }
+
     }
 
     /**
@@ -149,6 +147,12 @@ public class GameModel {
     }
 
     public void saveMap(String filename) throws IOException {
+        if (!mapIsValid()){
+            
+
+        }
+
+
         JsonArray json = new JsonArray();
 
         this.continents.values().forEach(continent -> json.add(continent.toJson()));
@@ -583,7 +587,7 @@ public class GameModel {
      */
     public void saveGameState(String filename) {
         try {
-            FileWriter fileWriter = new FileWriter(new File(filename));
+            FileWriter fileWriter = new FileWriter(new File("saves/"+filename));
             fileWriter.write(getGameStateJson().toString());
             fileWriter.close();
         } catch (Exception e) {
