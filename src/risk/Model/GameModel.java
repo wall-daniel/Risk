@@ -13,6 +13,7 @@ import risk.Players.AIPlayer;
 import risk.Players.HumanPlayer;
 import risk.Players.Player;
 import risk.Players.RandomPlayer;
+import risk.View.Main.MainGUI;
 import risk.View.Views.GameActionListener;
 
 import javax.swing.*;
@@ -202,14 +203,12 @@ public class GameModel {
             valid = false;
         }
 
-
         //every country has a continent
         for (Country country : countries.values())
             if (country.getContinent()==null){
                 errorMessage+= country.getName() + " needs a continent assigned to it\n";
                 valid = false;
             }
-
 
         //every country is connected to other country
         for (Country country : countries.values()){
@@ -222,7 +221,7 @@ public class GameModel {
             }
         }
 
-        if (valid){
+        if (!valid){
             String finalErrorMessage = errorMessage;
             gameActionListeners.forEach(it -> it.displayMessage(finalErrorMessage));
         }

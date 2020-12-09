@@ -37,8 +37,6 @@ public class EditableGameModel extends GameModel {
         }
     }
 
-
-
     public void addCountry(Country country) {
         this.countries.put(country.getName(), country);
         updateEditor();
