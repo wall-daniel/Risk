@@ -224,8 +224,11 @@ public class GameModel {
             }
         }
 
-        String finalErrorMessage = errorMessage;
-        gameActionListeners.forEach(it -> it.displayMessage(finalErrorMessage));
+        if (valid){
+            String finalErrorMessage = errorMessage;
+            gameActionListeners.forEach(it -> it.displayMessage(finalErrorMessage));
+        }
+
         return valid;
     }
 
