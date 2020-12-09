@@ -2,6 +2,7 @@ package risk.Model;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import risk.Enums.StringGlobals;
 import risk.Players.Player;
 
 import java.awt.*;
@@ -53,29 +54,29 @@ public class Country {
      * @param json, contains info about the name, neighoburs, and the polygon points
      */
     public Country(JsonObject json) {
-        this.name = json.get("name").getAsString();
+        this.name = json.get(StringGlobals.countryName).getAsString();
 
         // Get the neighbours
-        JsonArray arr = json.get("neighbours").getAsJsonArray();
+        JsonArray arr = json.get(StringGlobals.countryNeighbours).getAsJsonArray();
         this.neighbours = new ArrayList<>(arr.size());
         arr.forEach((item) -> neighbours.add(item.getAsString()));
 
         // Get the points
         polygon = new Polygon();
-        JsonArray pointArr = json.get("points").getAsJsonArray();
+        JsonArray pointArr = json.get(StringGlobals.countryPoints).getAsJsonArray();
         for (int i = 0; i < pointArr.size(); i++) {
             JsonObject point = pointArr.get(i).getAsJsonObject();
-            polygon.addPoint(point.get("x").getAsInt(), point.get("y").getAsInt());
+            polygon.addPoint(point.get(StringGlobals.countryX).getAsInt(), point.get(StringGlobals.countryY).getAsInt());
         }
 
         // Get where it is in on the screen, the label position, and the layer
-        JsonObject polygonPoint = json.get("polygonPoint").getAsJsonObject();
-        this.polygonPoint = new Point(polygonPoint.get("x").getAsInt(), polygonPoint.get("y").getAsInt());
+        JsonObject polygonPoint = json.get(StringGlobals.countryPolygonPoint).getAsJsonObject();
+        this.polygonPoint = new Point(polygonPoint.get(StringGlobals.countryX).getAsInt(), polygonPoint.get(StringGlobals.countryY).getAsInt());
 
-        JsonObject labelPoint = json.get("labelPoint").getAsJsonObject();
-        this.labelPoint = new Point(labelPoint.get("x").getAsInt(), labelPoint.get("y").getAsInt());
+        JsonObject labelPoint = json.get(StringGlobals.countryLabelPoint).getAsJsonObject();
+        this.labelPoint = new Point(labelPoint.get(StringGlobals.countryX).getAsInt(), labelPoint.get(StringGlobals.countryY).getAsInt());
 
-        this.layer = json.get("layer").getAsInt();
+        this.layer = json.get(StringGlobals.countryLayer).getAsInt();
         clickable = false;
     }
 
@@ -199,34 +200,34 @@ public class Country {
         JsonObject json = new JsonObject();
 
         // Add country name
-        json.addProperty("name", name);
+        json.addProperty(StringGlobals.countryName, name);
 
         // Add the neighbours
         JsonArray arr = new JsonArray();
         neighbours.forEach(arr::add);
-        json.add("neighbours", arr);
+        json.add(StringGlobals.countryNeighbours, arr);
 
         // Add the points
         JsonArray pointArr = new JsonArray();
         for (int i = 0; i < polygon.npoints; i++) {
             JsonObject point = new JsonObject();
-            point.addProperty("x", polygon.xpoints[i]);
-            point.addProperty("y", polygon.ypoints[i]);
+            point.addProperty(StringGlobals.countryX, polygon.xpoints[i]);
+            point.addProperty(StringGlobals.countryY, polygon.ypoints[i]);
             pointArr.add(point);
         }
-        json.add("points", pointArr);
+        json.add(StringGlobals.countryPoints, pointArr);
 
         JsonObject polygonPoint = new JsonObject();
-        polygonPoint.addProperty("x", this.polygonPoint.x);
-        polygonPoint.addProperty("y", this.polygonPoint.y);
-        json.add("polygonPoint", polygonPoint);
+        polygonPoint.addProperty(StringGlobals.countryX, this.polygonPoint.x);
+        polygonPoint.addProperty(StringGlobals.countryY, this.polygonPoint.y);
+        json.add(StringGlobals.countryPolygonPoint, polygonPoint);
 
         JsonObject labelPoint = new JsonObject();
-        labelPoint.addProperty("x", this.labelPoint.x);
-        labelPoint.addProperty("y", this.labelPoint.y);
-        json.add("labelPoint", labelPoint);
+        labelPoint.addProperty(StringGlobals.countryX, this.labelPoint.x);
+        labelPoint.addProperty(StringGlobals.countryY, this.labelPoint.y);
+        json.add(StringGlobals.countryLabelPoint, labelPoint);
 
-        json.addProperty("layer", layer);
+        json.addProperty(StringGlobals.countryLayer, layer);
 
         return json;
     }

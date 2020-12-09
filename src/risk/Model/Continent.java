@@ -2,12 +2,12 @@ package risk.Model;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import risk.Enums.StringGlobals;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-// Not useful right now, but later for bonuses and gui will be.
 public class Continent {
 
     private String continentName;
@@ -23,12 +23,12 @@ public class Continent {
 
     public Continent(JsonObject json) {
         // Get name
-        this.continentName = json.get("name").getAsString();
-        this.continentBonus = json.get("bonus").getAsInt();
+        this.continentName = json.get(StringGlobals.continentName).getAsString();
+        this.continentBonus = json.get(StringGlobals.continentBonus).getAsInt();
 
         // Get countries
         this.countries = new HashSet<>();
-        JsonArray countryArr = json.get("countries").getAsJsonArray();
+        JsonArray countryArr = json.get(StringGlobals.countries).getAsJsonArray();
         countryArr.forEach(country -> {
             Country c = new Country(country.getAsJsonObject());
             c.setContinent(this);
@@ -48,13 +48,13 @@ public class Continent {
         JsonObject json = new JsonObject();
 
         // Set continent values
-        json.addProperty("name", continentName);
-        json.addProperty("bonus", continentBonus);
+        json.addProperty(StringGlobals.continentName, continentName);
+        json.addProperty(StringGlobals.continentBonus, continentBonus);
 
         // Add the countries using their own initialization
         JsonArray countryArr = new JsonArray();
         countries.forEach(it -> countryArr.add(it.toJson()));
-        json.add("countries", countryArr);
+        json.add(StringGlobals.countries, countryArr);
 
         return json;
     }

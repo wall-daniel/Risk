@@ -3,6 +3,7 @@ package risk.View.Main;
 import risk.Controller.Controller;
 import risk.Enums.MapColor;
 import risk.Enums.PlayerType;
+import risk.Enums.StringGlobals;
 import risk.Model.GameModel;
 import risk.View.Map.MapGUI;
 import risk.View.MapCreator.MapEditorGUI;
@@ -78,7 +79,7 @@ public class MainGUI extends JFrame {
      * enter number of players
      */
     private void loadPlayMapOptions() {
-        String mapName = getFileName("maps");
+        String mapName = getFileName(StringGlobals.mapsFolder);
 
         JPanel playerOptionsMainPanel = new JPanel(new GridLayout(7, 1));
 
@@ -133,7 +134,7 @@ public class MainGUI extends JFrame {
      * displays saves from file in rows, select one
      */
     private void loadSaveOptions() {
-        String saveName = getFileName("saves");
+        String saveName = getFileName(StringGlobals.savesFolder);
 
         new MapGUI(saveName);
         this.dispose();
@@ -143,7 +144,7 @@ public class MainGUI extends JFrame {
      * displays maps from file in rows, select one
      */
     private void loadMapOptions() {
-        String saveName = getFileName("maps");
+        String saveName = getFileName(StringGlobals.mapsFolder);
 
         new MapEditorGUI(saveName);
         this.dispose();

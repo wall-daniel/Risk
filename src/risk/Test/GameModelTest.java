@@ -21,6 +21,9 @@ public class GameModelTest {
     private Country testCountry1;
     private Country testCountry2;
     private Country testCountry3;
+    private Country testCountry4;
+    private Country testCountry5;
+    private Country testCountry6;
     private Continent testContinent1;
 
     @Before
@@ -28,7 +31,11 @@ public class GameModelTest {
         this.gm = new EditableGameModel();
         testCountry1 = new Country("TestCountry", new Polygon(new int[] {0, 5, 28}, new int[] {0, 0, 56}, 3), new Point(3, 23), 1);
         testCountry2 = new Country("TestCountry2", new Polygon(new int[] {50, 5, 28}, new int[] {0, 25, 56}, 3), new Point(3, 23), 2);
-        testCountry3 = new Country("TestCountry3", new Polygon(new int[] {0, 5, 68}, new int[] {100, 0, 56}, 3), new Point(3, 23), 3);
+        testCountry3 = new Country("TestCountry3", new Polygon(new int[] {324, 4, 168}, new int[] {100, 0, 56}, 3), new Point(3, 23), 3);
+        testCountry4 = new Country("TestCountry4", new Polygon(new int[] {42, 54, 68}, new int[] {100, 30, 96}, 3), new Point(3, 23), 4);
+        testCountry5 = new Country("TestCountry5", new Polygon(new int[] {40, 5, 18}, new int[] {130, 0, 36}, 3), new Point(3, 23), 5);
+        testCountry6 = new Country("TestCountry6", new Polygon(new int[] {31, 46, 36}, new int[] {110, 0, 26}, 3), new Point(3, 23), 6);
+
         testContinent1 = new Continent("TestContinent", 5);
     }
 
@@ -71,16 +78,6 @@ public class GameModelTest {
     }
 
     @Test
-    public void saveMap() throws IOException {
-        //TODO currently only checks that the file has been created
-        gm.saveMap("testtest.txt");
-        File file = new File("testtest.txt");
-        assertNotNull(file);
-        file.delete();
-
-    }
-
-    @Test
     public void getCountriesNames() {
         gm.addCountry(testCountry1);
         ArrayList<String> a = gm.getCountriesNames();
@@ -95,6 +92,17 @@ public class GameModelTest {
         assertEquals(0, gm.getCurrentPlayer().getIndex());
         assertEquals(GameModel.GameStatus.TROOP_PLACEMENT_PHASE, gm.gameStatus);
         assertTrue(gm.getCurrentPlayer().getPlaceableArmies() > 0);
+    }
+
+
+    @Test
+    public void mapIsValid(){
+        gm.addCountry(testCountry1);
+        gm.addCountry(testCountry2);
+        gm.addCountry(testCountry3);
+        gm.addCountry(testCountry4);
+
+
     }
 
     @Test

@@ -1,5 +1,6 @@
 package risk.Controller;
 
+import risk.Enums.StringGlobals;
 import risk.Model.Continent;
 import risk.Model.Country;
 import risk.Model.EditableGameModel;
@@ -41,7 +42,7 @@ public class EditorController extends Controller {
 
     public void saveMap(String fileName) {
         try {
-            gameModel.saveMap("maps/"+fileName + ".txt");
+            gameModel.saveMap(StringGlobals.mapsFolder + fileName + ".txt");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -49,14 +50,6 @@ public class EditorController extends Controller {
 
     public void createNewCountry(String name, Polygon polygon) {
         gameModel.addCountry(new Country(name, polygon));
-    }
-
-    public void deleteCountry(Country country) {
-        gameModel.deleteCountry(country);
-    }
-
-    public void editCountryName(Country country, String countryName) {
-        gameModel.editCountryName(country, countryName);
     }
 
     public void editCountryContinent(Country country, Continent continent) {
@@ -100,18 +93,14 @@ public class EditorController extends Controller {
         // Make sure that it found a country
         if (editableCountryPanel != null) {
             if (selectedCountry == null) {
-                System.out.println("selected: " + editableCountryPanel.getCountry());
                 ((MapEditorGUI) gameView).setCountryInformation(editableCountryPanel.getCountry());
                 selectedCountry = editableCountryPanel.getCountry();
             } else if (selectedCountry == editableCountryPanel.getCountry()) {
-                System.out.println("de-selected: " + editableCountryPanel.getCountry());
                 selectedCountry = null;
                 ((MapEditorGUI) gameView).resetCountryInformation();
             } else if (((MapEditorGUI) gameView).isToggleNeighbours()) {
-                System.out.println("neighbour: " + editableCountryPanel.getCountry());
                 gameModel.toggleNeighbourToCountry(selectedCountry, editableCountryPanel.getCountry());
             } else {
-                System.out.println("select new country: " + editableCountryPanel.getCountry());
                 ((MapEditorGUI) gameView).setCountryInformation(editableCountryPanel.getCountry());
                 selectedCountry = editableCountryPanel.getCountry();
                 ((MapEditorGUI) gameView).resetToggleNeighbours();

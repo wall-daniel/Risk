@@ -8,6 +8,7 @@ import risk.Action.Attack;
 import risk.Action.End;
 import risk.Action.Fortify;
 import risk.Enums.PlayerType;
+import risk.Enums.StringGlobals;
 import risk.Players.AIPlayer;
 import risk.Players.HumanPlayer;
 import risk.Players.Player;
@@ -45,8 +46,9 @@ public class GameModel {
 
     public GameStatus gameStatus = GameStatus.TROOP_PLACEMENT_PHASE;
 
+    public String mapName;
     /**
-     * Used for the editor
+     * Used for new/existing map in editor
      */
     public GameModel() {
         continents = new HashMap<>();
@@ -61,29 +63,27 @@ public class GameModel {
     }
 
     /**
-     * Used for the editor
+     * Used for loading saved game
      */
-    public GameModel(String filename, boolean saved) throws FileNotFoundException {
+    public GameModel(String filename) throws FileNotFoundException {
         continents = new HashMap<>();
         countries = new HashMap<>();
         gameActionListeners = new ArrayList<>();
 
-        if (saved) {
-            players = new ArrayList<>();
-            JsonObject savedGame = JsonParser.parseReader(new FileReader("saves/" + filename)).getAsJsonObject();
+        players = new ArrayList<>();
+        JsonObject savedGame = JsonParser.parseReader(new FileReader(StringGlobals.savesFolder + filename)).getAsJsonObject();
+        this.mapName = StringGlobals.mapsFolder + savedGame.get(StringGlobals.gamemodelMapLocation).getAsString();
 
-            loadMap(JsonParser.parseReader(new FileReader("maps/" + savedGame.get("map_location").getAsString())).getAsJsonArray());
-            loadGameState(savedGame);
+        loadMap(JsonParser.parseReader(new FileReader(mapName)).getAsJsonArray());
+        loadGameState(savedGame);
 
-            currentPlayer = savedGame.get("currentPlayer").getAsInt();
-            gameStatus = GameStatus.valueOf(savedGame.get("phase").getAsString());
-        } else {
-            loadMap(JsonParser.parseReader(new FileReader("maps/" + filename)).getAsJsonArray());
-        }
+        currentPlayer = savedGame.get(StringGlobals.gamemodelCurrentPlayer).getAsInt();
+        gameStatus = GameStatus.valueOf(savedGame.get(StringGlobals.gamemodelPhase).getAsString());
+
     }
 
     /**
-     * Used for the game.
+     * Used for new game.
      *
      * @param numPlayers number of players that are playing the game
      * @throws FileNotFoundException when file is not found
@@ -93,6 +93,7 @@ public class GameModel {
         continents = new HashMap<>();
         countries = new HashMap<>();
         gameActionListeners = new ArrayList<>();
+        this.mapName = mapName;
 
         // Add the players
         for (int i = 0; i < numPlayers; i++) {
@@ -105,19 +106,17 @@ public class GameModel {
         }
 
         // Load the map
-
-        loadMap(JsonParser.parseReader(new FileReader("maps/" + mapName)).getAsJsonArray());
+        loadMap(JsonParser.parseReader(new FileReader(StringGlobals.mapsFolder + mapName)).getAsJsonArray());
 
         // Setup the map with players
         setupMap();
-
-
     }
+
 
     /**
      * @param json contains the continents and countries for the map
      */
-    private void loadMap(JsonArray json) {
+    protected void loadMap(JsonArray json) {
         // Loop through every continent
         for (int i = 0; i < json.size(); i++) {
             // The continent json contains the countries in it.
@@ -130,9 +129,13 @@ public class GameModel {
         }
     }
 
+    public void addContinent(Continent continent) {
+        this.continents.put(continent.getName(), continent);
+    }
+
     private void loadGameState(JsonObject savedGame) {
-        savedGame.get("players").getAsJsonArray().forEach(e -> {
-            switch (PlayerType.valueOf(e.getAsJsonObject().get("type").getAsString())) {
+        savedGame.get(StringGlobals.gamemodelPlayers).getAsJsonArray().forEach(e -> {
+            switch (PlayerType.valueOf(e.getAsJsonObject().get(StringGlobals.playerType).getAsString())) {
                 case AI_PLAYER:
                     players.add(new AIPlayer(this, e.getAsJsonObject()));
                     break;
@@ -148,10 +151,9 @@ public class GameModel {
 
     public void saveMap(String filename) throws IOException {
         if (!mapIsValid()){
-            
-
+            System.out.println("Map is invalid");
+            return;
         }
-
 
         JsonArray json = new JsonArray();
 
@@ -193,57 +195,52 @@ public class GameModel {
     }
 
     public boolean mapIsValid(){
-        ArrayList<String> tempCountryNames = getCountriesNames();
-        ArrayList<Country> tempCountries = new ArrayList<>();
-        ArrayList<String> validCountries = new ArrayList<>();
+        String errorMessage = "";
+        boolean valid = true;
 
-        for (String countryName : tempCountryNames){
-            tempCountries.add(getCountry(countryName));
+        //minimum 6 countries
+        if (countries.size() < 6){
+            errorMessage+="Needs at least 6 countries\n";
+            valid = false;
         }
 
-        Country start = tempCountries.get(0);
-        start.visit();
-        if (start.getContinent() != null) {
-            validCountries.add(start.getName());
-        }
 
-        for (Country neighbour : getUnvisitedNeighbours(start)){
-            if (!validCountries.contains(neighbour) && neighbour.getContinent() != null){
-                neighbour.visit();
-                validCountries.add(neighbour.getName());
+        //every country has a continent
+        for (Country country : countries.values())
+            if (country.getContinent()==null){
+                errorMessage+= country.getName() + " needs a continent assigned to it\n";
+                valid = false;
+            }
+
+
+        //every country is connected to other country
+        for (Country country : countries.values()){
+            HashMap<String, Country> ss = new HashMap<>();
+            ss.put(country.getName(), country);
+            ArrayList<String> list = getCountriesConnected(country, ss);
+            if (list.size() < countries.size()) {
+                errorMessage+= country.getName() + " is not connected to every country\n";
+                valid = false;
             }
         }
 
-        Stack<Country> stack = new Stack<Country>();
-        Country current = start;
-        stack.push(start);
-        while(!stack.isEmpty()) {
-            current = stack.pop();
-            current.visit();
-
-            for (Country neighbour : getUnvisitedNeighbours(current)){
-                stack.push(neighbour);
-            }
-
-        }
-
-        Collections.sort(tempCountryNames);
-        Collections.sort(validCountries);
-
-        return (tempCountryNames.equals(validCountries));
+        String finalErrorMessage = errorMessage;
+        gameActionListeners.forEach(it -> it.displayMessage(finalErrorMessage));
+        return valid;
     }
 
-
-    public List<Country> getUnvisitedNeighbours(Country c) {
-        List<Country> temp = new ArrayList<>();
-        for (String neighbourString : c.getNeighbours()){
-            Country neighbour = getCountry(neighbourString);
-            if (!neighbour.getVisited()){
-                temp.add(neighbour);
+    public ArrayList<String> getCountriesConnected(Country currentCountry, HashMap<String, Country> ss){
+        for (String countryName : currentCountry.getNeighbours()) {
+            Country country = getCountry(countryName);
+            if (!ss.containsKey(countryName)) {
+                ss.put(countryName, country);
+                getCountriesConnected(country, ss);
             }
         }
-        return temp;
+
+        return new ArrayList<>(ss.keySet());
     }
+
 
     private int getInitialArmies(int numPlayers) {
         int INITIAL_ARMY_6_PLAYERS = 50;
@@ -557,25 +554,25 @@ public class GameModel {
         for (Player player : players) {
             playerArr.add(player.savePlayer());
         }
-        obj.add("players", playerArr);
+        obj.add(StringGlobals.gamemodelPlayers, playerArr);
 
         // Add current player
-        obj.addProperty("currentPlayer", currentPlayer);
-        obj.addProperty("phase", gameStatus.toString());
-        obj.addProperty("map_location", "RiskMap.txt");
+        obj.addProperty(StringGlobals.gamemodelCurrentPlayer, currentPlayer);
+        obj.addProperty(StringGlobals.gamemodelPhase, gameStatus.toString());
+        obj.addProperty(StringGlobals.gamemodelMapLocation, this.mapName);
 
         // Save game phase, but only one of 3 different ones to avoid nulls when loading
         switch (gameStatus) {
             case TROOP_PLACEMENT_PHASE:
-                obj.addProperty("phase", GameStatus.TROOP_PLACEMENT_PHASE.toString());
+                obj.addProperty(StringGlobals.gamemodelPhase, GameStatus.TROOP_PLACEMENT_PHASE.toString());
                 break;
             case SELECT_ATTACKING_PHASE:
             case SELECT_DEFENDING_PHASE:
-                obj.addProperty("phase", GameStatus.SELECT_ATTACKING_PHASE.toString());
+                obj.addProperty(StringGlobals.gamemodelPhase, GameStatus.SELECT_ATTACKING_PHASE.toString());
                 break;
             case SELECT_TROOP_MOVING_FROM_PHASE:
             case SELECT_TROOP_MOVING_TO_PHASE:
-                obj.addProperty("phase", GameStatus.SELECT_TROOP_MOVING_TO_PHASE.toString());
+                obj.addProperty(StringGlobals.gamemodelPhase, GameStatus.SELECT_TROOP_MOVING_TO_PHASE.toString());
                 break;
         }
 
@@ -587,7 +584,7 @@ public class GameModel {
      */
     public void saveGameState(String filename) {
         try {
-            FileWriter fileWriter = new FileWriter(new File("saves/"+filename));
+            FileWriter fileWriter = new FileWriter(new File(StringGlobals.savesFolder +filename+".txt"));
             fileWriter.write(getGameStateJson().toString());
             fileWriter.close();
         } catch (Exception e) {

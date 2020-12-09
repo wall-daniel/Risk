@@ -2,6 +2,7 @@ package risk.View.MapCreator;
 
 import risk.Controller.EditorController;
 import risk.Enums.MapColor;
+import risk.Enums.StringGlobals;
 import risk.Model.Continent;
 import risk.Model.Country;
 import risk.Model.EditableGameModel;
@@ -87,25 +88,32 @@ public class MapEditorGUI extends JFrame implements GameActionListener {
         layeredPane = new JLayeredPane();
         layeredPane.setLayout(null);
 
-        this.countryInformation = new CountryInformation(this, controller,gameModel.getContinentListModel());
+        this.countryInformation = new CountryInformation(this, controller, gameModel.getContinentListModel());
+        this.continentPanel = makeContinentPanel(controller, gameModel.getContinentListModel());
 
-        this.continentPanel = new JPanel(new BorderLayout());
+        pane.add(layeredPane, BorderLayout.CENTER);
+        pane.add(countryInformation, BorderLayout.EAST);
+        pane.add(continentPanel, BorderLayout.WEST);
+    }
+
+    private JPanel makeContinentPanel(EditorController controller, DefaultListModel continentListModel) {
+        JPanel continentPanel = new JPanel(new BorderLayout());
         continentPanel.setVisible(false);
         JTextField continentName = new JTextField("");
         JTextField continentBonus = new JTextField("");
 
-        JButton submit = new JButton("Submit");
+        JButton submit = new JButton(StringGlobals.submitString);
         JButton delete = new JButton("Delete");
         delete.setEnabled(false);
         JButton reset = new JButton("Reset");
 
-        JList<Continent> continentJList = new JList<>(gameModel.getContinentListModel());
+        JList<Continent> continentJList = new JList<>(continentListModel);
         continentJList.setSelectionMode(DefaultListSelectionModel.SINGLE_SELECTION);
         continentJList.addListSelectionListener(e -> {
             if (!continentJList.isSelectionEmpty()) {
                 continentName.setText(continentJList.getSelectedValue().getName());
                 continentBonus.setText(String.valueOf(continentJList.getSelectedValue().getBonus()));
-                submit.setText("Edit");
+                submit.setText(StringGlobals.editString);
                 delete.setEnabled(true);
             }
         });
@@ -114,7 +122,7 @@ public class MapEditorGUI extends JFrame implements GameActionListener {
             try {
                 int bonus = Integer.parseInt(continentBonus.getText());
 
-                if (submit.getText().equals("Submit")){
+                if (submit.getText().equals(StringGlobals.submitString)){
                     controller.createNewContinent(continentName.getText(), bonus);
                 } else {
                     controller.editContinentProperties(continentJList.getSelectedValue(), continentName.getText(), bonus);
@@ -122,7 +130,7 @@ public class MapEditorGUI extends JFrame implements GameActionListener {
 
                 continentName.setText("");
                 continentBonus.setText("");
-                submit.setText("Submit");
+                submit.setText(StringGlobals.submitString);
                 delete.setEnabled(false);
             } catch (Exception ex){
 
@@ -135,7 +143,7 @@ public class MapEditorGUI extends JFrame implements GameActionListener {
             continentJList.clearSelection();
             continentName.setText("");
             continentBonus.setText("");
-            submit.setText("Submit");
+            submit.setText(StringGlobals.submitString);
             delete.setEnabled(false);
         });
 
@@ -154,10 +162,9 @@ public class MapEditorGUI extends JFrame implements GameActionListener {
         continentPanel.add(continentScroll, BorderLayout.CENTER);
         continentPanel.add(buttonPanel, BorderLayout.SOUTH);
 
-        pane.add(layeredPane, BorderLayout.CENTER);
-        pane.add(countryInformation, BorderLayout.EAST);
-        pane.add(continentPanel, BorderLayout.WEST);
+        return continentPanel;
     }
+
 
     private void addJMenuBar() {
         JMenuBar bar = new JMenuBar();
@@ -247,13 +254,12 @@ public class MapEditorGUI extends JFrame implements GameActionListener {
         }
 
         countryInformation.update();
-
-        //handling country deletions
-        Set<Country> currentCountries = new HashSet<>(countryList.keySet());
-        currentCountries.removeAll(gameModel.getCountries());
-        currentCountries.forEach(e -> layeredPane.remove(countryList.remove(e)));
     }
 
+    @Override
+    public void displayMessage(String message) {
+        JOptionPane.showMessageDialog(this, message);
+    }
 
     public boolean isToggleNeighbours() {
         return toggleNeighbours;
@@ -278,7 +284,6 @@ public class MapEditorGUI extends JFrame implements GameActionListener {
                 countryList.get(country1).setColorClickable();
         repaint();
     }
-
 
     public void setCountryInformation(Country country){
         countryInformation.setCountry(country);

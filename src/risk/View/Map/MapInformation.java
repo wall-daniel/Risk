@@ -3,6 +3,7 @@ package risk.View.Map;
 import risk.Controller.Controller;
 import risk.Controller.PlayerController;
 import risk.Enums.PlayerColor;
+import risk.Enums.StringGlobals;
 import risk.Model.GameModel;
 import risk.View.Views.GameActionListener;
 
@@ -30,7 +31,7 @@ public class MapInformation extends JPanel implements GameActionListener {
     protected void addButtons(JToolBar toolBar, PlayerController controller) {
         backButton = new JButton("Back");
         backButton.addActionListener(controller);
-        backButton.setActionCommand("Back");
+        backButton.setActionCommand(StringGlobals.backButtonActionCommand);
         toolBar.add(backButton);
 
         JPanel info = new JPanel(new GridLayout(3, 1));
@@ -44,7 +45,7 @@ public class MapInformation extends JPanel implements GameActionListener {
 
         nextButton = new JButton("Next");
         nextButton.addActionListener(controller);
-        nextButton.setActionCommand("Next");
+        nextButton.setActionCommand(StringGlobals.nextButtonActionCommand);
         toolBar.add(nextButton);
     }
 
@@ -83,5 +84,10 @@ public class MapInformation extends JPanel implements GameActionListener {
                 break;
         }
         repaint();
+    }
+
+    @Override
+    public void displayMessage(String message) {
+
     }
 }

@@ -80,7 +80,6 @@ public class AttackController {
         Country defendingCountry = attack.getDefendingCountry();
         Player player = attackingCountry.getPlayer();
 
-
         //handle country change
         defendingCountry.getPlayer().removeCountry(defendingCountry.getName());
         defendingCountry.setPlayer(player);
@@ -92,7 +91,5 @@ public class AttackController {
         player.inputTroopCount("How many troops do you want to move?", 1, attackingCountry.getArmies() - 1);
 
         new FortifyController(gameModel, player.getActionBuilder().buildFortify()).initiateFortify();
-
-        System.out.println(player.getName() + " conquers " + defendingCountry.getName());
     }
 }

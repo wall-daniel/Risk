@@ -1,6 +1,7 @@
 package risk.Controller;
 
 import risk.Action.ActionBuilder;
+import risk.Enums.StringGlobals;
 import risk.Model.Country;
 import risk.Model.GameModel;
 
@@ -80,9 +81,9 @@ public class PlayerController extends Controller implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
-        if (actionEvent.getActionCommand().equals("Back")) {
+        if (actionEvent.getActionCommand().equals(StringGlobals.backButtonActionCommand)) {
             gameModel.doAction(new ActionBuilder().buildReset());
-        } else if (actionEvent.getActionCommand().equals("Next")) {
+        } else if (actionEvent.getActionCommand().equals(StringGlobals.nextButtonActionCommand)) {
             gameModel.doAction(new ActionBuilder().buildEnd());
         }
 

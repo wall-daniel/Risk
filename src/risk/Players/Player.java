@@ -7,6 +7,7 @@ import risk.Action.Action;
 import risk.Action.ActionBuilder;
 import risk.Enums.PlayerColor;
 import risk.Enums.PlayerType;
+import risk.Enums.StringGlobals;
 import risk.Model.Country;
 import risk.Model.GameModel;
 
@@ -142,11 +143,6 @@ public abstract class Player {
         actionBuilder.setNumTroops(numTroopsOfAction);
     }
 
-    public boolean isTroopActionSet() {
-        return actionBuilder.isTroopsSet();
-    }
-
-
     public PlayerType getPlayerType(){
         return playerType;
     }
@@ -162,9 +158,9 @@ public abstract class Player {
         JsonObject player = new JsonObject();
 
         // Save some fields
-        player.addProperty("name", name);
-        player.addProperty("index", index);
-        player.addProperty("type", playerType.toString());
+        player.addProperty(StringGlobals.playerName, name);
+        player.addProperty(StringGlobals.playerIndex, index);
+        player.addProperty(StringGlobals.playerType, playerType.toString());
 
         // Save countries owned
         JsonArray countryArray = new JsonArray();
@@ -173,24 +169,24 @@ public abstract class Player {
 
             // Save country name and number of armies, the owner is contained by player
             JsonObject countryObj = new JsonObject();
-            countryObj.addProperty("name", countryString);
-            countryObj.addProperty("armies", country.getArmies());
+            countryObj.addProperty(StringGlobals.countryName, countryString);
+            countryObj.addProperty(StringGlobals.countryArmies, country.getArmies());
 
             countryArray.add(countryObj);
         }
-        player.add("countries", countryArray);
+        player.add(StringGlobals.countries, countryArray);
 
         return player;
     }
 
     public Player(JsonObject playerObj, GameModel gameModel) {
         this.gameModel = gameModel;
-        name = playerObj.get("name").getAsString();
-        index = playerObj.get("index").getAsInt();
-        playerType = PlayerType.valueOf(playerObj.get("type").getAsString());
+        name = playerObj.get(StringGlobals.playerName).getAsString();
+        index = playerObj.get(StringGlobals.playerIndex).getAsInt();
+        playerType = PlayerType.valueOf(playerObj.get(StringGlobals.playerType).getAsString());
         playerColor = PlayerColor.getPlayerColor(index);
 
-        JsonArray countries = playerObj.get("countries").getAsJsonArray();
+        JsonArray countries = playerObj.get(StringGlobals.countries).getAsJsonArray();
         countriesOwned = new ArrayList<>(countries.size());
         actionBuilder = new ActionBuilder();
 
@@ -198,8 +194,8 @@ public abstract class Player {
         for (JsonElement element : countries) {
             JsonObject countryObj = element.getAsJsonObject();
 
-            Country country = gameModel.getCountry(countryObj.get("name").getAsString());
-            country.setPlayer(this, countryObj.get("armies").getAsInt());
+            Country country = gameModel.getCountry(countryObj.get(StringGlobals.countryName).getAsString());
+            country.setPlayer(this, countryObj.get(StringGlobals.countryArmies).getAsInt());
         }
     }
 

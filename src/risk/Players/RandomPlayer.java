@@ -147,17 +147,4 @@ public class RandomPlayer extends Player {
         return actionBuilder.buildEnd();
     }
 
-
-    /**
-     * Choose two countries to move armies from and to.
-     * Make sure that the countries have a path between them.
-     * The number of armies is between 1 and first country armies minus 1.
-     *
-     * @return a movement action
-     */
-    private ActionBuilder getFortifyCommand(Country firstCountry, Country secondCountry) {
-        return new ActionBuilder(firstCountry, secondCountry, random.nextInt(firstCountry.getArmies() - 1) + 1);
-    }
-
-
 }

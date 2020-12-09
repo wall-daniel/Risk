@@ -1,6 +1,7 @@
 package risk.View.MapCreator;
 
 import risk.Controller.EditorController;
+import risk.Enums.StringGlobals;
 import risk.Model.Continent;
 import risk.Model.Country;
 
@@ -13,15 +14,13 @@ public class CountryInformation extends JPanel {
     private JLabel countryName;
     private JButton continentName;
     private JButton toggleNeighbours;
-    private JButton deleteCountry;
 
     public CountryInformation(MapEditorGUI mapEditorGUI, EditorController controller, DefaultListModel continentListModel){
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
         countryName = new JLabel("");
-        continentName = new JButton("");
-        toggleNeighbours = new JButton("Set Neighbours");
-        deleteCountry = new JButton("Delete Country");
+        continentName = new JButton("Set Continent");
+        toggleNeighbours = new JButton(StringGlobals.setNeighboursString);
 
         JList<Continent> continentJList = new JList<>(continentListModel);
         continentJList.setSelectionMode(DefaultListSelectionModel.SINGLE_SELECTION);
@@ -41,29 +40,21 @@ public class CountryInformation extends JPanel {
         });
 
         toggleNeighbours.addActionListener(e -> {
-          if (toggleNeighbours.getText().equals("Set Neighbours")){
-              mapEditorGUI.resetCountryColors();
+            mapEditorGUI.resetCountryColors();
+
+          if (toggleNeighbours.getText().equals(StringGlobals.setNeighboursString)){
               mapEditorGUI.colorCountryNeighbours(country);
               mapEditorGUI.setToggleNeighbours();
-              toggleNeighbours.setText("Back");
+              toggleNeighbours.setText(StringGlobals.backString);
           } else {
-              mapEditorGUI.resetCountryColors();
               mapEditorGUI.resetToggleNeighbours();
-              toggleNeighbours.setText("Set Neighbours");
+              toggleNeighbours.setText(StringGlobals.setNeighboursString);
           }
         });
-
-
-        deleteCountry.addActionListener(e -> {
-
-        });
-
-
 
         add(countryName);
         add(continentName);
         add(toggleNeighbours);
-        add(deleteCountry);
 
         setVisible(false);
     }
@@ -74,7 +65,7 @@ public class CountryInformation extends JPanel {
 
     public void resetCountry(){
         setVisible(false);
-        toggleNeighbours.setText("Set Neighbours");
+        toggleNeighbours.setText(StringGlobals.setNeighboursString);
     }
 
     public void update(){

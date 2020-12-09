@@ -34,7 +34,7 @@ public class MapGUI extends JFrame {
 
     public MapGUI(String filename) {
         try {
-            GameModel gameModel = new GameModel(filename, true);
+            GameModel gameModel = new GameModel(filename);
             this.controller = new PlayerController(gameModel, this);
             this.map = new Map(controller);
             this.mapInformation = new MapInformation(controller);

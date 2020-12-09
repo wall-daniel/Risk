@@ -38,4 +38,9 @@ public class Map extends JPanel implements GameActionListener {
 
         repaint();
     }
+
+    @Override
+    public void displayMessage(String message) {
+        JOptionPane.showMessageDialog(this, message);
+    }
 }
