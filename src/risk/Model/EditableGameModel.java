@@ -60,9 +60,13 @@ public class EditableGameModel extends GameModel {
     }
 
     public void deleteContinent(Continent continent){
-        this.continents.remove(continent.getName());
-        continentsDLM.removeElement(continent);
-        updateEditor();
+        if (continent.getCountries().isEmpty()){
+            this.continents.remove(continent.getName());
+            continentsDLM.removeElement(continent);
+            updateEditor();
+        } else{
+            gameActionListeners.forEach(it -> it.displayMessage("Cannot delete continent as there are countries belonging to it."));
+        }
     }
 
     public void editContinentProperties(Continent continent, String continentName, int continentBonus){
@@ -78,6 +82,8 @@ public class EditableGameModel extends GameModel {
 
     public void toggleNeighbourToCountry(Country country, Country neighbour){
         country.toggleNeighbour(neighbour);
+        if (country.isNeighbour(neighbour)!=neighbour.isNeighbour(country))
+            neighbour.toggleNeighbour(country);
         updateEditor();
     }
 }

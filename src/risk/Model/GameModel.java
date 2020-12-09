@@ -41,7 +41,7 @@ public class GameModel {
     private List<Player> players;
     protected final HashMap<String, Continent> continents;
     protected final HashMap<String, Country> countries;
-    private final List<GameActionListener> gameActionListeners;
+    protected final List<GameActionListener> gameActionListeners;
 
     private int currentPlayer = 0;
 

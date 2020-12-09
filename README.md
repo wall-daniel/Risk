@@ -12,7 +12,7 @@ Authors:
 - Khalid Kana’an
   - (Dropping the course)
 - Rahel Gunaratne
-  - Made map editor/creator
+  - MapEditing process made easy for users
   - Helped with map validation
 - Francois Argent
   - Map validation
@@ -34,3 +34,4 @@ Roadmap:
 
 Issues:
 - Auto neighbour sometimes produces some weird results
+- current risk map neighbours are still wonky
