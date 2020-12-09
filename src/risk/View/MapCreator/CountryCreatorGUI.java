@@ -9,6 +9,9 @@ public class CountryCreatorGUI extends JFrame {
     JPanel drawingButtons;
     CountryDrawPad drawingPad;
 
+    JButton closeShape;
+    JButton finish;
+
     MapEditorGUI mapEditorGUI;
 
     public CountryCreatorGUI(MapEditorGUI mapEditorGUI){
@@ -36,14 +39,26 @@ public class CountryCreatorGUI extends JFrame {
     public void addComponentToPane(Container pane) {
         drawingButtons = new JPanel(new FlowLayout());
         JButton clear = new JButton("Clear");
-        clear.addActionListener(e -> drawingPad.clear());
+        clear.addActionListener(e -> {
+            closeShape.setEnabled(false);
+            finish.setEnabled(false);
+            drawingPad.clear();
+        });
 
-        JButton closeShape = new JButton("Close Shape");
-        closeShape.addActionListener(e -> drawingPad.closeShape());
+        closeShape = new JButton("Close Shape");
+        closeShape.setEnabled(false);
+        closeShape.addActionListener(e -> {
+            finish.setEnabled(true);
+            drawingPad.closeShape();
+        });
 
-        JButton finish = new JButton("Finish");
+        finish = new JButton("Finish");
+        finish.setEnabled(false);
         finish.addActionListener(e -> {
-            String countryName = JOptionPane.showInputDialog("Enter Country Name");
+            String countryName = "";
+            do {
+                countryName = JOptionPane.showInputDialog("Enter Country Name");
+            } while (countryName.equals(""));
             mapEditorGUI.addNewCountry(countryName, drawingPad.getPolygon());
             this.dispose();
         });
@@ -66,10 +81,18 @@ public class CountryCreatorGUI extends JFrame {
 
         drawingButtons.add(borderDetailPanel);
 
-        drawingPad = new CountryDrawPad();
+        drawingPad = new CountryDrawPad(this);
 
         pane.add(drawingButtons, BorderLayout.NORTH);
         pane.add(drawingPad, BorderLayout.CENTER);
+    }
+
+    public void setCloseShapeEnabled(boolean enabled){
+        closeShape.setEnabled(enabled);
+    }
+
+    public void setFinishEnabled(boolean enabled){
+        finish.setEnabled(enabled);
     }
 
     private void addJMenuBar() {

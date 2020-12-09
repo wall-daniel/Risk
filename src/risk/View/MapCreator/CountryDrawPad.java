@@ -19,7 +19,10 @@ public class CountryDrawPad extends JPanel implements MouseListener {
     int borderDetail = 1000;
     final double BORDER_DEVIATION = 0.5;
 
-    public CountryDrawPad(){
+    private CountryCreatorGUI countryCreatorGUI;
+
+    public CountryDrawPad(CountryCreatorGUI ccg){
+        this.countryCreatorGUI = ccg;
         polygon = new Polygon();
         setDoubleBuffered(true);
         addMouseListener(this);
@@ -85,6 +88,7 @@ public class CountryDrawPad extends JPanel implements MouseListener {
             startY = e.getY();
             polygon.addPoint(startX, startY);
         } else {
+            countryCreatorGUI.setCloseShapeEnabled(true);
             randomFractal(oldX, oldY, e.getX(), e.getY());
             repaint();
         }

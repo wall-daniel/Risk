@@ -150,10 +150,8 @@ public class GameModel {
     }
 
     public void saveMap(String filename) throws IOException {
-        if (!mapIsValid()){
-            System.out.println("Map is invalid");
+        if (!mapIsValid())
             return;
-        }
 
         JsonArray json = new JsonArray();
 

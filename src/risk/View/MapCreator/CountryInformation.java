@@ -18,6 +18,9 @@ public class CountryInformation extends JPanel {
     public CountryInformation(MapEditorGUI mapEditorGUI, EditorController controller, DefaultListModel continentListModel){
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
+        JLabel countryLabel = new JLabel("Country: ");
+        JLabel continentLabel = new JLabel("Continent: ");
+
         countryName = new JLabel("");
         continentName = new JButton("Set Continent");
         toggleNeighbours = new JButton(StringGlobals.setNeighboursString);
@@ -52,7 +55,9 @@ public class CountryInformation extends JPanel {
           }
         });
 
+        add(countryLabel);
         add(countryName);
+        add(continentLabel);
         add(continentName);
         add(toggleNeighbours);
 

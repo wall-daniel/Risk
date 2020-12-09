@@ -37,7 +37,9 @@ public class MapEditorGUI extends JFrame implements GameActionListener {
 
     public MapEditorGUI(){
         EditableGameModel gameModel = new EditableGameModel();
-        this.mapName = JOptionPane.showInputDialog("Enter New Map Name");
+        do {
+            this.mapName = JOptionPane.showInputDialog("Enter New Map Name");
+        } while (mapName.equals(""));
         setup(gameModel);
     }
 
@@ -99,6 +101,9 @@ public class MapEditorGUI extends JFrame implements GameActionListener {
     private JPanel makeContinentPanel(EditorController controller, DefaultListModel continentListModel) {
         JPanel continentPanel = new JPanel(new BorderLayout());
         continentPanel.setVisible(false);
+        JLabel nameLabel = new JLabel("Name");
+        JLabel bonusLabel = new JLabel("Bonus");
+
         JTextField continentName = new JTextField("");
         JTextField continentBonus = new JTextField("");
 
@@ -147,8 +152,10 @@ public class MapEditorGUI extends JFrame implements GameActionListener {
             delete.setEnabled(false);
         });
 
-        JPanel textPanel = new JPanel(new GridLayout(1, 2));
+        JPanel textPanel = new JPanel(new GridLayout(2, 2));
+        textPanel.add(nameLabel);
         textPanel.add(continentName);
+        textPanel.add(bonusLabel);
         textPanel.add(continentBonus);
 
         JPanel buttonPanel = new JPanel(new GridLayout(4, 1));

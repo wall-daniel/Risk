@@ -42,7 +42,7 @@ public class EditorController extends Controller {
 
     public void saveMap(String fileName) {
         try {
-            gameModel.saveMap(StringGlobals.mapsFolder + fileName + ".txt");
+            gameModel.saveMap(StringGlobals.mapsFolder + fileName + (fileName.endsWith(".txt") ? "" : ".txt"));
         } catch (Exception e) {
             e.printStackTrace();
         }

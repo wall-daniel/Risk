@@ -91,9 +91,10 @@ public class MapGUI extends JFrame {
 
         JMenuItem save = new JMenuItem("Save");
         save.addActionListener(e -> {
-            String filename = JOptionPane.showInputDialog(this, "Enter filename:");
-
-            if (filename == null) return;
+            String filename = "";
+            do {
+                filename = JOptionPane.showInputDialog(this, "Enter filename:");
+            } while (filename.equals(""));
 
             controller.saveGame(filename);
         });
