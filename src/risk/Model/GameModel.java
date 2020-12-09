@@ -214,16 +214,18 @@ public class GameModel {
         for (Country country : countries.values()){
             HashMap<String, Country> ss = new HashMap<>();
             ss.put(country.getName(), country);
-            ArrayList<String> list = getCountriesConnected(country, ss);
-            if (list.size() < countries.size()) {
-                errorMessage+= country.getName() + " is not connected to every country\n";
+            ArrayList<String> countriesConnected = getCountriesConnected(country, ss);
+            if (countriesConnected.size() < countries.size()) {
+                ArrayList<String> allCountries = getCountriesNames();
+                allCountries.removeAll(countriesConnected);
+                for (String s : allCountries)
+                    errorMessage+=country.getName() + "is not connected to " + s + "\n";
                 valid = false;
             }
         }
 
         if (!valid){
             String finalErrorMessage = errorMessage;
-            System.out.println(errorMessage);
             gameActionListeners.forEach(it -> it.displayMessage(finalErrorMessage));
         }
 
