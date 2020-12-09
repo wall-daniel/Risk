@@ -7,15 +7,13 @@ README
 
 Authors:
 - Daniel Wall
-  - Random player
-  - Code cleaning
-  - play validation
+  - Saving/loading map state
+  - Update sequence diagram
 - Khalid Kana’an
   - (Dropping the course)
 - Rahel Gunaratne
-  - computer player to play with human player
-  - Refactoring code for Action
-  - All controller refactoring
+  - Made map editor/creator
+  - Helped with map validation
 - Francois Argent
   - Map validation
   - UML Diagram
