@@ -223,6 +223,7 @@ public class GameModel {
 
         if (!valid){
             String finalErrorMessage = errorMessage;
+            System.out.println(errorMessage);
             gameActionListeners.forEach(it -> it.displayMessage(finalErrorMessage));
         }
 
