@@ -17,9 +17,8 @@ Authors:
   - Refactoring code for Action
   - All controller refactoring
 - Francois Argent
-  - AI Player logic
-  - Some code refactoring/cleaning
-  - Attack validation
+  - Map validation
+  - UML Diagram
 
 Deliverables:
 1. Current iteration
