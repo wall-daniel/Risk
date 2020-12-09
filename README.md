@@ -7,34 +7,30 @@ README
 
 Authors:
 - Daniel Wall
-  - Random player
-  - Code cleaning
-  - play validation
+  - Saving/loading map state
+  - Update sequence diagram
 - Khalid Kana’an
   - (Dropping the course)
 - Rahel Gunaratne
-  - computer player to play with human player
-  - Refactoring code for Action
-  - All controller refactoring
+  - Made map editor/creator
+  - Helped with map validation
 - Francois Argent
   - Map validation
   - UML Diagram
 
 Deliverables:
-1. Current iteration
+1. Text based iteration
 2. GUI iteration: Add a gui using a JFrame and mouse interaction
 3. Additional Features iteration: add placing armies, moving armies, and ai player
-4. Save iteration: Add saving/loading, and 
+4. Save iteration: Add saving/loading, and validation
 
 Changes/Additions:
-- Added ai player and random player
-- Modularized controllers and actions
-- Cleaned up some code
-- Added placing/moving armies (done previously)
+- Added map state saving and loading
+- Added map validation
+- Made map creation better
 
 Roadmap:
-- Add saving and loading map
-- check to ensure map is good (with neighbours)
+- Everything is done now
 
 Issues:
-- some countries dont have the proper neighbours.
+- Auto neighbour sometimes produces some weird results
