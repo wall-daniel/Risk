@@ -11,9 +11,16 @@ Game phase:
 - First place armies on countries. The countries you can place are white, and the number of armies is in the info section.
 - Can then attack. Choose the country you want to attack from and then number of armies, and then country you want to attack. The countries you can select are in white.
 - For the final phase of your turn you can move armies from one to the next.
+- The ai takes it's turn all at once. Doing as many beneficial moves as possible.
 End of game
 - Player loses game when they have no more countries left
 - When there is only one player left then that player wins the game.
+Create Map
+- Add countries by pressing add country button
+  - Select the corners of country, can select the amount of border variation
+  - Set the country name
+- Add continenets by pressing menu button
+- Can edit each country to select which continent and which neighbours it has
 
 Decisions made:
 - We decided to make the map editor now because creating the map using hard coded values would have taken a while, so the time required becomes less.
@@ -25,6 +32,7 @@ Descriptions of Data Structures/Interfaces:
 - Game model
   - Players is an arraylist, and then the current player is an int. This works well for choosing the next player.
   - Continents and countries are a hashmap because of the ease of getting the object when all you have is the name of the country, which happens when loading from json often.
+  - Made sub class for editor to make it less convuluted
 - Observables
   - GameAcitonListener: Used for adding countries/continents on the editor. Will explain in correct milestone.
   - GameModelListener: Has update function which is called whenever the game model is updated. Having just the one method makes it easier to code and there are no visible performance bottlenecks.
